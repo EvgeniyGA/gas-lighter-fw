@@ -1,2 +1,3 @@
 /targets/stm32f4/Debug
 targets/stm32f4/.settings/stm32cubeide.project.prefs
+targets/stm32f4/gas-lighter-f4 Debug.launch
