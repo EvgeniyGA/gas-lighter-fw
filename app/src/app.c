@@ -12,7 +12,7 @@ void BlinkTask(void *argument)
     {
         //HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_7);
         vTaskDelay(pdMS_TO_TICKS(500));
-        dbgln("blink from freertos!!!!");
+        dbgln("blink from freertos!");
     }
 }
 

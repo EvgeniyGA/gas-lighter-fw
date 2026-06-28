@@ -50,7 +50,9 @@
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/freertos/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/app/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="../../../RTT"/>
 									<listOptionValue builtIn="false" value="&quot;../../..\modules\RTT\RTT&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../..\freertos&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../..\modules\freertos\portable\GCC\ARM_CM4F&quot;"/>
 									<listOptionValue builtIn="false" value="../../../modules/freertos/portable/MemMang"/>
 								</option>
@@ -86,6 +88,7 @@
 						<entry excluding="Syscalls|Examples|Config" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="RTT"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="app"/>
 						<entry excluding="examples|portable" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="freertos"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="freertos_support"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -140,6 +143,8 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Projects\gas-lighter-fw\modules\freertos\portable\GCC\ARM_CM4F&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/modules/freertos/portable/MemMang}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../..\modules\RTT\RTT&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../..\freertos&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Projects\gas-lighter-fw\RTT&quot;"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1517336091" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>

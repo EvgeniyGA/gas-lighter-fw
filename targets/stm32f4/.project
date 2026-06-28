@@ -55,5 +55,10 @@
 			<type>2</type>
 			<locationURI>PARENT-2-PROJECT_LOC/modules/freertos</locationURI>
 		</link>
+		<link>
+			<name>freertos_support</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/freertos</locationURI>
+		</link>
 	</linkedResources>
 </projectDescription>
