@@ -4,3 +4,6 @@
 [submodule "modules/RTT"]
 	path = modules/RTT
 	url = https://github.com/SEGGERMicro/RTT.git
+[submodule "modules/tinyusb"]
+	path = modules/tinyusb
+	url = https://github.com/hathach/tinyusb.git
