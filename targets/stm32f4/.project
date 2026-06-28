@@ -41,6 +41,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/modules/freertos/portable/MemMang</locationURI>
 		</link>
 		<link>
+			<name>RTT</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/modules/RTT</locationURI>
+		</link>
+		<link>
 			<name>app</name>
 			<type>2</type>
 			<locationURI>PARENT-2-PROJECT_LOC/app</locationURI>

@@ -50,6 +50,7 @@
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/freertos/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/app/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../..\modules\RTT\RTT&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../..\modules\freertos\portable\GCC\ARM_CM4F&quot;"/>
 									<listOptionValue builtIn="false" value="../../../modules/freertos/portable/MemMang"/>
 								</option>
@@ -78,12 +79,13 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="examples|portable" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="freertos"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ARM_CM4F"/>
-						<entry excluding="heap_5.c|heap_3.c|heap_2.c|heap_1.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="MemMang"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="app"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
+						<entry excluding="heap_5.c|heap_3.c|heap_2.c|heap_1.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="MemMang"/>
+						<entry excluding="Syscalls|Examples|Config" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="RTT"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="app"/>
+						<entry excluding="examples|portable" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="freertos"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -137,6 +139,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/app/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Projects\gas-lighter-fw\modules\freertos\portable\GCC\ARM_CM4F&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/modules/freertos/portable/MemMang}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../..\modules\RTT\RTT&quot;"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1517336091" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
