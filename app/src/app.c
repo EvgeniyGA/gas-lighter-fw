@@ -140,8 +140,8 @@ void cdc_task(void *params) {
       tud_cdc_write_flush();
 
       // Press on-board button to send Uart status notification
-      static uint32_t btn_prev = 0;
-      static cdc_notify_uart_state_t uart_state = { .value = 0 };
+      //static uint32_t btn_prev = 0;
+      //static cdc_notify_uart_state_t uart_state = { .value = 0 };
       //const uint32_t btn = board_button_read();
       //if (!btn_prev && btn) {
       //  uart_state.dsr ^= 1;

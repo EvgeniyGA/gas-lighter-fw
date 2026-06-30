@@ -11,16 +11,16 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(MAIN_EXECUTABLE "gas-lighter-fw")
 add_executable(${MAIN_EXECUTABLE})
 
-file(GLOB_RECURSE APP_SOURCES 
-    "${CMAKE_CURRENT_SOURCE_DIR}/app/src/*.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/app/src/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/freertos/*.c"
+target_sources(${MAIN_EXECUTABLE} PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/freertos/freertos.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src/portable/synopsys/dwc2/dcd_dwc2.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src/portable/synopsys/dwc2/dwc2_common.c
 )
-
-target_sources(${MAIN_EXECUTABLE} PRIVATE ${APP_SOURCES})
 
 target_include_directories(${MAIN_EXECUTABLE} PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/app/inc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src"
+    "${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/hw"
 )
 
 set(TARGET_CMAKE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/cmake/stm32cubemx")
@@ -33,9 +33,12 @@ target_include_directories(freertos_config SYSTEM INTERFACE
 set( FREERTOS_HEAP "4" CACHE STRING "" FORCE)
 set( FREERTOS_PORT GCC_ARM_CM4F)
 
+add_subdirectory(${CMAKE_SOURCE_DIR}/RTT)
+add_subdirectory(${CMAKE_SOURCE_DIR}/app)
 add_subdirectory(${CMAKE_SOURCE_DIR}/modules/freertos)
-add_subdirectory(RTT)
-add_subdirectory(app)
+add_subdirectory(${CMAKE_SOURCE_DIR}/modules/tinyusb/src)
 add_subdirectory("${TARGET_CMAKE_DIR}" "${CMAKE_BINARY_DIR}/stm32cubemx_${TARGET}")
+
+tinyusb_target_add(${MAIN_EXECUTABLE})
 
 target_link_libraries(${MAIN_EXECUTABLE} freertos_kernel)
