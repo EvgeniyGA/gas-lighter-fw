@@ -4,4 +4,5 @@ target_sources(${PROJECT_NAME} PRIVATE
     src/app.c
     src/msc_disk.c
     src/usb_descriptors.c
+    src/retarget.c
 )

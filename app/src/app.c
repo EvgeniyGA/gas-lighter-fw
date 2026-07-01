@@ -4,22 +4,7 @@
 #include "tusb.h"
 #include <ctype.h>
 #include "usb_descriptors.h"
-
-#define dbg(s)                        SEGGER_RTT_WriteString( 0, s )//; HAL_Delay(1)
-#define dbgln(s)                      dbg( s "\n" )
-#define dbgf( format, ... )           SEGGER_RTT_printf( 0, ( const char * ) ( format ), ##__VA_ARGS__ ); HAL_Delay(1)
-
-void BlinkTask(void *argument)
-{
-    for(;;)
-    {
-        //HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_7);
-        vTaskDelay(pdMS_TO_TICKS(500));
-        dbgln("blink from freertos!");
-    }
-}
-
-
+#include <stdio.h>
 
 #define USBD_STACK_SIZE    (configMINIMAL_STACK_SIZE * (CFG_TUSB_DEBUG ? 4 : 2))
 #define CDC_STACK_SIZE      (configMINIMAL_STACK_SIZE * (CFG_TUSB_DEBUG ? 3 : 2))
@@ -48,14 +33,13 @@ void cdc_task(void *params);
 
 void init(void){
 	SEGGER_RTT_ConfigUpBuffer( 0, NULL, NULL, 0, SEGGER_RTT_MODE_NO_BLOCK_TRIM );
-    SEGGER_RTT_WriteString( 0, "SEGGER Real-Time-Terminal Sample\n" );
+  SEGGER_RTT_WriteString( 0, "SEGGER Real-Time-Terminal Started\n" );
 }
 
 void setup(void){
 	xTaskCreate(led_blinking_task, "blinky", BLINKY_STACK_SIZE, NULL, 1, NULL);
 	xTaskCreate(usb_device_task, "usbd", USBD_STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
 	xTaskCreate(cdc_task, "cdc", CDC_STACK_SIZE, NULL, configMAX_PRIORITIES - 2, NULL);
-
 	vTaskStartScheduler();
 }
 
@@ -90,11 +74,13 @@ static void usb_device_task(void *param) {
 // Invoked when device is mounted
 void tud_mount_cb(void) {
   blink_interval_ms = BLINK_MOUNTED;
+  printf("USB device mounter\n\r");
 }
 
 // Invoked when device is unmounted
 void tud_umount_cb(void) {
   blink_interval_ms = BLINK_NOT_MOUNTED;
+  printf("USB device unmounted\n\r");
 }
 
 // Invoked when usb bus is suspended
@@ -103,11 +89,13 @@ void tud_umount_cb(void) {
 void tud_suspend_cb(bool remote_wakeup_en) {
   (void) remote_wakeup_en;
   blink_interval_ms = BLINK_SUSPENDED;
+  printf("USB bus suspended\n\r");
 }
 
 // Invoked when usb bus is resumed
 void tud_resume_cb(void) {
   blink_interval_ms = tud_mounted() ? BLINK_MOUNTED : BLINK_NOT_MOUNTED;
+  printf("USB bus resumed\n\r");
 }
 
 //--------------------------------------------------------------------+
@@ -160,11 +148,10 @@ void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts) {
   (void) itf;
   (void) rts;
 
-  // TODO set some indicator
   if (dtr) {
-    // Terminal connected
+    printf("Terminal connected\n\r");
   } else {
-    // Terminal disconnected
+    printf("Terminal disconnected\n\r");
   }
 }
 
