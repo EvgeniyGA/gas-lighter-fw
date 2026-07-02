@@ -58,7 +58,7 @@
 		<link>
 			<name>freertos_support</name>
 			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/freertos</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/freertos_support</locationURI>
 		</link>
 		<link>
 			<name>tinyusb_src</name>
