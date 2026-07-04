@@ -56,9 +56,9 @@
 									<listOptionValue builtIn="false" value="&quot;../../..\modules\RTT\RTT&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../..\modules\freertos\portable\GCC\ARM_CM4F&quot;"/>
 									<listOptionValue builtIn="false" value="../../../modules/freertos/portable/MemMang"/>
+									<listOptionValue builtIn="false" value="../../../modules/FreeRTOS-Plus-CLI"/>
 									<listOptionValue builtIn="false" value="../../../modules/tinyusb/src"/>
 									<listOptionValue builtIn="false" value="&quot;../../..\modules\tinyusb\hw&quot;"/>
-									<listOptionValue builtIn="false" value="../../../freertos_support/FreeRTOS-Plus-CLI"/>
 									<listOptionValue builtIn="false" value="../../../freertos_support"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.925299765" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
@@ -89,6 +89,7 @@
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ARM_CM4F"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="FreeRTOS-Plus-CLI"/>
 						<entry excluding="heap_3.c|heap_2.c|heap_1.c|heap_5.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="MemMang"/>
 						<entry excluding="Config|Examples|Syscalls" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="RTT"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="app"/>

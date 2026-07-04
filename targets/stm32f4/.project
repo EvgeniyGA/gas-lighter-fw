@@ -36,6 +36,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/modules/freertos/portable/GCC/ARM_CM4F</locationURI>
 		</link>
 		<link>
+			<name>FreeRTOS-Plus-CLI</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/modules/FreeRTOS-Plus-CLI</locationURI>
+		</link>
+		<link>
 			<name>MemMang</name>
 			<type>2</type>
 			<locationURI>PARENT-2-PROJECT_LOC/modules/freertos/portable/MemMang</locationURI>

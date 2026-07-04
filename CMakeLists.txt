@@ -14,14 +14,14 @@ add_executable(${MAIN_EXECUTABLE})
 target_sources(${MAIN_EXECUTABLE} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/freertos_support/freertos.c
     ${CMAKE_CURRENT_SOURCE_DIR}/freertos_support/freertos_hook.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/freertos_support/FreeRTOS-Plus-CLI/FreeRTOS_CLI.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/modules/FreeRTOS-Plus-CLI/FreeRTOS_CLI.c
     ${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src/portable/synopsys/dwc2/dcd_dwc2.c
     ${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src/portable/synopsys/dwc2/dwc2_common.c
 )
 
 target_include_directories(${MAIN_EXECUTABLE} PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/app/inc"
-    "${CMAKE_CURRENT_SOURCE_DIR}/freertos_support/FreeRTOS-Plus-CLI"
+    "${CMAKE_CURRENT_SOURCE_DIR}/modules/FreeRTOS-Plus-CLI"
     "${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src"
     "${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/hw"
 )
