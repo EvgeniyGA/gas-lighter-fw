@@ -56,6 +56,16 @@
 			<locationURI>PARENT-2-PROJECT_LOC/app</locationURI>
 		</link>
 		<link>
+			<name>fatfs_src</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/modules/fatfs/source</locationURI>
+		</link>
+		<link>
+			<name>fatfs_support</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/support/fatfs</locationURI>
+		</link>
+		<link>
 			<name>freertos</name>
 			<type>2</type>
 			<locationURI>PARENT-2-PROJECT_LOC/modules/freertos</locationURI>

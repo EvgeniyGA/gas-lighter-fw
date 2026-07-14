@@ -1,13 +1,17 @@
+#include <stdio.h>
+#include <ctype.h>
 #include <FreeRTOS.h>
 #include "FreeRTOS_CLI.h"
 #include "task.h"
 #include "SEGGER_RTT.h"
 #include "tusb.h"
-#include <ctype.h>
 #include "usb_descriptors.h"
-#include <stdio.h>
 #include "cli_commands.h"
+#include "ff.h"
+#include "sram_diskio.h"
+//#include "internal_flash_diskio.h"
 
+#define STORAGE_STACK_SIZE (configMINIMAL_STACK_SIZE)
 #define USBD_STACK_SIZE    (configMINIMAL_STACK_SIZE * (CFG_TUSB_DEBUG ? 4 : 2))
 #define CDC_STACK_SIZE      (configMINIMAL_STACK_SIZE * (CFG_TUSB_DEBUG ? 3 : 2))
 #define BLINKY_STACK_SIZE   configMINIMAL_STACK_SIZE
@@ -28,21 +32,62 @@ enum {
 };
 
 static uint32_t blink_interval_ms = BLINK_NOT_MOUNTED;
+char sramMas[TOTAL_DISK_SIZE];
 
 static void usb_device_task(void *param);
 void led_blinking_task(void* param);
 void cdc_task(void *params);
+void storage_task(void *params);
+
+void msc_disk_init(void);
 
 void init(void){
 	SEGGER_RTT_ConfigUpBuffer( 0, NULL, NULL, 0, SEGGER_RTT_MODE_NO_BLOCK_TRIM );
-  SEGGER_RTT_WriteString( 0, "SEGGER Real-Time-Terminal Started\n" );
+	SEGGER_RTT_WriteString( 0, "SEGGER Real-Time-Terminal Started\n" );
 }
 
 void setup(void){
+	xTaskCreate(storage_task, "storage", STORAGE_STACK_SIZE, NULL, 1, NULL);
 	xTaskCreate(led_blinking_task, "blinky", BLINKY_STACK_SIZE, NULL, 1, NULL);
 	xTaskCreate(usb_device_task, "usbd", USBD_STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
 	xTaskCreate(cdc_task, "cdc", CDC_STACK_SIZE, NULL, configMAX_PRIORITIES - 2, NULL);
 	vTaskStartScheduler();
+}
+
+void storage_task(void *param) {
+	(void) param;
+
+	static char sramPath[4];
+	static FATFS USERFatFS;
+	static FIL file;
+	static BYTE work[512] = {0};
+
+	if (FATFS_LinkDriver( &SRAMDISK_Driver, sramPath) != 0) {
+		printf("Cannot link Disk driver\n");
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
+	}
+
+	MKFS_PARM fmt_opt = {FM_SFD | FM_ANY, 0, 0, 0, 0};
+	FRESULT fr = f_mkfs(sramPath, &fmt_opt, work, sizeof(work));
+
+	FRESULT res = f_mount(&USERFatFS, sramPath, 1);
+	if (res != FR_OK){
+		printf("Cannot mount FS!\n");
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
+	}
+
+	fr = f_open(&file, "0:/README.TXT", FA_WRITE | FA_CREATE_ALWAYS);
+	if (fr == FR_OK) {
+		char data[] = "Hello from SRAM disk!";
+		UINT bw;
+		f_write(&file, data, sizeof(data), &bw);
+		f_close(&file);
+		printf("FatFS ready to use\n");
+	}
+
+	while(1){
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
+	}
 }
 
 // USB Device Driver task
@@ -76,7 +121,7 @@ static void usb_device_task(void *param) {
 // Invoked when device is mounted
 void tud_mount_cb(void) {
   blink_interval_ms = BLINK_MOUNTED;
-  printf("USB device mounter\n\r");
+  printf("USB device mounted\n\r");
 }
 
 // Invoked when device is unmounted
@@ -290,7 +335,6 @@ void led_blinking_task(void* param) {
   while (1) {
     // Blink every interval ms
     vTaskDelay(blink_interval_ms / portTICK_PERIOD_MS);
-
     //board_led_write(led_state);
     led_state = 1 - led_state; // toggle
   }

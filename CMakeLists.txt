@@ -36,6 +36,13 @@ target_include_directories(freertos_config SYSTEM INTERFACE
 set( FREERTOS_HEAP "4" CACHE STRING "" FORCE)
 set( FREERTOS_PORT GCC_ARM_CM4F)
 
+add_library(fatfs_config INTERFACE)
+target_include_directories(fatfs_config SYSTEM INTERFACE
+    ${CMAKE_SOURCE_DIR}/support/fatfs
+)
+#target_link_libraries(fatfs_config INTERFACE STM32_Drivers)
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/support/fatfs)
 add_subdirectory(${CMAKE_SOURCE_DIR}/RTT)
 add_subdirectory(${CMAKE_SOURCE_DIR}/app)
 add_subdirectory(${CMAKE_SOURCE_DIR}/modules/freertos)
@@ -44,4 +51,7 @@ add_subdirectory("${TARGET_CMAKE_DIR}" "${CMAKE_BINARY_DIR}/stm32cubemx_${TARGET
 
 tinyusb_target_add(${MAIN_EXECUTABLE})
 
-target_link_libraries(${MAIN_EXECUTABLE} freertos_kernel)
+target_link_libraries(${MAIN_EXECUTABLE} 
+    freertos_kernel
+    fatfs_core
+)
