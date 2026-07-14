@@ -7,3 +7,6 @@
 [submodule "modules/tinyusb"]
 	path = modules/tinyusb
 	url = https://github.com/hathach/tinyusb.git
+[submodule "modules/fatfs"]
+	path = modules/fatfs
+	url = https://github.com/STMicroelectronics/stm32-mw-fatfs
