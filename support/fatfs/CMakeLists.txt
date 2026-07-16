@@ -12,11 +12,13 @@ target_sources(fatfs_core PRIVATE
     ${FATFS_SOURCE_DIR}/ff.c
     ${FATFS_SOURCE_DIR}/ff_gen_drv.c
     ${FATFS_SOURCE_DIR}/diskio.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/sram_diskio.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/fatfs.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/sram_diskio.c
 )
 
 target_include_directories(fatfs_core PUBLIC
     ${FATFS_SOURCE_DIR}  
+    ${FATFS_SOURCE_DIR}/drivers
     ${CMAKE_CURRENT_SOURCE_DIR} 
 )
 

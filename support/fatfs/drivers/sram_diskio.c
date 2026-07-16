@@ -16,8 +16,11 @@
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
-#include "sram_diskio.h"
 #include <string.h>
+#include "sram_diskio.h"
+#include "fatfs.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
 
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -26,6 +29,8 @@ static DSTATUS SRAMDISK_status (BYTE);
 static DRESULT SRAMDISK_read (BYTE, BYTE*, LBA_t, UINT);
 static DRESULT SRAMDISK_write (BYTE, const BYTE*, LBA_t, UINT);
 static DRESULT SRAMDISK_ioctl (BYTE, BYTE, void*);
+
+extern SemaphoreHandle_t xDiskMutex;
 
 const Diskio_drvTypeDef SRAMDISK_Driver =
 {
@@ -69,12 +74,17 @@ static DSTATUS SRAMDISK_status(BYTE lun)
   */
 static DRESULT SRAMDISK_read(BYTE lun, BYTE *buff, LBA_t sector, UINT count)
 {
-  uint32_t BufferSize = (BLOCK_SIZE * count);
-  uint8_t *pMem = (uint8_t *) (SRAM_DISK_BASE_ADDR + (sector * BLOCK_SIZE));
+	if (xSemaphoreTake(xDiskMutex, portMAX_DELAY) == pdTRUE) {
+		uint32_t BufferSize = (BLOCK_SIZE * count);
+		uint8_t *pMem = (uint8_t *) (SRAM_DISK_BASE_ADDR + (sector * BLOCK_SIZE));
 
-  memcpy(buff, (void*)pMem, BufferSize);
-
-  return RES_OK;
+		memcpy(buff, (void*)pMem, BufferSize);
+		xSemaphoreGive(xDiskMutex);
+		return RES_OK;
+	}
+	else{
+		return RES_ERROR;
+	}
 }
 
 /**
@@ -87,12 +97,15 @@ static DRESULT SRAMDISK_read(BYTE lun, BYTE *buff, LBA_t sector, UINT count)
   */
 static DRESULT SRAMDISK_write(BYTE lun, const BYTE *buff, LBA_t sector, UINT count)
 {
-  uint32_t BufferSize = (BLOCK_SIZE * count);
-  uint8_t *pMem = (uint8_t *) (SRAM_DISK_BASE_ADDR + (sector * BLOCK_SIZE));
+	if (xSemaphoreTake(xDiskMutex, portMAX_DELAY) == pdTRUE) {
+		uint32_t BufferSize = (BLOCK_SIZE * count);
+		uint8_t *pMem = (uint8_t *) (SRAM_DISK_BASE_ADDR + (sector * BLOCK_SIZE));
 
-  memcpy((void*)pMem, buff, BufferSize);
-
-  return RES_OK;
+		memcpy((void*)pMem, buff, BufferSize);
+		xSemaphoreGive(xDiskMutex);
+		return RES_OK;
+	}
+	return RES_ERROR;
 }
 
 

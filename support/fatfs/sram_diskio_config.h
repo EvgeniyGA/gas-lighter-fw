@@ -39,7 +39,6 @@ extern "C" {
 #define TOTAL_DISK_SIZE				(DISK_BLOCK_SIZE*DISK_BLOCK_NUM)
 #define SRAM_DISK_SIZE				TOTAL_DISK_SIZE
 
-extern char sramMas[TOTAL_DISK_SIZE];
 /* Base Address */
 #define SRAM_DISK_BASE_ADDR       	sramMas
 

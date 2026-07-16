@@ -39,7 +39,10 @@ set( FREERTOS_PORT GCC_ARM_CM4F)
 add_library(fatfs_config INTERFACE)
 target_include_directories(fatfs_config SYSTEM INTERFACE
     ${CMAKE_SOURCE_DIR}/support/fatfs
+    ${CMAKE_SOURCE_DIR}/support/fatfs/drivers
 )
+
+target_link_libraries(fatfs_config INTERFACE freertos_kernel)
 #target_link_libraries(fatfs_config INTERFACE STM32_Drivers)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/support/fatfs)

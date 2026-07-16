@@ -6,4 +6,5 @@ target_sources(${PROJECT_NAME} PRIVATE
     src/usb_descriptors.c
     src/retarget.c
     src/cli_commands.c
+    src/cli_commands_fs.c
 )

@@ -64,6 +64,7 @@
 									<listOptionValue builtIn="false" value="../../../freertos_support"/>
 									<listOptionValue builtIn="false" value="&quot;../..\..\modules\fatfs\source&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../..\support\fatfs&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../..\support\fatfs\drivers&quot;"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.925299765" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
@@ -164,6 +165,7 @@
 									<listOptionValue builtIn="false" value="&quot;../..\..\modules\fatfs\source&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../..\modules\fatfs\source\drivers\sram&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../..\support\fatfs&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../..\support\fatfs\drivers&quot;"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1517336091" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
