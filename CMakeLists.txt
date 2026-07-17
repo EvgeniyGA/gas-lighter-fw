@@ -12,8 +12,8 @@ set(MAIN_EXECUTABLE "gas-lighter-fw")
 add_executable(${MAIN_EXECUTABLE})
 
 target_sources(${MAIN_EXECUTABLE} PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/freertos_support/freertos.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/freertos_support/freertos_hook.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/support/freertos_support/freertos.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/support/freertos_support/freertos_hook.c
     ${CMAKE_CURRENT_SOURCE_DIR}/modules/FreeRTOS-Plus-CLI/FreeRTOS_CLI.c
     ${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src/portable/synopsys/dwc2/dcd_dwc2.c
     ${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src/portable/synopsys/dwc2/dwc2_common.c
@@ -30,7 +30,7 @@ set(TARGET_CMAKE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/cmake/stm32c
 
 add_library(freertos_config INTERFACE)
 target_include_directories(freertos_config SYSTEM INTERFACE
-    ${CMAKE_SOURCE_DIR}/freertos_support
+    ${CMAKE_SOURCE_DIR}/support/freertos_support
 )
 
 set( FREERTOS_HEAP "4" CACHE STRING "" FORCE)
