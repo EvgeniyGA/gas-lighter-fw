@@ -45,9 +45,9 @@ target_include_directories(fatfs_config SYSTEM INTERFACE
 target_link_libraries(fatfs_config INTERFACE freertos_kernel)
 #target_link_libraries(fatfs_config INTERFACE STM32_Drivers)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/support/fatfs)
-add_subdirectory(${CMAKE_SOURCE_DIR}/RTT)
 add_subdirectory(${CMAKE_SOURCE_DIR}/app)
+add_subdirectory(${CMAKE_SOURCE_DIR}/support/fatfs)
+add_subdirectory(${CMAKE_SOURCE_DIR}/support/RTT)
 add_subdirectory(${CMAKE_SOURCE_DIR}/modules/freertos)
 add_subdirectory(${CMAKE_SOURCE_DIR}/modules/tinyusb/src)
 add_subdirectory("${TARGET_CMAKE_DIR}" "${CMAKE_BINARY_DIR}/stm32cubemx_${TARGET}")

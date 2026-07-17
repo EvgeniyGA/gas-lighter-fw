@@ -54,7 +54,6 @@
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/freertos/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/app/inc}&quot;"/>
-									<listOptionValue builtIn="false" value="../../../RTT"/>
 									<listOptionValue builtIn="false" value="&quot;../../..\modules\RTT\RTT&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../..\modules\freertos\portable\GCC\ARM_CM4F&quot;"/>
 									<listOptionValue builtIn="false" value="../../../modules/freertos/portable/MemMang"/>
@@ -65,6 +64,7 @@
 									<listOptionValue builtIn="false" value="&quot;../..\..\modules\fatfs\source&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../..\support\fatfs&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../..\support\fatfs\drivers&quot;"/>
+									<listOptionValue builtIn="false" value="../../../support/RTT"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.925299765" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
