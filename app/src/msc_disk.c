@@ -27,6 +27,7 @@
 #include "tusb.h"
 #include "semphr.h"
 #include "fatfs.h"
+#include "sram_driver.h"
 
 #if CFG_TUD_MSC
 
@@ -85,10 +86,12 @@ static void io_task(void *params) {
 			uint8_t* addr = (uint8_t*) (uintptr_t) (sramMas + io_ops.lba * DISK_BLOCK_SIZE + io_ops.offset);
 			int32_t nbytes = (int32_t) io_ops.bufsize;
 			if (io_ops.is_read) {
-				memcpy(io_ops.buffer, addr, io_ops.bufsize);
+				//memcpy(io_ops.buffer, addr, io_ops.bufsize);
+				memory_read(io_ops.buffer, addr, io_ops.bufsize);
 			} else {
 #ifndef CFG_EXAMPLE_MSC_READONLY
-				memcpy((uint8_t*) addr, io_ops.buffer, io_ops.bufsize);
+				//memcpy((uint8_t*) addr, io_ops.buffer, io_ops.bufsize);
+				memory_write((uint8_t*) addr, io_ops.buffer, io_ops.bufsize);
 #else
 				nbytes = -1; // failed to write
 #endif

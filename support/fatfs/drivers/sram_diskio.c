@@ -78,7 +78,8 @@ static DRESULT SRAMDISK_read(BYTE lun, BYTE *buff, LBA_t sector, UINT count)
 		uint32_t BufferSize = (BLOCK_SIZE * count);
 		uint8_t *pMem = (uint8_t *) (SRAM_DISK_BASE_ADDR + (sector * BLOCK_SIZE));
 
-		memcpy(buff, (void*)pMem, BufferSize);
+		//memcpy(buff, (void*)pMem, BufferSize);
+		memory_read(buff, (void*)pMem, BufferSize);
 		xSemaphoreGive(xDiskMutex);
 		return RES_OK;
 	}
@@ -101,7 +102,8 @@ static DRESULT SRAMDISK_write(BYTE lun, const BYTE *buff, LBA_t sector, UINT cou
 		uint32_t BufferSize = (BLOCK_SIZE * count);
 		uint8_t *pMem = (uint8_t *) (SRAM_DISK_BASE_ADDR + (sector * BLOCK_SIZE));
 
-		memcpy((void*)pMem, buff, BufferSize);
+		//memcpy((void*)pMem, buff, BufferSize);
+		memory_write((void*)pMem, buff, BufferSize);
 		xSemaphoreGive(xDiskMutex);
 		return RES_OK;
 	}

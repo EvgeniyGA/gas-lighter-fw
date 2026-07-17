@@ -8,6 +8,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) 
 
+if(NOT DEFINED TARGET)
+#    set(TARGET "stm32f4" CACHE STRING "Target hardware platform")
+    message(FATAL_ERROR "TARGET not specified, using default: ${TARGET}")
+endif()
+
 set(MAIN_EXECUTABLE "gas-lighter-fw")
 add_executable(${MAIN_EXECUTABLE})
 
@@ -17,6 +22,7 @@ target_sources(${MAIN_EXECUTABLE} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/modules/FreeRTOS-Plus-CLI/FreeRTOS_CLI.c
     ${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src/portable/synopsys/dwc2/dcd_dwc2.c
     ${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src/portable/synopsys/dwc2/dwc2_common.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/Core/Src/sram_driver.c
 )
 
 target_include_directories(${MAIN_EXECUTABLE} PRIVATE
@@ -45,11 +51,11 @@ target_include_directories(fatfs_config SYSTEM INTERFACE
 target_link_libraries(fatfs_config INTERFACE freertos_kernel)
 #target_link_libraries(fatfs_config INTERFACE STM32_Drivers)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/app)
-add_subdirectory(${CMAKE_SOURCE_DIR}/support/fatfs)
-add_subdirectory(${CMAKE_SOURCE_DIR}/support/RTT)
-add_subdirectory(${CMAKE_SOURCE_DIR}/modules/freertos)
-add_subdirectory(${CMAKE_SOURCE_DIR}/modules/tinyusb/src)
+add_subdirectory(app)
+add_subdirectory(support/fatfs)
+add_subdirectory(support/RTT)
+add_subdirectory(modules/freertos)
+add_subdirectory(modules/tinyusb/src)
 add_subdirectory("${TARGET_CMAKE_DIR}" "${CMAKE_BINARY_DIR}/stm32cubemx_${TARGET}")
 
 tinyusb_target_add(${MAIN_EXECUTABLE})
