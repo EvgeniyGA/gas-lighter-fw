@@ -37,6 +37,9 @@
 /* Exported functions ------------------------------------------------------- */
 extern const Diskio_drvTypeDef  SRAMDISK_Driver;
 
+DRESULT SRAMDISK_read(BYTE lun, BYTE *buff, LBA_t sector, UINT count);
+DRESULT SRAMDISK_write(BYTE lun, const BYTE *buff, LBA_t sector, UINT count);
+
 #ifdef __cplusplus
 }
 #endif

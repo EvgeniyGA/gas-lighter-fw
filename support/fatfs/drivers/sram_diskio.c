@@ -26,8 +26,8 @@
 /* Private function prototypes -----------------------------------------------*/
 static DSTATUS SRAMDISK_initialize (BYTE);
 static DSTATUS SRAMDISK_status (BYTE);
-static DRESULT SRAMDISK_read (BYTE, BYTE*, LBA_t, UINT);
-static DRESULT SRAMDISK_write (BYTE, const BYTE*, LBA_t, UINT);
+//static DRESULT SRAMDISK_read (BYTE, BYTE*, LBA_t, UINT);
+//static DRESULT SRAMDISK_write (BYTE, const BYTE*, LBA_t, UINT);
 static DRESULT SRAMDISK_ioctl (BYTE, BYTE, void*);
 
 extern SemaphoreHandle_t xDiskMutex;
@@ -72,20 +72,18 @@ static DSTATUS SRAMDISK_status(BYTE lun)
   * @param  count: Number of sectors to read (1..128)
   * @retval DRESULT: return RES_OK otherwise
   */
-static DRESULT SRAMDISK_read(BYTE lun, BYTE *buff, LBA_t sector, UINT count)
+DRESULT SRAMDISK_read(BYTE lun, BYTE *buff, LBA_t sector, UINT count)
 {
-	if (xSemaphoreTake(xDiskMutex, portMAX_DELAY) == pdTRUE) {
+	if (xSemaphoreTake(xDiskMutex, portMAX_DELAY) == pdTRUE)
+	{
 		uint32_t BufferSize = (BLOCK_SIZE * count);
 		uint8_t *pMem = (uint8_t *) (SRAM_DISK_BASE_ADDR + (sector * BLOCK_SIZE));
 
-		//memcpy(buff, (void*)pMem, BufferSize);
-		memory_read(buff, (void*)pMem, BufferSize);
+		memcpy(buff, (void*)pMem, BufferSize);
 		xSemaphoreGive(xDiskMutex);
 		return RES_OK;
 	}
-	else{
-		return RES_ERROR;
-	}
+	return RES_ERROR;
 }
 
 /**
@@ -96,14 +94,13 @@ static DRESULT SRAMDISK_read(BYTE lun, BYTE *buff, LBA_t sector, UINT count)
   * @param  count: Number of sectors to write (1..128)
   * @retval DRESULT: return RES_OK otherwise
   */
-static DRESULT SRAMDISK_write(BYTE lun, const BYTE *buff, LBA_t sector, UINT count)
+DRESULT SRAMDISK_write(BYTE lun, const BYTE *buff, LBA_t sector, UINT count)
 {
 	if (xSemaphoreTake(xDiskMutex, portMAX_DELAY) == pdTRUE) {
 		uint32_t BufferSize = (BLOCK_SIZE * count);
 		uint8_t *pMem = (uint8_t *) (SRAM_DISK_BASE_ADDR + (sector * BLOCK_SIZE));
 
-		//memcpy((void*)pMem, buff, BufferSize);
-		memory_write((void*)pMem, buff, BufferSize);
+		memcpy((void*)pMem, buff, BufferSize);
 		xSemaphoreGive(xDiskMutex);
 		return RES_OK;
 	}

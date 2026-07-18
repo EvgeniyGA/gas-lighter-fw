@@ -27,7 +27,7 @@
 #include "tusb.h"
 #include "semphr.h"
 #include "fatfs.h"
-#include "sram_driver.h"
+#include "sram_diskio.h"
 
 #if CFG_TUD_MSC
 
@@ -39,8 +39,6 @@
 
 #if CFG_EXAMPLE_MSC_ASYNC_IO
 #define IO_STACK_SIZE      configMINIMAL_STACK_SIZE
-
-extern SemaphoreHandle_t xDiskMutex;
 
 typedef struct {
   uint8_t lun;
@@ -82,24 +80,21 @@ static void io_task(void *params) {
   io_ops_t io_ops;
   while (1) {
     if (xQueueReceive(io_queue, &io_ops, portMAX_DELAY)) {
-    	if (xSemaphoreTake(xDiskMutex, portMAX_DELAY) == pdTRUE) {
-			uint8_t* addr = (uint8_t*) (uintptr_t) (sramMas + io_ops.lba * DISK_BLOCK_SIZE + io_ops.offset);
+			//uint8_t* addr = (uint8_t*) (uintptr_t) (sramMas + io_ops.lba * DISK_BLOCK_SIZE + io_ops.offset);
 			int32_t nbytes = (int32_t) io_ops.bufsize;
 			if (io_ops.is_read) {
 				//memcpy(io_ops.buffer, addr, io_ops.bufsize);
-				memory_read(io_ops.buffer, addr, io_ops.bufsize);
+				SRAMDISK_read(io_ops.lun, io_ops.buffer, io_ops.lba, 1);
 			} else {
 #ifndef CFG_EXAMPLE_MSC_READONLY
 				//memcpy((uint8_t*) addr, io_ops.buffer, io_ops.bufsize);
-				memory_write((uint8_t*) addr, io_ops.buffer, io_ops.bufsize);
+				SRAMDISK_write(io_ops.lun, io_ops.buffer, io_ops.lba, 1);
 #else
 				nbytes = -1; // failed to write
 #endif
 			}
-			xSemaphoreGive(xDiskMutex);
 			tusb_time_delay_ms_api(CFG_EXAMPLE_MSC_IO_DELAY_MS);
 			tud_msc_async_io_done(nbytes, false);
-    	}
     }
 
   }

@@ -22,7 +22,7 @@ target_sources(${MAIN_EXECUTABLE} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/modules/FreeRTOS-Plus-CLI/FreeRTOS_CLI.c
     ${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src/portable/synopsys/dwc2/dcd_dwc2.c
     ${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src/portable/synopsys/dwc2/dwc2_common.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/Core/Src/sram_driver.c
+#    ${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/Core/Src/sram_diskio.c
 )
 
 target_include_directories(${MAIN_EXECUTABLE} PRIVATE
