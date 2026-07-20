@@ -28,6 +28,7 @@
 #include "semphr.h"
 #include "fatfs.h"
 #include "sram_diskio.h"
+#include "flash_diskio.h"
 
 #if CFG_TUD_MSC
 
@@ -80,15 +81,20 @@ static void io_task(void *params) {
   io_ops_t io_ops;
   while (1) {
     if (xQueueReceive(io_queue, &io_ops, portMAX_DELAY)) {
-			//uint8_t* addr = (uint8_t*) (uintptr_t) (sramMas + io_ops.lba * DISK_BLOCK_SIZE + io_ops.offset);
 			int32_t nbytes = (int32_t) io_ops.bufsize;
 			if (io_ops.is_read) {
-				//memcpy(io_ops.buffer, addr, io_ops.bufsize);
+#ifdef MSC_USE_SRAM
 				SRAMDISK_read(io_ops.lun, io_ops.buffer, io_ops.lba, 1);
+#elif defined(MSC_USE_FLASH)
+				USER_read(io_ops.lun, io_ops.buffer, io_ops.lba, 1);
+#endif
 			} else {
 #ifndef CFG_EXAMPLE_MSC_READONLY
-				//memcpy((uint8_t*) addr, io_ops.buffer, io_ops.bufsize);
+#ifdef MSC_USE_SRAM
 				SRAMDISK_write(io_ops.lun, io_ops.buffer, io_ops.lba, 1);
+#elif defined(MSC_USE_FLASH)
+				USER_write(io_ops.lun, io_ops.buffer, io_ops.lba, 1);
+#endif
 #else
 				nbytes = -1; // failed to write
 #endif

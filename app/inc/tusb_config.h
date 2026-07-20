@@ -30,6 +30,7 @@
  extern "C" {
 #endif
 
+#include "diskio_config.h"
 //--------------------------------------------------------------------+
 // Board Specific Configuration
 //--------------------------------------------------------------------+
@@ -116,7 +117,7 @@
 #define CFG_TUD_CDC_TX_EPSIZE  (TUD_OPT_HIGH_SPEED ? 512 : 64)
 
 // MSC Buffer size of Device Mass storage
-#define CFG_TUD_MSC_EP_BUFSIZE   512
+#define CFG_TUD_MSC_EP_BUFSIZE   DISK_BLOCK_SIZE
 
 #ifdef __cplusplus
  }

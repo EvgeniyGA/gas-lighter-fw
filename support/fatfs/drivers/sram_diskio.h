@@ -29,7 +29,7 @@
    * and contain the config parameters for SRAM diskio
    *
    */
-#include "sram_diskio_config.h"
+#include <diskio_config.h>
 #include "ff_gen_drv.h"
 
 /* Exported types ------------------------------------------------------------*/

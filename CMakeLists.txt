@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.22)
 
 project(gas-lighter-fw LANGUAGES C CXX ASM)
 
+add_compile_definitions(MSC_USE_SRAM)
+
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 17)
@@ -22,7 +24,7 @@ target_sources(${MAIN_EXECUTABLE} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/modules/FreeRTOS-Plus-CLI/FreeRTOS_CLI.c
     ${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src/portable/synopsys/dwc2/dcd_dwc2.c
     ${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src/portable/synopsys/dwc2/dwc2_common.c
-#    ${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/Core/Src/sram_diskio.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/Core/Src/W25Qxx.c
 )
 
 target_include_directories(${MAIN_EXECUTABLE} PRIVATE
@@ -48,8 +50,7 @@ target_include_directories(fatfs_config SYSTEM INTERFACE
     ${CMAKE_SOURCE_DIR}/support/fatfs/drivers
 )
 
-target_link_libraries(fatfs_config INTERFACE freertos_kernel)
-#target_link_libraries(fatfs_config INTERFACE STM32_Drivers)
+target_link_libraries(fatfs_config INTERFACE freertos_kernel STM32_Drivers)
 
 add_subdirectory(app)
 add_subdirectory(support/fatfs)

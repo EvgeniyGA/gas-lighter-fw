@@ -14,6 +14,7 @@ target_sources(fatfs_core PRIVATE
     ${FATFS_SOURCE_DIR}/diskio.c
     ${CMAKE_CURRENT_SOURCE_DIR}/fatfs.c
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/sram_diskio.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/flash_diskio.c
 )
 
 target_include_directories(fatfs_core PUBLIC

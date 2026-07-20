@@ -30,17 +30,16 @@ extern "C" {
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Block size */
-#define DISK_BLOCK_SIZE            	512
-#define DISK_BLOCK_NUM				128
-
-#define BLOCK_SIZE					DISK_BLOCK_SIZE
-
-/* SRAM Disk size in bytes */
+#ifdef MSC_USE_SRAM
+	#define DISK_BLOCK_SIZE            	512
+	#define DISK_BLOCK_NUM				128
+#elif defined(MSC_USE_FLASH)
+	#define DISK_BLOCK_SIZE            	4096
+	#define DISK_BLOCK_NUM				256
+#endif
 #define TOTAL_DISK_SIZE				(DISK_BLOCK_SIZE*DISK_BLOCK_NUM)
 #define SRAM_DISK_SIZE				TOTAL_DISK_SIZE
 
-/* Base Address */
-#define SRAM_DISK_BASE_ADDR       	sramMas
 
 #ifdef __cplusplus
 }

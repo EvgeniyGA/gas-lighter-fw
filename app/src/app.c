@@ -9,6 +9,7 @@
 #include "cli_commands.h"
 #include "cli_commands_fs.h"
 #include "fatfs.h"
+#include "W25Qxx.h"
 
 #define STORAGE_STACK_SIZE (configMINIMAL_STACK_SIZE)
 #define USBD_STACK_SIZE    (configMINIMAL_STACK_SIZE * (CFG_TUSB_DEBUG ? 4 : 2))
@@ -44,6 +45,9 @@ void init(void){
 }
 
 void setup(void){
+	uint32_t ID = W25Q_ReadID();
+	printf("ID = 0x%08lX\r\n", ID);
+
 	FATFS_Init();
 	xTaskCreate(led_blinking_task, "blinky", BLINKY_STACK_SIZE, NULL, 1, NULL);
 	xTaskCreate(usb_device_task, "usbd", USBD_STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);

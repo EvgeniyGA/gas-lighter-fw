@@ -16,6 +16,7 @@
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
+#ifdef MSC_USE_SRAM
 #include <string.h>
 #include "sram_diskio.h"
 #include "fatfs.h"
@@ -26,11 +27,12 @@
 /* Private function prototypes -----------------------------------------------*/
 static DSTATUS SRAMDISK_initialize (BYTE);
 static DSTATUS SRAMDISK_status (BYTE);
-//static DRESULT SRAMDISK_read (BYTE, BYTE*, LBA_t, UINT);
-//static DRESULT SRAMDISK_write (BYTE, const BYTE*, LBA_t, UINT);
 static DRESULT SRAMDISK_ioctl (BYTE, BYTE, void*);
 
 extern SemaphoreHandle_t xDiskMutex;
+
+char sramMas[TOTAL_DISK_SIZE];
+#define SRAM_DISK_BASE_ADDR       	sramMas
 
 const Diskio_drvTypeDef SRAMDISK_Driver =
 {
@@ -76,8 +78,8 @@ DRESULT SRAMDISK_read(BYTE lun, BYTE *buff, LBA_t sector, UINT count)
 {
 	if (xSemaphoreTake(xDiskMutex, portMAX_DELAY) == pdTRUE)
 	{
-		uint32_t BufferSize = (BLOCK_SIZE * count);
-		uint8_t *pMem = (uint8_t *) (SRAM_DISK_BASE_ADDR + (sector * BLOCK_SIZE));
+		uint32_t BufferSize = (DISK_BLOCK_SIZE * count);
+		uint8_t *pMem = (uint8_t *) (SRAM_DISK_BASE_ADDR + (sector * DISK_BLOCK_SIZE));
 
 		memcpy(buff, (void*)pMem, BufferSize);
 		xSemaphoreGive(xDiskMutex);
@@ -97,8 +99,8 @@ DRESULT SRAMDISK_read(BYTE lun, BYTE *buff, LBA_t sector, UINT count)
 DRESULT SRAMDISK_write(BYTE lun, const BYTE *buff, LBA_t sector, UINT count)
 {
 	if (xSemaphoreTake(xDiskMutex, portMAX_DELAY) == pdTRUE) {
-		uint32_t BufferSize = (BLOCK_SIZE * count);
-		uint8_t *pMem = (uint8_t *) (SRAM_DISK_BASE_ADDR + (sector * BLOCK_SIZE));
+		uint32_t BufferSize = (DISK_BLOCK_SIZE * count);
+		uint8_t *pMem = (uint8_t *) (SRAM_DISK_BASE_ADDR + (sector * DISK_BLOCK_SIZE));
 
 		memcpy((void*)pMem, buff, BufferSize);
 		xSemaphoreGive(xDiskMutex);
@@ -128,13 +130,13 @@ static DRESULT SRAMDISK_ioctl(BYTE lun, BYTE cmd, void *buff)
 
   /* Get number of sectors on the disk (DWORD) */
   case GET_SECTOR_COUNT :
-    *(DWORD*)buff = SRAM_DISK_SIZE / BLOCK_SIZE;
+    *(DWORD*)buff = SRAM_DISK_SIZE / DISK_BLOCK_SIZE;
     res = RES_OK;
     break;
 
   /* Get R/W sector size (WORD) */
   case GET_SECTOR_SIZE :
-    *(WORD*)buff = BLOCK_SIZE;
+    *(WORD*)buff = DISK_BLOCK_SIZE;
     res = RES_OK;
     break;
 
@@ -150,4 +152,4 @@ static DRESULT SRAMDISK_ioctl(BYTE lun, BYTE cmd, void *buff)
 
   return res;
 }
-
+#endif

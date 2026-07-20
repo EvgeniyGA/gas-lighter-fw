@@ -11,14 +11,14 @@
 #include "ff_gen_drv.h"
 
 #include "sram_diskio.h"
+#include "flash_diskio.h"
 
-extern char sramMas[TOTAL_DISK_SIZE];
 extern char sramPath[4];
 extern FATFS USERFatFS;
 extern FIL file;
 extern SemaphoreHandle_t xDiskMutex;
 
-void FATFS_Init(void);
+uint8_t FATFS_Init(void);
 
 #ifdef __cplusplus
 }
