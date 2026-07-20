@@ -135,8 +135,8 @@ static BaseType_t prvReadCommand( char *pcWriteBuffer,
     /* Obtain the name of the source file, and the length of its name, from
        the command string. The name of the source file is the first parameter. */
 	filename = FreeRTOS_CLIGetParameter( pcCommandString,
-                                         1,
-                                         &xParameter1StringLength );
+                                         (UBaseType_t)1,
+                                         (BaseType_t*)&xParameter1StringLength );
 	if (filename != NULL){
 		if (f_open(&file, filename, FA_READ) == FR_OK)
 		{
@@ -198,8 +198,8 @@ static BaseType_t prvDeleteCommand( char *pcWriteBuffer,
     /* Obtain the name of the source file, and the length of its name, from
        the command string. The name of the source file is the first parameter. */
 	filename = FreeRTOS_CLIGetParameter( pcCommandString,
-                                         1,
-                                         &xParameter1StringLength );
+                                         (UBaseType_t)1,
+                                         (BaseType_t*)&xParameter1StringLength );
 	if (filename != NULL){
 		if (f_unlink(filename) == FR_OK){
 			sprintf(pcWriteBuffer, "%s deleted!\r\n", filename);
@@ -223,8 +223,8 @@ static BaseType_t prvCreateFileCommand( char *pcWriteBuffer,
     /* Obtain the name of the source file, and the length of its name, from
        the command string. The name of the source file is the first parameter. */
 	filename = FreeRTOS_CLIGetParameter( pcCommandString,
-                                         1,
-                                         &xParameter1StringLength );
+                                         (UBaseType_t)1,
+                                         (BaseType_t*)&xParameter1StringLength );
 	if (filename != NULL){
 		if (f_open(&file, filename, FA_CREATE_NEW) == FR_OK)
 		{
@@ -250,8 +250,8 @@ static BaseType_t prvCreateDirCommand( char *pcWriteBuffer,
     /* Obtain the name of the source file, and the length of its name, from
        the command string. The name of the source file is the first parameter. */
 	dirname = FreeRTOS_CLIGetParameter( pcCommandString,
-                                         1,
-                                         &xParameter1StringLength );
+                                         (UBaseType_t)1,
+                                         (BaseType_t*)&xParameter1StringLength );
 	if (dirname != NULL){
 		if (f_mkdir(dirname) == FR_OK)
 		{
@@ -276,8 +276,8 @@ static BaseType_t prvChangeDirCommand( char *pcWriteBuffer,
     /* Obtain the name of the source file, and the length of its name, from
        the command string. The name of the source file is the first parameter. */
 	dirname = FreeRTOS_CLIGetParameter( pcCommandString,
-                                         1,
-                                         &xParameter1StringLength );
+                                         (UBaseType_t)1,
+                                         (BaseType_t*)&xParameter1StringLength );
 	if (dirname != NULL){
 		if (f_chdir(dirname) != FR_OK)
 		{
@@ -305,14 +305,14 @@ static BaseType_t prvRenameCommand( char *pcWriteBuffer,
     /* Obtain the name of the source file, and the length of its name, from
        the command string. The name of the source file is the first parameter. */
 	filename_old = FreeRTOS_CLIGetParameter( pcCommandString,
-                                         1,
-                                         &xParameterStringLength );
+                                         (UBaseType_t)1,
+                                         (BaseType_t*)&xParameterStringLength );
 	memcpy(filename, filename_old, xParameterStringLength);
 	filename[xParameterStringLength] = '\0';
 
 	filename_new = FreeRTOS_CLIGetParameter( pcCommandString,
-                                         2,
-                                         &xParameterStringLength );
+                                         (UBaseType_t)2,
+                                         (BaseType_t*)&xParameterStringLength );
 	if (filename_old != NULL){
 		if (filename_new != NULL){
 			if (f_rename(filename, filename_new) == FR_OK){

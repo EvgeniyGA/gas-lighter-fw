@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <FreeRTOS.h>
 #include "FreeRTOS_CLI.h"
 #include "task.h"
@@ -70,8 +71,8 @@ BaseType_t prvColorCommand(char *pcWriteBuffer, size_t xWriteBufferLen, const ch
 
 	uint32_t foreground, background, pLen;
 
-	foreground = atoi(FreeRTOS_CLIGetParameter(pcCommandString, 1, &pLen));
-	background = atoi(FreeRTOS_CLIGetParameter(pcCommandString, 2, &pLen));
+	foreground = atoi(FreeRTOS_CLIGetParameter(pcCommandString, (UBaseType_t)1, (BaseType_t*)&pLen));
+	background = atoi(FreeRTOS_CLIGetParameter(pcCommandString, (UBaseType_t)2, (BaseType_t*)&pLen));
 
 	if (background == foreground && background != 0)
 	{
@@ -79,7 +80,7 @@ BaseType_t prvColorCommand(char *pcWriteBuffer, size_t xWriteBufferLen, const ch
 		return pdFALSE;
 	}
 
-	uint8_t output[18] = {0};
+	char output[18] = {0};
 
 	switch(foreground) {
 		case 1:
