@@ -80,5 +80,10 @@
 			<type>2</type>
 			<locationURI>PARENT-2-PROJECT_LOC/modules/tinyusb/src</locationURI>
 		</link>
+		<link>
+			<name>tinyusb_support</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/support/tinyusb</locationURI>
+		</link>
 	</linkedResources>
 </projectDescription>

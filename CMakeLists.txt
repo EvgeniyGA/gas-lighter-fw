@@ -22,6 +22,8 @@ target_sources(${MAIN_EXECUTABLE} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/support/freertos_support/freertos.c
     ${CMAKE_CURRENT_SOURCE_DIR}/support/freertos_support/freertos_hook.c
     ${CMAKE_CURRENT_SOURCE_DIR}/modules/FreeRTOS-Plus-CLI/FreeRTOS_CLI.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/support/tinyusb/msc_disk.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/support/tinyusb/usb_descriptors.c
     ${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src/portable/synopsys/dwc2/dcd_dwc2.c
     ${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src/portable/synopsys/dwc2/dwc2_common.c
     ${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/Core/Src/W25Qxx.c
@@ -29,6 +31,7 @@ target_sources(${MAIN_EXECUTABLE} PRIVATE
 
 target_include_directories(${MAIN_EXECUTABLE} PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/app/inc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/support/tinyusb"
     "${CMAKE_CURRENT_SOURCE_DIR}/modules/FreeRTOS-Plus-CLI"
     "${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src"
     "${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/hw"
