@@ -1,10 +1,15 @@
+#ifdef MSC_USE_FLASH
 /* Includes ------------------------------------------------------------------*/
 #include <flash_diskio.h>
 #include <string.h>
 #include "ff_gen_drv.h"
-#include "stm32f4xx.h"
 #include "diskio_config.h"
 #include "W25Qxx.h"
+#ifdef STM32F746xx
+#include "stm32f7xx.h"
+#elif defined STM32F407xx
+#include "stm32f4xx.h"
+#endif
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 
@@ -136,6 +141,6 @@ DRESULT USER_ioctl (
     }
     return RES_PARERR;
 }
-
+#endif
 
 

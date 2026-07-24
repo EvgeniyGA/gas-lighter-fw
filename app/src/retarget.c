@@ -1,7 +1,11 @@
 #include <stdio.h>
 #include "app.h"
 #include "SEGGER_RTT.h"
+#ifdef STM32F746xx
+#include "stm32f7xx.h"
+#elif defined STM32F407xx
 #include "stm32f4xx.h"
+#endif
 
 extern UART_HandleTypeDef huart1;
 

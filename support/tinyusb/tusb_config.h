@@ -48,7 +48,12 @@
 //--------------------------------------------------------------------
 // COMMON CONFIGURATION
 //--------------------------------------------------------------------
+#ifdef STM32F746xx
+#define CFG_TUSB_MCU OPT_MCU_STM32F7
+#elif defined STM32F407xx
 #define CFG_TUSB_MCU OPT_MCU_STM32F4
+#endif
+
 // defined by board.mk
 #ifndef CFG_TUSB_MCU
 #error CFG_TUSB_MCU must be defined
