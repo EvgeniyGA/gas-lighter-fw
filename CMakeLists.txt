@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.22)
 
 project(gas-lighter-fw LANGUAGES C CXX ASM)
 
-add_compile_definitions(MSC_USE_SRAM)
+add_compile_definitions(MSC_USE_FLASH)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
