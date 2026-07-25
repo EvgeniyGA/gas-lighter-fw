@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.22)
 
 project(gas-lighter-fw LANGUAGES C CXX ASM)
 
-add_compile_definitions(MSC_USE_FLASH)
+add_compile_definitions(MSC_USE_SRAM)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -12,7 +12,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if(NOT DEFINED TARGET)
 #    set(TARGET "stm32f4" CACHE STRING "Target hardware platform")
-    message(FATAL_ERROR "TARGET not specified, using default: ${TARGET}")
+    message(FATAL_ERROR "TARGET not specified: ${TARGET}")
 endif()
 
 set(MAIN_EXECUTABLE "gas-lighter-fw")
@@ -45,7 +45,13 @@ target_include_directories(freertos_config SYSTEM INTERFACE
 )
 
 set( FREERTOS_HEAP "4" CACHE STRING "" FORCE)
-set( FREERTOS_PORT GCC_ARM_CM4F)
+if(${TARGET} STREQUAL "stm32f4")
+    set( FREERTOS_PORT GCC_ARM_CM4F)
+elseif(${TARGET} STREQUAL "stm32f7")
+    set( FREERTOS_PORT GCC_ARM_CM7)
+else()
+    message(FATAL_ERROR "Неизвестный TARGET: '${TARGET}'. Добавьте настройку FREERTOS_PORT для этой платформы.")
+endif()
 
 add_library(fatfs_config INTERFACE)
 target_include_directories(fatfs_config SYSTEM INTERFACE
