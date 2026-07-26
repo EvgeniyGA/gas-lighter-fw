@@ -24,3 +24,15 @@ int __wrap_printf(const char *fmt, ...) {
   va_end(args);
   return count0+count1;
 }
+
+__weak HAL_StatusTypeDef __wrap_HAL_RCC_OscConfig(const RCC_OscInitTypeDef  *RCC_OscInitStruct){
+  return HAL_OK;
+}
+
+HAL_StatusTypeDef __wrap_HAL_RCC_ClockConfig(const RCC_ClkInitTypeDef  *RCC_ClkInitStruct, uint32_t FLatency){
+  return HAL_OK;
+}
+
+void __wrap_MX_USB_OTG_FS_PCD_Init(void){
+  return;
+}

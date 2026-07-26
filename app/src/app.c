@@ -303,6 +303,8 @@ void led_blinking_task(void* param) {
     vTaskDelay(blink_interval_ms / portTICK_PERIOD_MS);
     //board_led_write(led_state);
     led_state = 1 - led_state; // toggle
+	static uint32_t i;
+	printf("blink %04d\n\r", i++);
   }
 }
 

@@ -12,6 +12,17 @@
             }
         },
         {
+            "name": "qemu-f4",
+            "hidden": false,
+            "inherits": "default",
+            "toolchainFile": "${sourceDir}/targets/stm32f4/cmake/gcc-arm-none-eabi.cmake",
+            "cacheVariables": {
+                "TARGET": "stm32f4",
+                "CMAKE_BUILD_TYPE": "Debug",
+                "FOR_QEMU": "OK"
+            }
+        },
+        {
             "name": "stm32f4-default",
             "hidden": true,
             "inherits": "default",
@@ -59,6 +70,10 @@
         }
     ],
     "buildPresets": [
+        {
+            "name": "qemu-f4",
+            "configurePreset": "qemu-f4"
+        },
         {
             "name": "stm32f4-debug",
             "configurePreset": "stm32f4-debug"

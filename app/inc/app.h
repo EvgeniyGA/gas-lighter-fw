@@ -11,7 +11,7 @@
 void init(void);
 void setup(void);
 
-//#define PRINTF_UART (1)
-#define PRINTF_RTT	(1)
+#define PRINTF_UART (1)
+//#define PRINTF_RTT	(1)
 
 #endif /* INC_APP_H_ */

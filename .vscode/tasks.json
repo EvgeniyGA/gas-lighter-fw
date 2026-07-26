@@ -26,7 +26,7 @@
 			],
 			"options": { "cwd": "${workspaceFolder}/build" },
 			"group": "build",
-			"detail": "Прошивка f4 мк (j-link)."
+			"detail": "Flash STM32F4 (j-link)."
 		},
 		{
 			"label": "Flash F7 (j-link)",
@@ -38,7 +38,25 @@
 			],
 			"options": { "cwd": "${workspaceFolder}/build" },
 			"group": "build",
-			"detail": "Прошивка f7 мк (j-link)."
+			"detail": "Flash STM32F7 (j-link)."
+		},
+		{
+			"label": "Run qemu-arm",
+			"type": "shell",
+			"command": "qemu-system-arm",
+			"args": [
+				"-M", "netduinoplus2",
+				"-nographic", 
+				"-serial", "mon:stdio",
+				"-gdb", "tcp::1234", "-S",        
+				"-kernel", "${command:cmake.launchTargetPath}"
+			],
+			"isBackground": true,
+			"problemMatcher": {
+				"pattern": [ { "regexp": ".", "file": 1, "location": 2, "message": 3 } ],
+				"background": { "activeOnStart": true, "beginsPattern": "^.*", "endsPattern": "^$"
+				}
+			}
 		},
 	]
 }
