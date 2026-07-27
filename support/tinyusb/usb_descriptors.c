@@ -307,7 +307,7 @@ static char const *string_desc_arr[] = {
   NULL,                          // 3: Serials will use unique ID if possible
   "TinyUSB CDC",                 // 4: CDC Interface
   "TinyUSB MSC",                 // 5: MSC Interface
-  "TinyUSB WebUSB"               // 5: Vendor Interface
+  "TinyUSB WebUSB"               // 6: Vendor Interface
 };
 
 static uint16_t _desc_str[32 + 1];
