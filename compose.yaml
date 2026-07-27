@@ -1,0 +1,10 @@
+services:
+  ceedling-tests:
+    user: root
+    build:
+      context: .
+      dockerfile: Dockerfile.ceedling-tests
+    volumes:
+      - .:/home/dev
+    image: ceedling-tests
+    working_dir: /home/dev
