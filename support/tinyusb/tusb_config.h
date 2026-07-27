@@ -108,7 +108,7 @@
 #define CFG_TUD_MSC              1
 #define CFG_TUD_HID              0
 #define CFG_TUD_MIDI             0
-#define CFG_TUD_VENDOR           0
+#define CFG_TUD_VENDOR           1
 
 #define CFG_TUD_CDC_NOTIFY        1 // Enable use of notification endpoint
 
