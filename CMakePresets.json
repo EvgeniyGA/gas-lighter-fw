@@ -6,7 +6,7 @@
             "hidden": true,
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/${presetName}",
-		    "toolchainFile": "${sourceDir}/Targets/stm32f4/cmake/gcc-arm-none-eabi.cmake",
+		    "toolchainFile": "${sourceDir}/targets/stm32f4/cmake/gcc-arm-none-eabi.cmake",
             "cacheVariables": {
                 "TARGET": "stm32f4"
             }
