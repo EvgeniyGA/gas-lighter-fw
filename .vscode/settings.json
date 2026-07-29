@@ -1,5 +1,4 @@
 {
-    "cmake.generator": "Unix Makefiles",
     "cmake.configureEnvironment": {
         "CMAKE_EXPORT_COMPILE_COMMANDS": "on"
     },
@@ -8,7 +7,7 @@
         "stm32f4xx_hal.h": "c",
         "stm32f4xx.h": "c"
     },
-    "cortex-debug.gdbPath": "arm-none-eabi-gdb",
+    "cortex-debug.gdbPath.linux": "arm-none-eabi-gdb",
     "cortex-debug.gdbPath.windows": "C:/arm/arm-none-eabi/bin/arm-none-eabi-gdb.exe",
     "cortex-debug.JLinkGDBServerPath.windows": "C:/Program Files/SEGGER/JLink_V918/JLinkGDBServerCL.exe",
 }
