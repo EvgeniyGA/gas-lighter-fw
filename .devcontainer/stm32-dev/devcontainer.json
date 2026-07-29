@@ -15,7 +15,7 @@
 				"ms-vscode.cpptools",
 				"ms-vscode.cmake-tools",
 				"twxs.cmake",
-				"debug-tracker-vscode",
+				"mcu-debug.debug-tracker-vscode",
 				"marus25.cortex-debug"
 			]
 		},
