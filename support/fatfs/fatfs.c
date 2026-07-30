@@ -1,4 +1,5 @@
 #include "fatfs.h"
+#include "W25Qxx.h"
 
 char sramPath[4];
 FATFS USERFatFS;
@@ -18,6 +19,8 @@ uint8_t FATFS_Init(void) {
 #ifdef MSC_USE_SRAM
     if (FATFS_LinkDriver(&SRAMDISK_Driver, sramPath) != 0) {
 #elif defined(MSC_USE_FLASH)
+    uint32_t ID = W25Q_ReadID();
+    printf("ID = 0x%08lX\r\n", ID);
     if (FATFS_LinkDriver(&USER_Driver, sramPath) != 0) {
 #endif
         printf("ERROR: Cannot link Disk driver\n");

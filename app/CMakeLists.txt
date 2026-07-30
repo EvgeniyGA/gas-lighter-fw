@@ -6,4 +6,5 @@ target_sources(${PROJECT_NAME} PRIVATE
     src/wrapper.c
     src/cli_commands.c
     src/cli_commands_fs.c
+    src/usb_service.c
 )
