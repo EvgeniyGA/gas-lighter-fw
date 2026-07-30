@@ -92,6 +92,7 @@ int main(void)
   MX_USB_OTG_FS_PCD_Init();
   MX_USART1_UART_Init();
   MX_SPI1_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   setup();
   /* USER CODE END 2 */
