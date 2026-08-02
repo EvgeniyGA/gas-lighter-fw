@@ -100,11 +100,11 @@
     - +:test/unit/**
     - -:test/unit/support
   :source:
-    - App/Src/**
-    - Targets/stm32f4/Core/Src/**
+    - app/Src/**
+    - targets/stm32f4/Core/Src/**
   :include:
-    - App/Inc/** # In simple projects, this entry often duplicates :source
-    - Targets/stm32f4/Core/Inc/**
+    - app/Inc/** # In simple projects, this entry often duplicates :source
+    - targets/stm32f4/Core/Inc/**
   :support:
     - test/unit/support
   :libraries: []
