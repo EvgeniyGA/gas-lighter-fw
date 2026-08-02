@@ -7,6 +7,7 @@
 #include "fatfs.h"
 #include "usb_service.h"
 #include "version.h"
+#include "version_check.h"
 
 #define STORAGE_STACK_SIZE (configMINIMAL_STACK_SIZE)
 #define BLINKY_STACK_SIZE   configMINIMAL_STACK_SIZE
@@ -30,7 +31,6 @@ static uint32_t blink_interval_ms = BLINK_NOT_MOUNTED;
 
 void led_blinking_task(void* param);
 
-
 void init(void){
 	SEGGER_RTT_ConfigUpBuffer( 0, NULL, NULL, 0, SEGGER_RTT_MODE_NO_BLOCK_TRIM );
 	SEGGER_RTT_WriteString( 0, "SEGGER Real-Time-Terminal Started\n" );
@@ -38,10 +38,14 @@ void init(void){
 
 void setup(void){
 	printf("Firmware version: %s\n", FW_VERSION_STR);
-    printf("Build: %s %s (git: %s)\n", FW_BUILD_DATE, FW_BUILD_TIME, FW_GIT_HASH);
-    
-    printf("Version: %d.%d.%d\n", FW_VERSION_MAJOR, FW_VERSION_MINOR, FW_VERSION_PATCH);
-	FATFS_Init();
+  printf("Build: %s %s (git: %s)\n", FW_BUILD_DATE, FW_BUILD_TIME, FW_GIT_HASH);  
+  printf("Version: %d.%d.%d\n", FW_VERSION_MAJOR, FW_VERSION_MINOR, FW_VERSION_PATCH);
+	if (is_hash_invalid(FW_GIT_HASH)) {
+      printf("ERROR: Invalid firmware hash detected: %s\r\n", FW_GIT_HASH ? FW_GIT_HASH : "NULL");
+  } else {
+      printf("FW Hash: %s\r\n", FW_GIT_HASH);
+  }
+  FATFS_Init();
 	xTaskCreate(led_blinking_task, "blinky", BLINKY_STACK_SIZE, NULL, 1, NULL);
 	xTaskCreate(usb_device_task, "usbd", USBD_STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
 	xTaskCreate(cdc_task, "cdc", CDC_STACK_SIZE, NULL, configMAX_PRIORITIES - 2, NULL);
