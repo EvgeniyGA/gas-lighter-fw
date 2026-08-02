@@ -100,10 +100,10 @@
     - +:test/unit/**
     - -:test/unit/support
   :source:
-    - app/Src/**
+    - app/src/**
     - targets/stm32f4/Core/Src/**
   :include:
-    - app/Inc/** # In simple projects, this entry often duplicates :source
+    - app/inc/** # In simple projects, this entry often duplicates :source
     - targets/stm32f4/Core/Inc/**
   :support:
     - test/unit/support
