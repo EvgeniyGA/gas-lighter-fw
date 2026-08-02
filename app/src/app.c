@@ -6,6 +6,7 @@
 #include "tusb.h"
 #include "fatfs.h"
 #include "usb_service.h"
+#include "version.h"
 
 #define STORAGE_STACK_SIZE (configMINIMAL_STACK_SIZE)
 #define BLINKY_STACK_SIZE   configMINIMAL_STACK_SIZE
@@ -36,6 +37,10 @@ void init(void){
 }
 
 void setup(void){
+	printf("Firmware version: %s\n", FW_VERSION_STR);
+    printf("Build: %s %s (git: %s)\n", FW_BUILD_DATE, FW_BUILD_TIME, FW_GIT_HASH);
+    
+    printf("Version: %d.%d.%d\n", FW_VERSION_MAJOR, FW_VERSION_MINOR, FW_VERSION_PATCH);
 	FATFS_Init();
 	xTaskCreate(led_blinking_task, "blinky", BLINKY_STACK_SIZE, NULL, 1, NULL);
 	xTaskCreate(usb_device_task, "usbd", USBD_STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
