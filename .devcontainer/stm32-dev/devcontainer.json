@@ -12,12 +12,25 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"donjayamanne.python-extension-pack",
 				"ms-vscode.cpptools",
 				"ms-vscode.cmake-tools",
 				"twxs.cmake",
 				"mcu-debug.debug-tracker-vscode",
 				"marus25.cortex-debug"
-			]
+			],
+			"settings": {
+                "python.testing.pytestEnabled": true,
+                "python.testing.pytestArgs": [
+                    "tests",
+                    "--fw-image=build/qemu-f4/gas-lighter-fw.elf",
+                    "-v"
+                ],
+                "python.testing.unittestEnabled": false,
+                "python.defaultInterpreterPath": "/usr/bin/python3"
+            }
 		},
 		// Set *default* container specific settings.json values on container create.
 		"settings": {}
