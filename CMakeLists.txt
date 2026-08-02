@@ -2,6 +2,38 @@ cmake_minimum_required(VERSION 3.22)
 
 project(gas-lighter-fw LANGUAGES C CXX ASM)
 
+file(READ "${CMAKE_SOURCE_DIR}/VERSION" FW_VERSION_RAW)
+string(STRIP "${FW_VERSION_RAW}" FW_VERSION)
+
+string(REGEX MATCH "^([0-9]+)\\.([0-9]+)\\.([0-9]+)" _ "${FW_VERSION}")
+set(PROJECT_VERSION_MAJOR ${CMAKE_MATCH_1})
+set(PROJECT_VERSION_MINOR ${CMAKE_MATCH_2})
+set(PROJECT_VERSION_PATCH ${CMAKE_MATCH_3})
+set(PROJECT_VERSION "${FW_VERSION}")
+
+project(gas-lighter-fw VERSION ${FW_VERSION} LANGUAGES C CXX ASM)
+
+execute_process(
+    COMMAND git rev-parse --short HEAD
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE GIT_HASH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_QUIET
+)
+
+if(NOT GIT_HASH)
+    set(GIT_HASH "unknown")
+endif()
+
+string(TIMESTAMP BUILD_DATE "%Y-%m-%d" UTC)
+string(TIMESTAMP BUILD_TIME "%H:%M:%S" UTC)
+
+configure_file(
+    ${CMAKE_SOURCE_DIR}/version.h.in
+    ${CMAKE_BINARY_DIR}/generated/version.h
+    @ONLY
+)
+
 if(FOR_QEMU)
     add_compile_definitions(MSC_USE_SRAM)
     add_compile_definitions(PRINTF_UART)
@@ -41,6 +73,7 @@ target_include_directories(${MAIN_EXECUTABLE} PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/modules/FreeRTOS-Plus-CLI"
     "${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src"
     "${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/hw"
+    "${CMAKE_BINARY_DIR}/generated"
 )
 
 set(TARGET_CMAKE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/cmake/stm32cubemx")
