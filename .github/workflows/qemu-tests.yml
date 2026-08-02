@@ -33,7 +33,7 @@ jobs:
 
       - name: Run pytest in Docker
         run: |
-          docker compose run --rm stm32-dev pytest tests/ \
+          docker compose run --rm stm32-dev pytest \
             --junitxml=build/test-results.xml \
             --fw-image=build/qemu-f4/gas-lighter-fw.elf \
             -v
