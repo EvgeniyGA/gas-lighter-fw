@@ -36,6 +36,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/modules/freertos/portable/GCC/ARM_CM4F</locationURI>
 		</link>
 		<link>
+			<name>CMSIS-DSP-Source</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/modules/CMSIS-DSP/Source</locationURI>
+		</link>
+		<link>
 			<name>FreeRTOS-Plus-CLI</name>
 			<type>2</type>
 			<locationURI>PARENT-2-PROJECT_LOC/modules/FreeRTOS-Plus-CLI</locationURI>

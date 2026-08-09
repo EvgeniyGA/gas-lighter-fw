@@ -10,3 +10,6 @@
 [submodule "modules/fatfs"]
 	path = modules/fatfs
 	url = https://github.com/STMicroelectronics/stm32-mw-fatfs
+[submodule "modules/CMSIS-DSP"]
+	path = modules/CMSIS-DSP
+	url = https://github.com/ARM-software/CMSIS-DSP.git
