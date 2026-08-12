@@ -29,21 +29,24 @@ typedef struct{
 	float32_t main_phase_deg;
 }waveMeasureFFT_result;
 
-#define ADC_DMA_BUFFER_SIZE 	(ADC_NumbOfCnannels * ADC_DMA_STEPS * ADC_DMA_CYCLES)
+#define ADC_DMA_BUFFER_SIZE 	(ADC_NumbOfCnannels * ADC_DMA_STEPS * ADC_DMA_CYCLES * 2)
 #define FFT_BUF_SIZE			(ADC_DMA_STEPS * ADC_DMA_CYCLES)
+
+#define WAVE_MEASURE_TASK_STACK_SIZE	(configMINIMAL_STACK_SIZE*2)
 
 uint16_t adc_dma_buffer[ADC_DMA_BUFFER_SIZE];
 float32_t fftBufIn[FFT_BUF_SIZE], fftBufOut[FFT_BUF_SIZE];
 float32_t fftBufPhases[FFT_BUF_SIZE/2];
 arm_rfft_fast_instance_f32 fftHandler;
 
-TaskHandle_t wave_measure_task_handle = NULL;
+static TaskHandle_t wave_measure_task_handle = NULL;
+static StaticTask_t wave_measure_task_def;
 
-static uint8_t fft_buffer(waveMeasureConfig_s* wave_measure_config, uint8_t channel, waveMeasureFFT_result* result);
+static uint8_t fft_buffer(waveMeasureConfig_s* wave_measure_config, uint8_t channel, uint8_t offset, waveMeasureFFT_result* result);
 
-void wave_measure_adc_callback(void){
+void wave_measure_adc_callback(uint8_t offset){
 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-	xTaskNotifyFromISR(wave_measure_task_handle, 1, eSetValueWithOverwrite, &xHigherPriorityTaskWoken);
+	xTaskNotifyFromISR(wave_measure_task_handle, offset, eSetValueWithOverwrite, &xHigherPriorityTaskWoken);
 	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
@@ -52,15 +55,13 @@ void wave_measure_task(void* param);
 void wave_measure_task(void* param){
 	waveMeasureConfig_s* wave_measure_config = (waveMeasureConfig_s*)param;
 	waveMeasureFFT_result result_ch1, result_ch2;
-	uint32_t ulNotificationValue;
-	TickType_t xLastWakeTime = xTaskGetTickCount();
-	const TickType_t xFrequency = pdMS_TO_TICKS(500);
+	uint32_t offset;
 
 	while(1){
-		if (xTaskNotifyWait(0, ULONG_MAX, &ulNotificationValue, xFrequency) == pdPASS)
+		if (xTaskNotifyWait(0, ULONG_MAX, &offset, portMAX_DELAY) == pdPASS)
 		{
-			fft_buffer(wave_measure_config, ADC_Channel_1, &result_ch1);
-			fft_buffer(wave_measure_config, ADC_Channel_2, &result_ch2);
+			fft_buffer(wave_measure_config, ADC_Channel_1, offset, &result_ch1);
+			fft_buffer(wave_measure_config, ADC_Channel_2, offset, &result_ch2);
 
 			printf("F1: %6.2f Hz, F2: %6.2f Hz\t", result_ch1.main_freq_Hz, result_ch2.main_freq_Hz);
 			if(result_ch1.main_freq_Hz == result_ch2.main_freq_Hz){
@@ -70,40 +71,38 @@ void wave_measure_task(void* param){
 				printf("\n\r");
 			}
 		}
-		vTaskDelayUntil(&xLastWakeTime, xFrequency);
+		vTaskDelay(1000);
 	}
 }
 
-StackType_t  wave_measure_stack[128];
-
 int wave_measure_init(waveMeasureConfig_s* wave_measure_config){
+	static StackType_t  wave_measure_stack[WAVE_MEASURE_TASK_STACK_SIZE];
 	memset(adc_dma_buffer, 0x00, sizeof(adc_dma_buffer[0])*ADC_DMA_BUFFER_SIZE);
 	wave_measure_config->buf_adc_in = adc_dma_buffer;
-	wave_measure_config->buf_adc_in_size = sizeof(adc_dma_buffer);
+	wave_measure_config->buf_adc_in_size = sizeof(adc_dma_buffer)/sizeof(adc_dma_buffer[0]);
+	wave_measure_config->adc_num = ADC_NUM_2;
 	wave_measure_config->numb_of_channels = ADC_NumbOfCnannels;
-	wave_measure_config->adc_callback = wave_measure_adc_callback;
+	//wave_measure_config->adc_callback = wave_measure_adc_callback;
 	wave_measure_config->adc_sample_rate = wave_measure_config->main_freqency*
 			wave_measure_config->time_resolution/wave_measure_config->numb_of_channels;
 
 	arm_rfft_fast_init_f32(&fftHandler, FFT_BUF_SIZE );
-	adc_driver_start(adc_dma_buffer, ADC_DMA_BUFFER_SIZE);
-	xTaskCreate(wave_measure_task, "wave_measure", configMINIMAL_STACK_SIZE*2,
-			wave_measure_config, configMAX_PRIORITIES - 3 , &wave_measure_task_handle);
-
-	//(io_task, "io", IO_STACK_SIZE, NULL, 2, io_stack, &io_taskdef);
-
+	adc_driver_start(wave_measure_config->adc_num, adc_dma_buffer, ADC_DMA_BUFFER_SIZE);
+	wave_measure_task_handle = xTaskCreateStatic(wave_measure_task, "wave_measure", WAVE_MEASURE_TASK_STACK_SIZE,
+			wave_measure_config, configMAX_PRIORITIES - 3 , wave_measure_stack, &wave_measure_task_def);
 	return 0;
 }
 
 
-uint8_t fft_buffer(waveMeasureConfig_s* wave_measure_config, uint8_t channel, waveMeasureFFT_result* result){
+uint8_t fft_buffer(waveMeasureConfig_s* wave_measure_config, uint8_t channel, uint8_t offset, waveMeasureFFT_result* result){
 	float32_t freq = 0, main_freq = 0, tmp_max = 0;
 	uint16_t main_bin = 0;
+	uint16_t offset_ = offset*wave_measure_config->buf_adc_in_size/2;
 	if(channel >= ADC_NumbOfCnannels){
 		return -1;
 	}
 	for(int i = 0; i < FFT_BUF_SIZE; i++){
-		fftBufIn[i] = (float32_t)wave_measure_config->buf_adc_in[i*2 + channel];
+		fftBufIn[i] = (float32_t)wave_measure_config->buf_adc_in[i*2 + channel + offset_];
 	}
 	arm_rfft_fast_f32(&fftHandler, fftBufIn, fftBufOut, 0);
 

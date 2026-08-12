@@ -17,14 +17,15 @@ extern "C" {
 #include "app.h"
 
 #define ADC_DMA_STEPS			(MAIN_TIME_RESOLUTION)
-#define ADC_DMA_CYCLES			(64)
+#define ADC_DMA_CYCLES			(32)//(64)
 
 typedef enum {
-	WAVE_MEASURE_OFFSET_ZERO,
+	WAVE_MEASURE_OFFSET_ZERO = 0,
 	WAVE_MEASURE_OFFSET_HALF
 }wave_measure_offset_e;
 
 typedef struct{
+	uint8_t adc_num;
 	uint16_t* buf_adc_in;
 	uint16_t buf_adc_in_size;
 	float32_t* buf_fft_mag_result;
@@ -37,7 +38,7 @@ typedef struct{
 
 
 double process_buffer(uint16_t *buffer, uint8_t numb_of_channels);
-void wave_measure_adc_callback(void);
+void wave_measure_adc_callback(uint8_t offset);
 int wave_measure_init(waveMeasureConfig_s* wave_measure_config);
 
 #ifdef __cplusplus

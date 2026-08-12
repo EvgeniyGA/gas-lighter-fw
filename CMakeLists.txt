@@ -65,6 +65,8 @@ target_sources(${MAIN_EXECUTABLE} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src/portable/synopsys/dwc2/dcd_dwc2.c
     ${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src/portable/synopsys/dwc2/dwc2_common.c
     ${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/Core/Src/W25Qxx.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/Core/Src/adc_driver.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/Core/Src/dac_driver.c
 )
 
 target_include_directories(${MAIN_EXECUTABLE} PRIVATE
@@ -100,11 +102,21 @@ target_include_directories(fatfs_config SYSTEM INTERFACE
 
 target_link_libraries(fatfs_config INTERFACE freertos_kernel STM32_Drivers)
 
+#set(CMSIS_DSP_CONFIG_FLOAT_ABI "hard" CACHE STRING "")
+#set(CMSIS_DSP_CONFIG_FPU "fpv4-sp-d16" CACHE STRING "")
+
+set(CMSI_CORE_INCLUDE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/targets/stm32f4/Drivers/CMSIS/Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/targets/stm32f4/Drivers/CMSIS/Device/ST/STM32F4xx/Include
+)
+include_directories(${CMSI_CORE_INCLUDE})
+
 add_subdirectory(app)
 add_subdirectory(support/fatfs)
 add_subdirectory(support/RTT)
 add_subdirectory(modules/freertos)
 add_subdirectory(modules/tinyusb/src)
+add_subdirectory(modules/CMSIS-DSP)
 add_subdirectory("${TARGET_CMAKE_DIR}" "${CMAKE_BINARY_DIR}/stm32cubemx_${TARGET}")
 
 tinyusb_target_add(${MAIN_EXECUTABLE})
@@ -112,4 +124,5 @@ tinyusb_target_add(${MAIN_EXECUTABLE})
 target_link_libraries(${MAIN_EXECUTABLE} 
     freertos_kernel
     fatfs_core
+    CMSISDSP
 )

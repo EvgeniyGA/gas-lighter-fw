@@ -12,6 +12,7 @@
 #include "arm_math.h"
 #include "wave_starter.h"
 #include "wave_measure.h"
+#include "pulse_measure.h"
 
 #define STORAGE_STACK_SIZE (configMINIMAL_STACK_SIZE)
 #define BLINKY_STACK_SIZE   configMINIMAL_STACK_SIZE
@@ -42,6 +43,7 @@ void init(void){
 
 waveGenConfig_s 	wave_gen_config;
 waveMeasureConfig_s wave_measure_config;
+pulseMeasureConfig_s pulse_measure_config;
 
 void setup(void){
 	printf("Firmware version: %s\n", FW_VERSION_STR);
@@ -64,6 +66,7 @@ void setup(void){
 	wave_starter_init(&wave_gen_config);
 	wave_starter_run(&wave_gen_config);
 
+	pulse_measure_init(&pulse_measure_config);
 
 	FATFS_Init();
 	xTaskCreate(led_blinking_task, "blinky", BLINKY_STACK_SIZE, NULL, 1, NULL);

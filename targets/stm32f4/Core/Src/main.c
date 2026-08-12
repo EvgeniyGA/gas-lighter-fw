@@ -100,6 +100,7 @@ int main(void)
   MX_ADC2_Init();
   MX_TIM8_Init();
   MX_DAC_Init();
+  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
   setup();
   /* USER CODE END 2 */

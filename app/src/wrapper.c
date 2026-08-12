@@ -18,7 +18,7 @@ int __wrap_printf(const char *fmt, ...) {
   unsigned int t = HAL_GetTick();
   va_list args;
   int count0, count1;
-  count0 = __real_printf(">>%d.%d: ", t/1000, t%1000);
+  count0 = __real_printf(">>%06d.%03d: ", t/1000, t%1000);
   va_start(args, fmt);
   count1 = vprintf(fmt, args);
   va_end(args);
