@@ -106,8 +106,8 @@ target_link_libraries(fatfs_config INTERFACE freertos_kernel STM32_Drivers)
 #set(CMSIS_DSP_CONFIG_FPU "fpv4-sp-d16" CACHE STRING "")
 
 set(CMSI_CORE_INCLUDE 
-    ${CMAKE_CURRENT_SOURCE_DIR}/targets/stm32f4/Drivers/CMSIS/Include
-    ${CMAKE_CURRENT_SOURCE_DIR}/targets/stm32f4/Drivers/CMSIS/Device/ST/STM32F4xx/Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/Drivers/CMSIS/Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/Drivers/CMSIS/Device/ST/STM32F4xx/Include
 )
 include_directories(${CMSI_CORE_INCLUDE})
 
