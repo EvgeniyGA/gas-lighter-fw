@@ -102,15 +102,6 @@ target_include_directories(fatfs_config SYSTEM INTERFACE
 
 target_link_libraries(fatfs_config INTERFACE freertos_kernel STM32_Drivers)
 
-#set(CMSIS_DSP_CONFIG_FLOAT_ABI "hard" CACHE STRING "")
-#set(CMSIS_DSP_CONFIG_FPU "fpv4-sp-d16" CACHE STRING "")
-
-set(CMSI_CORE_INCLUDE 
-    ${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/Drivers/CMSIS/Include
-    ${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/Drivers/CMSIS/Device/ST/STM32F4xx/Include
-)
-include_directories(${CMSI_CORE_INCLUDE})
-
 add_subdirectory(app)
 add_subdirectory(support/fatfs)
 add_subdirectory(support/RTT)
@@ -120,6 +111,11 @@ add_subdirectory(modules/CMSIS-DSP)
 add_subdirectory("${TARGET_CMAKE_DIR}" "${CMAKE_BINARY_DIR}/stm32cubemx_${TARGET}")
 
 tinyusb_target_add(${MAIN_EXECUTABLE})
+
+target_include_directories(CMSISDSP PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/Drivers/CMSIS/Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/Drivers/CMSIS/Device/ST/STM32F4xx/Include
+)
 
 target_link_libraries(${MAIN_EXECUTABLE} 
     freertos_kernel
