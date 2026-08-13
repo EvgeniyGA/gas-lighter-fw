@@ -38,7 +38,7 @@ void led_blinking_task(void* param);
 
 void init(void){
 	SEGGER_RTT_ConfigUpBuffer( 0, NULL, NULL, 0, SEGGER_RTT_MODE_NO_BLOCK_TRIM );
-	SEGGER_RTT_WriteString( 0, "SEGGER Real-Time-Terminal Started\n" );
+	//SEGGER_RTT_WriteString( 0, "SEGGER Real-Time-Terminal Started\n" );
 }
 
 waveGenConfig_s 	wave_gen_config;

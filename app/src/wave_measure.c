@@ -63,12 +63,12 @@ void wave_measure_task(void* param){
 			fft_buffer(wave_measure_config, ADC_Channel_1, offset, &result_ch1);
 			fft_buffer(wave_measure_config, ADC_Channel_2, offset, &result_ch2);
 
-			printf("F1: %6.2f Hz, F2: %6.2f Hz\t", result_ch1.main_freq_Hz, result_ch2.main_freq_Hz);
+			//printf("F1: %6.2f Hz, F2: %6.2f Hz\t", result_ch1.main_freq_Hz, result_ch2.main_freq_Hz);
 			if(result_ch1.main_freq_Hz == result_ch2.main_freq_Hz){
-				printf("delta Phase, deg: %3.2f\n\r", result_ch1.main_phase_deg - result_ch2.main_phase_deg);
+			//	printf("delta Phase, deg: %3.2f\n\r", result_ch1.main_phase_deg - result_ch2.main_phase_deg);
 			}
 			else{
-				printf("\n\r");
+			//	printf("\n\r");
 			}
 		}
 		vTaskDelay(1000);

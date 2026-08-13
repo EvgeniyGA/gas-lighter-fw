@@ -22,7 +22,7 @@ uint8_t adc_driver_start(uint8_t adc_num, uint16_t* buff, uint16_t size){
 		HAL_ADC_Start_DMA (&hadc1, (uint32_t*) buff, size) ;
 	}
 	else if(adc_num == ADC_NUM_2){
-		//HAL_TIM_Base_Start_IT(&htim8);//todo
+		//HAL_TIM_Base_Start_IT(&htim8);//tim8 required for adc2
 		HAL_ADC_Start_DMA (&hadc2, (uint32_t*) buff, size) ;
 	}
 	else{

@@ -10,6 +10,7 @@
 #include "task.h"
 #include "limits.h"
 #include "string.h"
+#include "gpio.h"//todo
 
 typedef enum{
 	Pulse_Measure_ADC_Channel_1 = 0,
@@ -20,8 +21,9 @@ typedef enum{
 }pulse_measure_channels_e;
 
 #define PULSE_MEASURE_ADC_DMA_STEPS			(2048)
-#define PULSE_MEASURE_ADC_DMA_BUFFER_SIZE 	(Pulse_Measure_ADC_NumbOfCnannels * PULSE_MEASURE_ADC_DMA_STEPS * 1/*ADC_DMA_CYCLES*/ * 2)
+#define PULSE_MEASURE_ADC_DMA_BUFFER_SIZE 	(Pulse_Measure_ADC_NumbOfCnannels * PULSE_MEASURE_ADC_DMA_STEPS * 2)
 #define PULSE_MEASURE_TASK_STACK_SIZE	(configMINIMAL_STACK_SIZE*2)
+#define PULSE_MEASURE_INDENT_CYCLES			(100)
 
 uint16_t pulse_measure_adc_dma_buffer[PULSE_MEASURE_ADC_DMA_BUFFER_SIZE];
 
@@ -44,17 +46,25 @@ void pulse_measure_task(void* param){
 			memset(result, 0x00, sizeof(result));
 			uint32_t adc_samples_per_ch = pulse_measure_config->buf_adc_in_size /(2 * Pulse_Measure_ADC_NumbOfCnannels);
 			offset = offset*pulse_measure_config->buf_adc_in_size/2;
-			for (size_t i = 0; i < pulse_measure_config->buf_adc_in_size/2; i += Pulse_Measure_ADC_NumbOfCnannels){
+			for (size_t i = PULSE_MEASURE_INDENT_CYCLES*Pulse_Measure_ADC_NumbOfCnannels; 
+						i < (pulse_measure_config->buf_adc_in_size/2); 
+						i += Pulse_Measure_ADC_NumbOfCnannels){
 				for(size_t j = 0; j < Pulse_Measure_ADC_NumbOfCnannels; j++){
 					result[j] += pulse_measure_config->buf_adc_in[i + j + offset];
 				}
 			}
 			for(size_t j = 0; j < Pulse_Measure_ADC_NumbOfCnannels; j++){
-				result[j] /= adc_samples_per_ch;
+				result[j] /= (adc_samples_per_ch - PULSE_MEASURE_INDENT_CYCLES);
 			}
-			printf("result %04d:%04d:%04d:%04d\n\r", result[0], result[1], result[2], result[3]);
+			if(offset == 0){
+				HAL_GPIO_WritePin (en_led2a_GPIO_Port, en_led2a_Pin, GPIO_PIN_SET);
+			}
+			else{
+				HAL_GPIO_WritePin (en_led2a_GPIO_Port, en_led2a_Pin, GPIO_PIN_RESET);
+				printf("result %04d:%04d:%04d:%04d\n\r", result[0], result[1], result[2], result[3]);
+			}
 		}
-		vTaskDelay(1000);
+		vTaskDelay(100);
 	}
 }
 
