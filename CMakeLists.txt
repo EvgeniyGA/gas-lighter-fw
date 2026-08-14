@@ -83,6 +83,8 @@ target_include_directories(freertos_config SYSTEM INTERFACE
     ${CMAKE_SOURCE_DIR}/support/freertos_support
 )
 
+target_link_libraries(freertos_config INTERFACE segger_sysview)
+
 set( FREERTOS_HEAP "4" CACHE STRING "" FORCE)
 if(${TARGET} STREQUAL "stm32f4")
     set( FREERTOS_PORT GCC_ARM_CM4F)
@@ -103,6 +105,7 @@ target_link_libraries(fatfs_config INTERFACE freertos_kernel STM32_Drivers)
 add_subdirectory(app)
 add_subdirectory(support/fatfs)
 add_subdirectory(support/RTT)
+add_subdirectory(support/SystemView)
 add_subdirectory(modules/freertos)
 add_subdirectory(modules/tinyusb/src)
 add_subdirectory("${TARGET_CMAKE_DIR}" "${CMAKE_BINARY_DIR}/stm32cubemx_${TARGET}")
@@ -112,4 +115,6 @@ tinyusb_target_add(${MAIN_EXECUTABLE})
 target_link_libraries(${MAIN_EXECUTABLE} 
     freertos_kernel
     fatfs_core
+    segger_rtt         
+    segger_sysview 
 )
