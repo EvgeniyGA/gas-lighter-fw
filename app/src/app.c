@@ -3,6 +3,7 @@
 #include <FreeRTOS.h>
 #include "task.h"
 #include "SEGGER_RTT.h"
+#include "SEGGER_SYSVIEW.h"
 #include "tusb.h"
 #include "fatfs.h"
 #include "usb_service.h"
@@ -37,8 +38,12 @@ static uint32_t blink_interval_ms = BLINK_NOT_MOUNTED;
 void led_blinking_task(void* param);
 
 void init(void){
+#ifndef FOR_QEMU
 	SEGGER_RTT_ConfigUpBuffer( 0, NULL, NULL, 0, SEGGER_RTT_MODE_NO_BLOCK_TRIM );
-	//SEGGER_RTT_WriteString( 0, "SEGGER Real-Time-Terminal Started\n" );
+#endif
+  SEGGER_SYSVIEW_Conf();
+  SEGGER_SYSVIEW_Start();
+  SEGGER_RTT_WriteString( 0, "SEGGER Real-Time-Terminal Started\n" );
 }
 
 waveGenConfig_s 	wave_gen_config;

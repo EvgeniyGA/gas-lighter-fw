@@ -13,3 +13,6 @@
 [submodule "modules/CMSIS-DSP"]
 	path = modules/CMSIS-DSP
 	url = https://github.com/ARM-software/CMSIS-DSP.git
+[submodule "modules/SystemView"]
+	path = modules/SystemView
+	url = https://github.com/SEGGERMicro/SystemView.git
