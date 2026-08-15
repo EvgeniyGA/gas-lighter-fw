@@ -76,6 +76,8 @@
 									<listOptionValue builtIn="false" value="../../../modules/SystemView/Config"/>
 									<listOptionValue builtIn="false" value="../../../modules/SystemView/Sample/FreeRTOSV11/Config/Cortex-M"/>
 									<listOptionValue builtIn="false" value="../../../modules/SystemView/Sample/FreeRTOSV11"/>
+									<listOptionValue builtIn="false" value="../../../modules/CMSIS-DSP/Include"/>
+									<listOptionValue builtIn="false" value="../../../modules/CMSIS-DSP/PrivateInclude"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.925299765" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
@@ -195,6 +197,8 @@
 									<listOptionValue builtIn="false" value="../../../modules/SystemView/Config"/>
 									<listOptionValue builtIn="false" value="../../../modules/SystemView/Sample/FreeRTOSV11/Config/Cortex-M"/>
 									<listOptionValue builtIn="false" value="../../../modules/SystemView/Sample/FreeRTOSV11"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Projects\gas-lighter-fw\modules\CMSIS-DSP\Source&quot;"/>
+									<listOptionValue builtIn="false" value="../../../modules/CMSIS-DSP/PrivateInclude"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1517336091" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>

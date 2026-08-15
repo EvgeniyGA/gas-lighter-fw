@@ -64,7 +64,7 @@ void pulse_measure_task(void* param){
 				printf("result %04d:%04d:%04d:%04d\n\r", result[0], result[1], result[2], result[3]);
 			}
 		}
-		vTaskDelay(100);
+		//vTaskDelay(100);
 	}
 }
 
