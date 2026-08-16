@@ -8,4 +8,5 @@ target_sources(${PROJECT_NAME} PRIVATE
     src/cli_commands_fs.c
     src/usb_service.c
     src/version_check.c
+    src/lcd_printer.c
 )
