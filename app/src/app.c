@@ -14,6 +14,8 @@
 #include "wave_starter.h"
 #include "wave_measure.h"
 #include "pulse_measure.h"
+#include "lcd.h"
+#include "main.h"
 
 #define STORAGE_STACK_SIZE (configMINIMAL_STACK_SIZE)
 #define BLINKY_STACK_SIZE   configMINIMAL_STACK_SIZE
@@ -49,8 +51,24 @@ void init(void){
 waveGenConfig_s 	wave_gen_config;
 waveMeasureConfig_s wave_measure_config;
 pulseMeasureConfig_s pulse_measure_config;
+LCD_HandleTypeDef hlcd1;
 
 void setup(void){
+    hlcd1.RS_Port = disp_a0_GPIO_Port; hlcd1.RS_Pin = disp_a0_Pin;
+    hlcd1.EN_Port = disp_e_GPIO_Port; hlcd1.EN_Pin = disp_e_Pin;
+    hlcd1.D4_Port = disp_d4_GPIO_Port; hlcd1.D4_Pin = disp_d4_Pin;
+    hlcd1.D5_Port = disp_d5_GPIO_Port; hlcd1.D5_Pin = disp_d5_Pin;
+    hlcd1.D6_Port = disp_d6_GPIO_Port; hlcd1.D6_Pin = disp_d6_Pin;
+    hlcd1.D7_Port = disp_d7_GPIO_Port; hlcd1.D7_Pin = disp_d7_Pin;
+
+  LCD_Init(&hlcd1);
+  LCD_Clear(&hlcd1);
+
+  LCD_SetCursor(&hlcd1, 0, 3); // Строка 1, 4-й символ
+  LCD_SendString(&hlcd1, "Hello, STM32F4!");
+  LCD_SetCursor(&hlcd1, 1, 2); // Строка 2, 3-й символ
+  LCD_SendString(&hlcd1, "MT-20S4A 20x4");
+
 	printf("Firmware version: %s\n", FW_VERSION_STR);
 	printf("Build: %s %s (git: %s)\n", FW_BUILD_DATE, FW_BUILD_TIME, FW_GIT_HASH);
 	printf("Version: %d.%d.%d\n", FW_VERSION_MAJOR, FW_VERSION_MINOR, FW_VERSION_PATCH);
