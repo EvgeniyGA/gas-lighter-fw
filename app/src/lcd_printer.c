@@ -4,7 +4,7 @@
 #include "queue.h"
 #include <stdio.h>
 
-#define LCD_PRINTER_STACK_SIZE      configMINIMAL_STACK_SIZE
+#define LCD_PRINTER_STACK_SIZE      configMINIMAL_STACK_SIZE * 2
 #define LCD_MAX_LEN             (20)
 #define LCD_PRINTER_BUF_LEN     (10)
 
@@ -35,6 +35,9 @@ void lcd_printer_task(void* param){
         if (xQueueReceive(printerQueue, &msg, portMAX_DELAY)) {
             printf("%.*s\n\r", msg.data_len, (char*)msg.data);
         }
+        UBaseType_t watermark = uxTaskGetStackHighWaterMark(NULL);
+        printf("LCD task stack free: %u words (%u bytes)\n\r", 
+                   watermark, watermark * 4);
     }
 }
 
