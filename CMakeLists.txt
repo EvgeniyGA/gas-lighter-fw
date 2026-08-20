@@ -1,38 +1,14 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(gas-lighter-fw LANGUAGES C CXX ASM)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 file(READ "${CMAKE_SOURCE_DIR}/VERSION" FW_VERSION_RAW)
 string(STRIP "${FW_VERSION_RAW}" FW_VERSION)
 
-string(REGEX MATCH "^([0-9]+)\\.([0-9]+)\\.([0-9]+)" _ "${FW_VERSION}")
-set(PROJECT_VERSION_MAJOR ${CMAKE_MATCH_1})
-set(PROJECT_VERSION_MINOR ${CMAKE_MATCH_2})
-set(PROJECT_VERSION_PATCH ${CMAKE_MATCH_3})
-set(PROJECT_VERSION "${FW_VERSION}")
-
 project(gas-lighter-fw VERSION ${FW_VERSION} LANGUAGES C CXX ASM)
 
-execute_process(
-    COMMAND git rev-parse --short HEAD
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE GIT_HASH
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    ERROR_QUIET
-)
-
-if(NOT GIT_HASH)
-    set(GIT_HASH "unknown")
-endif()
-
-string(TIMESTAMP BUILD_DATE "%Y-%m-%d" UTC)
-string(TIMESTAMP BUILD_TIME "%H:%M:%S" UTC)
-
-configure_file(
-    ${CMAKE_SOURCE_DIR}/version.h.in
-    ${CMAKE_BINARY_DIR}/generated/version.h
-    @ONLY
-)
+include(version)
+generate_version_header()
 
 if(FOR_QEMU)
     add_compile_definitions(MSC_USE_SRAM)

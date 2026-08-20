@@ -14,4 +14,5 @@ target_sources(${PROJECT_NAME} PRIVATE
     src/wave_starter.c
     src/version_check.c
     src/lcd.c
+    src/lcd_printer.c
 )

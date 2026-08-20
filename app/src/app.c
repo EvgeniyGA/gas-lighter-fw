@@ -16,6 +16,8 @@
 #include "pulse_measure.h"
 #include "lcd.h"
 #include "main.h"
+#include "queue.h"
+#include "lcd_printer.h"
 
 #define STORAGE_STACK_SIZE (configMINIMAL_STACK_SIZE)
 #define BLINKY_STACK_SIZE   configMINIMAL_STACK_SIZE
@@ -37,7 +39,16 @@ enum {
 
 static uint32_t blink_interval_ms = BLINK_NOT_MOUNTED;
 
+#define PRINTER_MESSAGE_LEN   36
+typedef struct{
+  uint8_t* data;
+  uint32_t dataLen;
+}printerMessage_t;
+
+QueueHandle_t print_queue;
+
 void led_blinking_task(void* param);
+void print_task(void* param);
 
 void init(void){
 #ifndef FOR_QEMU
@@ -45,6 +56,7 @@ void init(void){
 #endif
   SEGGER_SYSVIEW_Conf();
   SEGGER_SYSVIEW_Start();
+  while(SEGGER_SYSVIEW_IsStarted()==0);
   SEGGER_RTT_WriteString( 0, "SEGGER Real-Time-Terminal Started\n" );
 }
 
@@ -79,6 +91,15 @@ void setup(void){
 		printf("FW Hash: %s\r\n", FW_GIT_HASH);
 	}
 
+ // print_queue = NULL;
+ // print_queue = xQueueCreate(PRINTER_MESSAGE_LEN, sizeof(printerMessage_t));
+  
+ // if(print_queue == NULL){
+ //   while(1);
+ // }
+
+  lcd_printer_init();
+
 	wave_measure_config.main_freqency = MAIN_FREQENCY_HZ;
 	wave_measure_config.time_resolution = MAIN_TIME_RESOLUTION;
 	wave_measure_init(&wave_measure_config);
@@ -103,16 +124,13 @@ void setup(void){
 //--------------------------------------------------------------------+
 void led_blinking_task(void* param) {
   (void) param;
-    static uint8_t led_state = 0;
-
+  static uint8_t led_state = 0;
+  static uint32_t i;
   while (1) {
-    // Blink every interval ms
-   // vTaskDelay(blink_interval_ms / portTICK_PERIOD_MS);
-    vTaskDelay(100);
-
-    //board_led_write(led_state);
+    SEGGER_SYSVIEW_PrintfHost("BlikTask started");
+    vTaskDelay(blink_interval_ms / portTICK_PERIOD_MS);
     led_state = 1 - led_state; // toggle
-	static uint32_t i;
-	//printf("blink %04d\n\r", i++);
+//	  printf("blink %04d\n\r", i++);
+//    lcd_print(1, "blink %03d", i++);
   }
 }
