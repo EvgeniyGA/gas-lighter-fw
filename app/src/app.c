@@ -3,11 +3,14 @@
 #include <FreeRTOS.h>
 #include "task.h"
 #include "SEGGER_RTT.h"
+#include "SEGGER_SYSVIEW.h"
 #include "tusb.h"
 #include "fatfs.h"
 #include "usb_service.h"
 #include "version.h"
 #include "version_check.h"
+#include "queue.h"
+#include "lcd_printer.h"
 
 #define STORAGE_STACK_SIZE (configMINIMAL_STACK_SIZE)
 #define BLINKY_STACK_SIZE   configMINIMAL_STACK_SIZE
@@ -29,12 +32,28 @@ enum {
 
 static uint32_t blink_interval_ms = BLINK_NOT_MOUNTED;
 
+#define PRINTER_MESSAGE_LEN   36
+typedef struct{
+  uint8_t* data;
+  uint32_t dataLen;
+}printerMessage_t;
+
+QueueHandle_t print_queue;
+
 void led_blinking_task(void* param);
+void print_task(void* param);
 
 void init(void){
+#ifndef FOR_QEMU
 	SEGGER_RTT_ConfigUpBuffer( 0, NULL, NULL, 0, SEGGER_RTT_MODE_NO_BLOCK_TRIM );
-	SEGGER_RTT_WriteString( 0, "SEGGER Real-Time-Terminal Started\n" );
+#endif
+  SEGGER_SYSVIEW_Conf();
+  SEGGER_SYSVIEW_Start();
+  while(SEGGER_SYSVIEW_IsStarted()==0);
+  SEGGER_RTT_WriteString( 0, "SEGGER Real-Time-Terminal Started\n" );
 }
+
+
 
 void setup(void){
 	printf("Firmware version: %s\n", FW_VERSION_STR);
@@ -46,27 +65,43 @@ void setup(void){
       printf("FW Hash: %s\r\n", FW_GIT_HASH);
   }
   FATFS_Init();
+
+ // print_queue = NULL;
+ // print_queue = xQueueCreate(PRINTER_MESSAGE_LEN, sizeof(printerMessage_t));
+  
+ // if(print_queue == NULL){
+ //   while(1);
+ // }
+
+  lcd_printer_init();
+
 	xTaskCreate(led_blinking_task, "blinky", BLINKY_STACK_SIZE, NULL, 1, NULL);
 	xTaskCreate(usb_device_task, "usbd", USBD_STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
 	xTaskCreate(cdc_task, "cdc", CDC_STACK_SIZE, NULL, configMAX_PRIORITIES - 2, NULL);
 	vTaskStartScheduler();
 }
 
-
+void print_task(void* param) {
+  (void) param;
+  printerMessage_t msg;
+  while(1){
+    xQueueReceive(print_queue, &msg, portMAX_DELAY);
+    // todo print msg
+  }
+}
 
 //--------------------------------------------------------------------+
 // BLINKING TASK
 //--------------------------------------------------------------------+
 void led_blinking_task(void* param) {
   (void) param;
-    static uint8_t led_state = 0;
-
+  static uint8_t led_state = 0;
+  static uint32_t i;
   while (1) {
-    // Blink every interval ms
+    SEGGER_SYSVIEW_PrintfHost("BlikTask started");
     vTaskDelay(blink_interval_ms / portTICK_PERIOD_MS);
-    //board_led_write(led_state);
     led_state = 1 - led_state; // toggle
-	static uint32_t i;
-	printf("blink %04d\n\r", i++);
+//	  printf("blink %04d\n\r", i++);
+//    lcd_print(1, "blink %03d", i++);
   }
 }

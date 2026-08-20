@@ -10,3 +10,6 @@
 [submodule "modules/fatfs"]
 	path = modules/fatfs
 	url = https://github.com/STMicroelectronics/stm32-mw-fatfs
+[submodule "modules/SystemView"]
+	path = modules/SystemView
+	url = https://github.com/SEGGERMicro/SystemView.git

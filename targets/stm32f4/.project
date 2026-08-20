@@ -51,6 +51,16 @@
 			<locationURI>PARENT-2-PROJECT_LOC/modules/RTT</locationURI>
 		</link>
 		<link>
+			<name>SystemView-FreeRTOSV11</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/modules/SystemView/Sample/FreeRTOSV11</locationURI>
+		</link>
+		<link>
+			<name>SystemView-src</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/modules/SystemView/SYSVIEW</locationURI>
+		</link>
+		<link>
 			<name>app</name>
 			<type>2</type>
 			<locationURI>PARENT-2-PROJECT_LOC/app</locationURI>

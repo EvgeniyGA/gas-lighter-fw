@@ -69,6 +69,11 @@
 									<listOptionValue builtIn="false" value="../../../support/freertos_support"/>
 									<listOptionValue builtIn="false" value="&quot;../../..\support\tinyusb&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/app/cube_stubs}&quot;"/>
+									<listOptionValue builtIn="false" value="../../../modules/SystemView/SEGGER"/>
+									<listOptionValue builtIn="false" value="../../../modules/SystemView/SYSVIEW"/>
+									<listOptionValue builtIn="false" value="../../../modules/SystemView/Config"/>
+									<listOptionValue builtIn="false" value="../../../modules/SystemView/Sample/FreeRTOSV11/Config/Cortex-M"/>
+									<listOptionValue builtIn="false" value="../../../modules/SystemView/Sample/FreeRTOSV11"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.925299765" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
@@ -104,6 +109,8 @@
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="FreeRTOS-Plus-CLI"/>
 						<entry excluding="heap_3.c|heap_2.c|heap_1.c|heap_5.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="MemMang"/>
 						<entry excluding="Config|Examples|Syscalls" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="RTT"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="SystemView-FreeRTOSV11"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="SystemView-src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="app"/>
 						<entry excluding="drivers|drivers/sram|drivers/sd|drivers/usb_host|drivers/template" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="fatfs_src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="fatfs_support"/>
@@ -179,6 +186,11 @@
 									<listOptionValue builtIn="false" value="&quot;../../..\support\fatfs\drivers&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../..\support\tinyusb&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;/${ProjName}/app/cube_stubs&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:C:\Projects\gas-lighter-fw\modules\SystemView\SYSVIEW}&quot;"/>
+									<listOptionValue builtIn="false" value="../../../modules/SystemView/SEGGER"/>
+									<listOptionValue builtIn="false" value="../../../modules/SystemView/Config"/>
+									<listOptionValue builtIn="false" value="../../../modules/SystemView/Sample/FreeRTOSV11/Config/Cortex-M"/>
+									<listOptionValue builtIn="false" value="../../../modules/SystemView/Sample/FreeRTOSV11"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1517336091" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
