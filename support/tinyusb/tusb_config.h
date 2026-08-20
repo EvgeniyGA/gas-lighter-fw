@@ -52,6 +52,8 @@
 #define CFG_TUSB_MCU OPT_MCU_STM32F7
 #elif defined STM32F407xx
 #define CFG_TUSB_MCU OPT_MCU_STM32F4
+#elif defined STM32H743xx
+#define CFG_TUSB_MCU OPT_MCU_STM32H7
 #endif
 
 // defined by board.mk

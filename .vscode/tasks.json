@@ -41,6 +41,18 @@
 			"detail": "Flash STM32F7 (j-link)."
 		},
 		{
+			"label": "Flash H7 (j-link)",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/C",
+				"((echo r & echo h & echo loadfile stm32h7-debug/${workspaceFolderBasename}.elf & echo q) > flash.jlink) && (JLink.exe -device STM32H743VI -if SWD -speed 4000 -NoGui 1 -CommandFile flash.jlink)"
+			],
+			"options": { "cwd": "${workspaceFolder}/build" },
+			"group": "build",
+			"detail": "Flash STM32F7 (j-link)."
+		},
+		{
 			"label": "Run qemu-arm",
 			"type": "shell",
 			"command": "qemu-system-arm",

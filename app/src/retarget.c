@@ -5,6 +5,8 @@
 #include "stm32f7xx.h"
 #elif defined STM32F407xx
 #include "stm32f4xx.h"
+#elif defined STM32H743xx
+#include "stm32h7xx.h"
 #endif
 
 extern UART_HandleTypeDef huart1;
