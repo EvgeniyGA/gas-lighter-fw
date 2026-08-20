@@ -49,6 +49,7 @@ void init(void){
 #endif
   SEGGER_SYSVIEW_Conf();
   SEGGER_SYSVIEW_Start();
+  while(SEGGER_SYSVIEW_IsStarted()==0);
   SEGGER_RTT_WriteString( 0, "SEGGER Real-Time-Terminal Started\n" );
 }
 
@@ -94,16 +95,13 @@ void print_task(void* param) {
 //--------------------------------------------------------------------+
 void led_blinking_task(void* param) {
   (void) param;
-    static uint8_t led_state = 0;
-static uint32_t i;
-
+  static uint8_t led_state = 0;
+  static uint32_t i;
   while (1) {
-    // Blink every interval ms
+    SEGGER_SYSVIEW_PrintfHost("BlikTask started");
     vTaskDelay(blink_interval_ms / portTICK_PERIOD_MS);
-    //board_led_write(led_state);
     led_state = 1 - led_state; // toggle
-	  //printf("blink %04d\n\r", i++);
-  
-    lcd_print(1, "blink %03d", i++);
+//	  printf("blink %04d\n\r", i++);
+//    lcd_print(1, "blink %03d", i++);
   }
 }

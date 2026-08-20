@@ -35,9 +35,9 @@ void lcd_printer_task(void* param){
         if (xQueueReceive(printerQueue, &msg, portMAX_DELAY)) {
             printf("%.*s\n\r", msg.data_len, (char*)msg.data);
         }
-        UBaseType_t watermark = uxTaskGetStackHighWaterMark(NULL);
-        printf("LCD task stack free: %u words (%u bytes)\n\r", 
-                   watermark, watermark * 4);
+        //UBaseType_t watermark = uxTaskGetStackHighWaterMark(NULL);
+        //printf("LCD task stack free: %u words (%u bytes)\n\r", 
+        //           watermark, watermark * 4);
     }
 }
 
