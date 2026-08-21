@@ -14,7 +14,7 @@ if(FOR_QEMU)
     add_compile_definitions(MSC_USE_SRAM)
     add_compile_definitions(PRINTF_UART)
 else()
-    add_compile_definitions(MSC_USE_FLASH)
+    add_compile_definitions(MSC_USE_SRAM)#add_compile_definitions(MSC_USE_FLASH)
     add_compile_definitions(PRINTF_RTT)
 endif()
 

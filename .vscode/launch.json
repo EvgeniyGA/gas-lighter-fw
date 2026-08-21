@@ -25,6 +25,26 @@
             }
         },
         {
+            "name" : "Debug H7(gdb/jlink)",
+            "cwd" : "${workspaceRoot}",
+            "executable": "${command:cmake.launchTargetPath}",     
+            "interface": "swd",
+            "request" : "launch",
+            "type" : "cortex-debug",
+            "servertype" : "jlink",
+            "device": "STM32H743VI",
+            "preRestartCommands" : [ "load", "enable breakpoint", "monitor reset" ],        
+            "runToEntryPoint" : "main",        
+           // "svdFile": "${workspaceFolder}/targets/stm32f4/STM32F407.svd",
+            "liveWatch": { "enabled": true, "samplesPerSecond": 2 },
+            "rttConfig":
+            {
+                "enabled": true,
+                "address": "auto",
+                "decoders": [ { "label": "RTT F4", "port": 0, "type": "console" } ]
+            }
+        },
+        {
             "name": "Debug (qemu)",
             "cwd": "${workspaceFolder}",
             "executable": "${command:cmake.launchTargetPath}",    

@@ -73,7 +73,7 @@ void setup(void){
  //   while(1);
  // }
 
-  lcd_printer_init();
+//  lcd_printer_init();
 
 	xTaskCreate(led_blinking_task, "blinky", BLINKY_STACK_SIZE, NULL, 1, NULL);
 	xTaskCreate(usb_device_task, "usbd", USBD_STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
@@ -89,7 +89,7 @@ void print_task(void* param) {
     // todo print msg
   }
 }
-
+#include "dma.h"
 //--------------------------------------------------------------------+
 // BLINKING TASK
 //--------------------------------------------------------------------+
@@ -97,9 +97,28 @@ void led_blinking_task(void* param) {
   (void) param;
   static uint8_t led_state = 0;
   static uint32_t i;
+  uint8_t buff_conf[255] = {0};
+  for (i = 0; i < 254; i++){
+    buff_conf[i] = i;
+  }
   while (1) {
+    *(volatile uint8_t*)0x60010000 = 0xff;  // например, команда Column Address Set
+  //  *(volatile uint8_t*)0x60010000 = 0xff;
+  //  *(volatile uint8_t*)0xC0000000 = 0xff;  // например, команда Column Address Set
+  //  *(volatile uint8_t*)0xC0010000 = 0xff;
+    vTaskDelay(blink_interval_ms / portTICK_PERIOD_MS / 10);
+    *(volatile uint8_t*)0x60010000 = 0x00;  // например, команда Column Address Set
+  //  *(volatile uint8_t*)0x60010000 = 0x00;
+  //  *(volatile uint8_t*)0xC0000000 = 0x00;  // например, команда Column Address Set
+  //  *(volatile uint8_t*)0xC0010000 = 0x00;
+    //HAL_DMA_Start(&hdma_memtomem_dma2_stream0, (uint32_t)buff_conf, (uint32_t)(0x60000000), sizeof(buff_conf));
+		//HAL_DMA_PollForTransfer(&hdma_memtomem_dma2_stream0, HAL_DMA_FULL_TRANSFER, HAL_MAX_DELAY);
+
+    //    HAL_DMA_Start(&hdma_memtomem_dma2_stream0, (uint32_t)buff_conf, (uint32_t)(0xC0000000), sizeof(buff_conf));
+		//HAL_DMA_PollForTransfer(&hdma_memtomem_dma2_stream0, HAL_DMA_FULL_TRANSFER, HAL_MAX_DELAY);
+    
     SEGGER_SYSVIEW_PrintfHost("BlikTask started");
-    vTaskDelay(blink_interval_ms / portTICK_PERIOD_MS);
+    vTaskDelay(blink_interval_ms / portTICK_PERIOD_MS / 10);
     led_state = 1 - led_state; // toggle
 //	  printf("blink %04d\n\r", i++);
 //    lcd_print(1, "blink %03d", i++);
