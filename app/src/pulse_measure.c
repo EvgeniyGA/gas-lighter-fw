@@ -40,6 +40,7 @@ void pulse_measure_task(void* param){
 	pulseMeasureConfig_s* pulse_measure_config = (pulseMeasureConfig_s*)param;
 	uint32_t offset;
 	uint32_t result[Pulse_Measure_ADC_NumbOfCnannels] = {0};
+	vTaskDelay(5000 / portTICK_PERIOD_MS);
 	while(1){
 		if (xTaskNotifyWait(0, ULONG_MAX, &offset, portMAX_DELAY) == pdPASS)
 		{
@@ -62,9 +63,9 @@ void pulse_measure_task(void* param){
 			else{
 				HAL_GPIO_WritePin (en_led2a_GPIO_Port, en_led2a_Pin, GPIO_PIN_RESET);
 				printf("result %04d:%04d:%04d:%04d\n\r", result[0], result[1], result[2], result[3]);
+				lcd_print(0, 0, "%04d:%04d:%04d:%04d\n\r", result[0], result[1], result[2], result[3]);
 			}
 		}
-		//vTaskDelay(100);
 	}
 }
 

@@ -1,4 +1,5 @@
 #include "lcd_printer.h"
+#include "lcd_driver.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
@@ -12,6 +13,7 @@ typedef struct{
     uint8_t data[LCD_MAX_LEN];
     uint8_t data_len;
     uint8_t line;
+    uint8_t offset;
 }lcd_printer_msg_t;
 
 StackType_t lcd_printer_stack[LCD_PRINTER_STACK_SIZE];
@@ -19,6 +21,7 @@ StaticTask_t lcd_printer_taskdef;
 QueueHandle_t printerQueue;
 uint8_t lcd_printer_queue_buf[LCD_PRINTER_BUF_LEN * sizeof(lcd_printer_msg_t)];
 StaticQueue_t lcd_printer_queue;
+LCD_HandleTypeDef hlcd1;
 
 void lcd_printer_task(void* param);
 
@@ -31,9 +34,14 @@ void lcd_printer_init(void){
 
 void lcd_printer_task(void* param){
     lcd_printer_msg_t msg;
+    hlcd1.delay_ms = vTaskDelay;//HAL_Delay;
+
+    LCD_Init(&hlcd1);
+
     while(1){
         if (xQueueReceive(printerQueue, &msg, portMAX_DELAY)) {
-            printf("%.*s\n\r", msg.data_len, (char*)msg.data);
+            LCD_SetCursor(&hlcd1, msg.line, msg.offset);
+            LCD_SendString(&hlcd1, msg.data);
         }
         //UBaseType_t watermark = uxTaskGetStackHighWaterMark(NULL);
         //printf("LCD task stack free: %u words (%u bytes)\n\r", 
@@ -41,9 +49,10 @@ void lcd_printer_task(void* param){
     }
 }
 
-uint8_t lcd_print(uint8_t line, const char* format, ...){
+uint8_t lcd_print(uint8_t line, uint8_t offset, const char* format, ...){
     lcd_printer_msg_t msg;
     msg.line = line;
+    msg.offset = offset;
     
     va_list args;
     va_start(args, format);
@@ -57,7 +66,7 @@ uint8_t lcd_print(uint8_t line, const char* format, ...){
     } else {
         msg.data_len = (uint8_t)len;
     }
-    
+    //printf("%.*s\n\r", msg.data_len, (char*)msg.data);
     if (xQueueSendToBack(printerQueue, &msg, 0) == pdPASS) {
         return 0;
     }

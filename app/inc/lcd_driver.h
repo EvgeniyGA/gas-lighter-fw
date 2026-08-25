@@ -17,6 +17,7 @@ typedef struct {
     uint16_t      D6_Pin;
     GPIO_TypeDef* D7_Port;
     uint16_t      D7_Pin;
+    void (*delay_ms)(uint32_t);
 } LCD_HandleTypeDef;
 
 void LCD_Init(LCD_HandleTypeDef* lcd);
