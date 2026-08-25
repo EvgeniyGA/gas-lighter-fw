@@ -12,6 +12,8 @@
 #include "queue.h"
 #include "lcd_printer.h"
 
+//#include "tim.h"
+
 #define STORAGE_STACK_SIZE (configMINIMAL_STACK_SIZE)
 #define BLINKY_STACK_SIZE   configMINIMAL_STACK_SIZE
 
@@ -30,7 +32,7 @@ enum {
   BLINK_SUSPENDED = 2500,
 };
 
-static uint32_t blink_interval_ms = BLINK_NOT_MOUNTED;
+static uint32_t blink_interval_ms = BLINK_MOUNTED;//BLINK_NOT_MOUNTED;
 
 #define PRINTER_MESSAGE_LEN   36
 typedef struct{
@@ -39,6 +41,8 @@ typedef struct{
 }printerMessage_t;
 
 QueueHandle_t print_queue;
+
+
 
 void led_blinking_task(void* param);
 void print_task(void* param);
@@ -53,7 +57,8 @@ void init(void){
   SEGGER_RTT_WriteString( 0, "SEGGER Real-Time-Terminal Started\n" );
 }
 
-
+//#include "dma.h"
+//extern DMA_HandleTypeDef hdma_tim6_up;
 
 void setup(void){
 	printf("Firmware version: %s\n", FW_VERSION_STR);
@@ -75,7 +80,13 @@ void setup(void){
 
 //  lcd_printer_init();
 
-	xTaskCreate(led_blinking_task, "blinky", BLINKY_STACK_SIZE, NULL, 1, NULL);
+//  uint32_t buff_conf[] = {0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
+//  HAL_TIM_Base_Start(&htim6);
+//  HAL_DMA_Start(&hdma_tim6_up, (uint32_t)buff_conf, (uint32_t)(&(GPIOD->BSRR)), sizeof(buff_conf)/sizeof(buff_conf[0]));
+//  __HAL_TIM_ENABLE_DMA(&htim6, TIM_DMA_UPDATE);  
+//  HAL_TIM_Base_Start(&htim6);
+	
+  xTaskCreate(led_blinking_task, "blinky", BLINKY_STACK_SIZE, NULL, 1, NULL);
 	xTaskCreate(usb_device_task, "usbd", USBD_STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
 	xTaskCreate(cdc_task, "cdc", CDC_STACK_SIZE, NULL, configMAX_PRIORITIES - 2, NULL);
 	vTaskStartScheduler();
@@ -89,35 +100,41 @@ void print_task(void* param) {
     // todo print msg
   }
 }
-#include "dma.h"
+
 //--------------------------------------------------------------------+
 // BLINKING TASK
 //--------------------------------------------------------------------+
+#include "fmc.h"
+#include "dma.h"
+#include "main.h"
+uint8_t buff_conf[] = {0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00};
 void led_blinking_task(void* param) {
   (void) param;
   static uint8_t led_state = 0;
   static uint32_t i;
-  uint8_t buff_conf[255] = {0};
-  for (i = 0; i < 254; i++){
-    buff_conf[i] = i;
-  }
+  
+  //uint16_t buff_conf[255] = {0};
+  //for (i = 0; i < 255; i++){
+  //  buff_conf[i] = 0xFFFF*(1 - (i%2));
+  //}
+  HAL_GPIO_WritePin(led_mode0_GPIO_Port, led_mode0_Pin, GPIO_PIN_SET);
+  vTaskDelay(blink_interval_ms / portTICK_PERIOD_MS);//
+//  vTaskDelay(pdMS_TO_TICKS(10000));
+  HAL_GPIO_WritePin(led_mode1_GPIO_Port, led_mode1_Pin, GPIO_PIN_SET);
+  vTaskDelay(blink_interval_ms / portTICK_PERIOD_MS);//vTaskDelay(pdMS_TO_TICKS(10000));
+  HAL_GPIO_WritePin(led_mode2_GPIO_Port, led_mode2_Pin, GPIO_PIN_SET);
+  vTaskDelay(blink_interval_ms / portTICK_PERIOD_MS);//vTaskDelay(pdMS_TO_TICKS(10000));
+  HAL_GPIO_WritePin(led_mode3_GPIO_Port, led_mode3_Pin, GPIO_PIN_SET);
+  vTaskDelay(blink_interval_ms / portTICK_PERIOD_MS);//vTaskDelay(pdMS_TO_TICKS(10000));
+  HAL_GPIO_WritePin(led_mode4_GPIO_Port, led_mode4_Pin, GPIO_PIN_SET);
+  vTaskDelay(blink_interval_ms / portTICK_PERIOD_MS);//vTaskDelay(pdMS_TO_TICKS(10000));
+  HAL_GPIO_WritePin(led_mode5_GPIO_Port, led_mode5_Pin, GPIO_PIN_SET);
+  vTaskDelay(blink_interval_ms / portTICK_PERIOD_MS);//vTaskDelay(pdMS_TO_TICKS(10000));
   while (1) {
-    *(volatile uint8_t*)0x60010000 = 0xff;  // например, команда Column Address Set
-  //  *(volatile uint8_t*)0x60010000 = 0xff;
-  //  *(volatile uint8_t*)0xC0000000 = 0xff;  // например, команда Column Address Set
-  //  *(volatile uint8_t*)0xC0010000 = 0xff;
-    vTaskDelay(blink_interval_ms / portTICK_PERIOD_MS / 10);
-    *(volatile uint8_t*)0x60010000 = 0x00;  // например, команда Column Address Set
-  //  *(volatile uint8_t*)0x60010000 = 0x00;
-  //  *(volatile uint8_t*)0xC0000000 = 0x00;  // например, команда Column Address Set
-  //  *(volatile uint8_t*)0xC0010000 = 0x00;
-    //HAL_DMA_Start(&hdma_memtomem_dma2_stream0, (uint32_t)buff_conf, (uint32_t)(0x60000000), sizeof(buff_conf));
-		//HAL_DMA_PollForTransfer(&hdma_memtomem_dma2_stream0, HAL_DMA_FULL_TRANSFER, HAL_MAX_DELAY);
-
-    //    HAL_DMA_Start(&hdma_memtomem_dma2_stream0, (uint32_t)buff_conf, (uint32_t)(0xC0000000), sizeof(buff_conf));
-		//HAL_DMA_PollForTransfer(&hdma_memtomem_dma2_stream0, HAL_DMA_FULL_TRANSFER, HAL_MAX_DELAY);
+      HAL_DMA_Start(&hdma_memtomem_dma2_stream0, (uint32_t)buff_conf, (uint32_t)(0x60000000), sizeof(buff_conf));
+			HAL_DMA_PollForTransfer(&hdma_memtomem_dma2_stream0, HAL_DMA_FULL_TRANSFER, HAL_MAX_DELAY);
     
-    SEGGER_SYSVIEW_PrintfHost("BlikTask started");
+    //SEGGER_SYSVIEW_PrintfHost("BlikTask started");
     vTaskDelay(blink_interval_ms / portTICK_PERIOD_MS / 10);
     led_state = 1 - led_state; // toggle
 //	  printf("blink %04d\n\r", i++);
