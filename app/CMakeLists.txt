@@ -13,6 +13,6 @@ target_sources(${PROJECT_NAME} PRIVATE
     src/wave_measure.c
     src/wave_starter.c
     src/version_check.c
-    src/lcd_driver.c
-    src/lcd_printer.c
 )
+
+add_subdirectory(services)

@@ -102,4 +102,5 @@ target_link_libraries(${MAIN_EXECUTABLE}
     CMSISDSP
     segger_rtt         
     segger_sysview 
+    lcd_service
 )
