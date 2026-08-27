@@ -43,7 +43,7 @@ target_sources(${MAIN_EXECUTABLE} PRIVATE
 )
 
 target_include_directories(${MAIN_EXECUTABLE} PRIVATE
-    "${CMAKE_CURRENT_SOURCE_DIR}/app/inc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/app/core/inc"
     "${CMAKE_CURRENT_SOURCE_DIR}/support/tinyusb"
     "${CMAKE_CURRENT_SOURCE_DIR}/modules/FreeRTOS-Plus-CLI"
     "${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src"
