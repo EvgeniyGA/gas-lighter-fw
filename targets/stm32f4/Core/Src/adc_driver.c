@@ -9,7 +9,10 @@
 
 #include "adc.h"
 #include "tim.h"
-#include "wave_measure.h"
+//#include "wave_measure.h"
+
+extern void pulse_measure_adc_callback(uint8_t offset);
+extern void wave_measure_adc_callback(uint8_t offset);
 
 uint8_t adc_driver_start(uint8_t adc_num, uint16_t* buff, uint16_t size){
 	if(!size){
@@ -46,18 +49,18 @@ uint8_t adc_driver_stop(uint8_t adc_num){
 
 inline void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
 	if(hadc->Instance == ADC1){
-		pulse_measure_adc_callback (WAVE_MEASURE_OFFSET_HALF);
+		pulse_measure_adc_callback (1);//todo
 	}
 	else if(hadc->Instance == ADC2){
-		wave_measure_adc_callback (WAVE_MEASURE_OFFSET_HALF) ;
+		wave_measure_adc_callback (1);//todo
 	}
 }
 
 inline void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef *hadc){
 	if(hadc->Instance == ADC1){
-		pulse_measure_adc_callback (WAVE_MEASURE_OFFSET_ZERO);
+		pulse_measure_adc_callback (0);//todo
 	}
 	else if(hadc->Instance == ADC2){
-		wave_measure_adc_callback (WAVE_MEASURE_OFFSET_ZERO) ;
+		wave_measure_adc_callback (0);//todo
 	}
 }

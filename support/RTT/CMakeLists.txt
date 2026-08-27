@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.19)
-
 add_library(segger_rtt INTERFACE)
 
 #target_include_directories(${PROJECT_NAME} PUBLIC

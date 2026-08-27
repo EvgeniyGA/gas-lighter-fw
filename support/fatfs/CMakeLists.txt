@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.19)
-
 if(NOT TARGET fatfs_config)
     message(FATAL_ERROR "fatfs_config target not specified")
 endif()

@@ -40,9 +40,6 @@ target_sources(${MAIN_EXECUTABLE} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/support/tinyusb/usb_descriptors.c
     ${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src/portable/synopsys/dwc2/dcd_dwc2.c
     ${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src/portable/synopsys/dwc2/dwc2_common.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/Core/Src/W25Qxx.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/Core/Src/adc_driver.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/Core/Src/dac_driver.c
 )
 
 target_include_directories(${MAIN_EXECUTABLE} PRIVATE
@@ -88,6 +85,7 @@ add_subdirectory(modules/freertos)
 add_subdirectory(modules/tinyusb/src)
 add_subdirectory(modules/CMSIS-DSP)
 add_subdirectory("${TARGET_CMAKE_DIR}" "${CMAKE_BINARY_DIR}/stm32cubemx_${TARGET}")
+add_subdirectory(targets)
 
 tinyusb_target_add(${MAIN_EXECUTABLE})
 
@@ -103,4 +101,5 @@ target_link_libraries(${MAIN_EXECUTABLE}
     segger_rtt         
     segger_sysview 
     lcd_service
+    bsp_drivers
 )
