@@ -16,12 +16,12 @@ typedef struct{
     uint8_t offset;
 }lcd_printer_msg_t;
 
-StackType_t lcd_printer_stack[LCD_PRINTER_STACK_SIZE];
-StaticTask_t lcd_printer_taskdef;
-QueueHandle_t printerQueue;
-uint8_t lcd_printer_queue_buf[LCD_PRINTER_BUF_LEN * sizeof(lcd_printer_msg_t)];
-StaticQueue_t lcd_printer_queue;
-LCD_HandleTypeDef hlcd1;
+static StackType_t lcd_printer_stack[LCD_PRINTER_STACK_SIZE];
+static StaticTask_t lcd_printer_taskdef;
+static QueueHandle_t printerQueue;
+static uint8_t lcd_printer_queue_buf[LCD_PRINTER_BUF_LEN * sizeof(lcd_printer_msg_t)];
+static StaticQueue_t lcd_printer_queue;
+
 
 void lcd_printer_task(void* param);
 
@@ -33,8 +33,8 @@ void lcd_printer_init(void){
 }
 
 void lcd_printer_task(void* param){
+    static LCD_HandleTypeDef hlcd1 = {.delay_ms = vTaskDelay}; //HAL_Delay;
     lcd_printer_msg_t msg;
-    hlcd1.delay_ms = vTaskDelay;//HAL_Delay;
 
     LCD_Init(&hlcd1);
 
