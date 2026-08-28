@@ -10,7 +10,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     core/src/process_adc.c
     core/src/pulse_measure.c
     core/src/wave_gen.c
-    core/src/wave_measure.c
+#    core/src/wave_measure.c
     core/src/wave_starter.c
     core/src/version_check.c
 )

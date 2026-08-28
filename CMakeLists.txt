@@ -101,5 +101,6 @@ target_link_libraries(${MAIN_EXECUTABLE}
     segger_rtt         
     segger_sysview 
     lcd_service
+    wave_measure_service
     bsp_drivers
 )
