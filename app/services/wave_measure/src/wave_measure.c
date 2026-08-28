@@ -6,17 +6,21 @@
  */
 
 #include "wave_measure.h"
-#include "process_adc.h"
-#include "adc.h"
-#include "adc_driver.h"
 #include "math.h"
 #include "arm_math.h"
+#include <stdlib.h>
 #include "FreeRTOS.h"
 #include "task.h"
 
 #define VREFINT_CAL_VREF_MV                   ( 3300UL)
 #define VREFINT_CAL_ADDR_MV                   ((uint16_t*) (0x1FFF7A2AU))
 #define ADC_RESOLUTION pow(2, 12)
+
+typedef enum{
+    WAVE_MEASURE_ADC_NUM_1 = 1,
+    WAVE_MEASURE_ADC_NUM_2,
+    WAVE_MEASURE_ADC_NUM_3
+}wave_measure_adc_numbers_e;
 
 typedef enum{
 	ADC_Channel_1,
@@ -44,6 +48,8 @@ static StaticTask_t wave_measure_task_def;
 
 static uint8_t fft_buffer(waveMeasureConfig_s* wave_measure_config, uint8_t channel, uint8_t offset, waveMeasureFFT_result* result);
 
+extern uint8_t adc_driver_start(uint8_t adc_num, uint16_t* buff, uint16_t size);//todo
+
 void wave_measure_adc_callback(uint8_t offset){
 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 	xTaskNotifyFromISR(wave_measure_task_handle, offset, eSetValueWithOverwrite, &xHigherPriorityTaskWoken);
@@ -67,7 +73,7 @@ void wave_measure_task(void* param){
 			if(result_ch1.main_freq_Hz == result_ch2.main_freq_Hz){
 				float diff = result_ch1.main_phase_deg - result_ch2.main_phase_deg;
 				int diff_x100 = (int)(diff * 100);
-				lcd_print(3, 0, "dPhase: %d.%02d deg", diff_x100/100, abs(diff_x100%100));
+				lcd_print(3, 0, "dPhase: %d.%02d deg", diff_x100/100, abs(diff_x100%100));//todo
 			}
 			else{
 				lcd_print(2, 0, "                    ");
@@ -82,7 +88,7 @@ int wave_measure_init(waveMeasureConfig_s* wave_measure_config){
 	memset(adc_dma_buffer, 0x00, sizeof(adc_dma_buffer[0])*ADC_DMA_BUFFER_SIZE);
 	wave_measure_config->buf_adc_in = adc_dma_buffer;
 	wave_measure_config->buf_adc_in_size = sizeof(adc_dma_buffer)/sizeof(adc_dma_buffer[0]);
-	wave_measure_config->adc_num = ADC_NUM_2;
+	wave_measure_config->adc_num = WAVE_MEASURE_ADC_NUM_2;
 	wave_measure_config->numb_of_channels = ADC_NumbOfCnannels;
 	//wave_measure_config->adc_callback = wave_measure_adc_callback;
 	wave_measure_config->adc_sample_rate = wave_measure_config->main_freqency*

@@ -104,7 +104,6 @@ void setup(void){
 void led_blinking_task(void* param) {
   (void) param;
   static uint8_t led_state = 0;
-  static uint32_t i;
   while (1) {
     SEGGER_SYSVIEW_PrintfHost("BlikTask started");
     vTaskDelay(blink_interval_ms / portTICK_PERIOD_MS);

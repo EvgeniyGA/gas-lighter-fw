@@ -9,7 +9,6 @@
 #define INC_APP_H_
 
 #define MAIN_FREQENCY_HZ				(10000)
-#define MAIN_TIME_RESOLUTION			(32)//(64)
 
 void init(void);
 void setup(void);

@@ -14,7 +14,10 @@ extern "C" {
 
 #include <stdint.h>
 #include "arm_math.h"
-#include "app.h"
+
+#ifndef MAIN_TIME_RESOLUTION
+	#error "MAIN_TIME_RESOLUTION must be defined via CMAKE or compiler flag"
+#endif
 
 #define ADC_DMA_STEPS			(MAIN_TIME_RESOLUTION)
 #define ADC_DMA_CYCLES			(32)//(64)

@@ -32,6 +32,11 @@ endif()
 set(MAIN_EXECUTABLE "gas-lighter-fw")
 add_executable(${MAIN_EXECUTABLE})
 
+set(MAIN_TIME_RESOLUTION 32 CACHE STRING "buffer size")
+target_compile_definitions(${MAIN_EXECUTABLE} PRIVATE
+    MAIN_TIME_RESOLUTION=${MAIN_TIME_RESOLUTION}
+)
+
 target_sources(${MAIN_EXECUTABLE} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/support/freertos_support/freertos.c
     ${CMAKE_CURRENT_SOURCE_DIR}/support/freertos_support/freertos_hook.c
@@ -89,11 +94,6 @@ add_subdirectory(targets)
 
 tinyusb_target_add(${MAIN_EXECUTABLE})
 
-target_include_directories(CMSISDSP PRIVATE 
-    ${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/Drivers/CMSIS/Include
-    ${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/Drivers/CMSIS/Device/ST/STM32F4xx/Include
-)
-
 target_link_libraries(${MAIN_EXECUTABLE} 
     freertos_kernel
     fatfs_core
@@ -103,4 +103,5 @@ target_link_libraries(${MAIN_EXECUTABLE}
     lcd_service
     wave_measure_service
     bsp_drivers
+    
 )
