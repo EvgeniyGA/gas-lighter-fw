@@ -36,7 +36,7 @@
             "runToEntryPoint" : "main",
             //"showDevDebugOutput" : "raw",
             "svdFile": "${workspaceFolder}/targets/stm32f4/STM32F407.svd",
-            "preLaunchTask": "Run qemu-arm",
+            //"preLaunchTask": "Run qemu-arm (gdb)",
             "liveWatch": { "enabled": false, "samplesPerSecond": 2 },
         }
     ]

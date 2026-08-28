@@ -13,9 +13,12 @@ generate_version_header()
 if(FOR_QEMU)
     add_compile_definitions(MSC_USE_SRAM)
     add_compile_definitions(PRINTF_UART)
+    add_compile_definitions(FOR_QEMU)
+    set(MAIN_TIME_RESOLUTION 2 CACHE STRING "buffer size")
 else()
     add_compile_definitions(MSC_USE_FLASH)
     add_compile_definitions(PRINTF_RTT)
+    set(MAIN_TIME_RESOLUTION 32 CACHE STRING "buffer size")
 endif()
 
 set(CMAKE_C_STANDARD 11)
@@ -32,7 +35,6 @@ endif()
 set(MAIN_EXECUTABLE "gas-lighter-fw")
 add_executable(${MAIN_EXECUTABLE})
 
-set(MAIN_TIME_RESOLUTION 32 CACHE STRING "buffer size")
 target_compile_definitions(${MAIN_EXECUTABLE} PRIVATE
     MAIN_TIME_RESOLUTION=${MAIN_TIME_RESOLUTION}
 )

@@ -41,7 +41,7 @@
 			"detail": "Flash STM32F7 (j-link)."
 		},
 		{
-			"label": "Run qemu-arm",
+			"label": "Run qemu-arm (gdb)",
 			"type": "shell",
 			"command": "qemu-system-arm",
 			"args": [
@@ -49,6 +49,23 @@
 				"-nographic", 
 				"-serial", "mon:stdio",
 				"-gdb", "tcp::1234", "-S",        
+				"-kernel", "${command:cmake.launchTargetPath}"
+			],
+			"isBackground": true,
+			"problemMatcher": {
+				"pattern": [ { "regexp": ".", "file": 1, "location": 2, "message": 3 } ],
+				"background": { "activeOnStart": true, "beginsPattern": "^.*", "endsPattern": "^$"
+				}
+			}
+		},
+		{
+			"label": "Run qemu-arm",
+			"type": "shell",
+			"command": "qemu-system-arm",
+			"args": [
+				"-M", "netduinoplus2",
+				"-nographic", 
+				"-serial", "mon:stdio",     
 				"-kernel", "${command:cmake.launchTargetPath}"
 			],
 			"isBackground": true,

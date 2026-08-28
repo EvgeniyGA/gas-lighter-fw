@@ -20,7 +20,12 @@ typedef enum{
 	Pulse_Measure_ADC_NumbOfCnannels
 }pulse_measure_channels_e;
 
+#ifndef FOR_QEMU
 #define PULSE_MEASURE_ADC_DMA_STEPS			(2048)
+#else
+#define PULSE_MEASURE_ADC_DMA_STEPS			(2)
+#endif
+
 #define PULSE_MEASURE_ADC_DMA_BUFFER_SIZE 	(Pulse_Measure_ADC_NumbOfCnannels * PULSE_MEASURE_ADC_DMA_STEPS * 2)
 #define PULSE_MEASURE_TASK_STACK_SIZE	(configMINIMAL_STACK_SIZE*2)
 #define PULSE_MEASURE_INDENT_CYCLES			(100)
