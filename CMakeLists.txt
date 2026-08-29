@@ -15,10 +15,12 @@ if(FOR_QEMU)
     add_compile_definitions(PRINTF_UART)
     add_compile_definitions(FOR_QEMU)
     set(MAIN_TIME_RESOLUTION 2 CACHE STRING "buffer size")
+    set(DISKIO_DRIVER_SRC "drivers/sram_diskio.c")
 else()
     add_compile_definitions(MSC_USE_FLASH)
     add_compile_definitions(PRINTF_RTT)
     set(MAIN_TIME_RESOLUTION 32 CACHE STRING "buffer size")
+    set(DISKIO_DRIVER_SRC "drivers/flash_diskio.c")
 endif()
 
 set(CMAKE_C_STANDARD 11)
@@ -28,8 +30,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) 
 
 if(NOT DEFINED TARGET)
-#    set(TARGET "stm32f4" CACHE STRING "Target hardware platform")
-    message(FATAL_ERROR "TARGET not specified: ${TARGET}")
+    message(FATAL_ERROR "TARGET not specified: ${TARGET}")#    set(TARGET "stm32f4" CACHE STRING "Target hardware platform")
 endif()
 
 set(MAIN_EXECUTABLE "gas-lighter-fw")
@@ -39,42 +40,20 @@ target_compile_definitions(${MAIN_EXECUTABLE} PRIVATE
     MAIN_TIME_RESOLUTION=${MAIN_TIME_RESOLUTION}
 )
 
-target_sources(${MAIN_EXECUTABLE} PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/modules/FreeRTOS-Plus-CLI/FreeRTOS_CLI.c
-)
-
 target_include_directories(${MAIN_EXECUTABLE} PRIVATE
-    "${CMAKE_CURRENT_SOURCE_DIR}/app/core/inc"
-    "${CMAKE_CURRENT_SOURCE_DIR}/modules/FreeRTOS-Plus-CLI"
     "${CMAKE_BINARY_DIR}/generated"
 )
 
-set(TARGET_CMAKE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/cmake/stm32cubemx")
-
-
-add_library(fatfs_config INTERFACE)
-target_include_directories(fatfs_config SYSTEM INTERFACE
-    ${CMAKE_SOURCE_DIR}/support/fatfs
-    ${CMAKE_SOURCE_DIR}/support/fatfs/drivers
-)
-
-target_link_libraries(fatfs_config INTERFACE freertos_kernel STM32_Drivers)
-
 add_subdirectory(modules/CMSIS-DSP)
-add_subdirectory(support/RTT)
-add_subdirectory(support/SystemView)
 add_subdirectory(targets)
-add_subdirectory(modules/freertos)
-add_subdirectory(support/freertos_support)
-add_subdirectory(modules/tinyusb/src)
-add_subdirectory(support/tinyusb)
-add_subdirectory(support/fatfs)
-add_subdirectory("${TARGET_CMAKE_DIR}" "${CMAKE_BINARY_DIR}/stm32cubemx_${TARGET}")
+add_subdirectory(modules)
+add_subdirectory(support)
 add_subdirectory(app)
 
 target_link_libraries(${MAIN_EXECUTABLE} 
     freertos_kernel
     freertos_support
+    freertos_cli_core
     fatfs_core
     CMSISDSP
     segger_rtt         

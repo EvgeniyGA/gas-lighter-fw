@@ -1,6 +1,5 @@
 add_library(diskio_drivers STATIC 
-    drivers/flash_diskio.c
-    drivers/sram_diskio.c
+    ${DISKIO_DRIVER_SRC}
 )
 
 target_include_directories(diskio_drivers PUBLIC 

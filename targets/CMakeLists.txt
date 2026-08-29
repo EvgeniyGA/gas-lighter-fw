@@ -1,21 +1,10 @@
-set(BSP_SOURCES
-    ${TARGET}/Core/Src/adc_driver.c
-    ${TARGET}/Core/Src/dac_driver.c
-    ${TARGET}/Core/Src/W25Qxx.c
+#------------------------------------------------------------
+#------------- cubeide --------------------------------------
+#------------------------------------------------------------
+add_subdirectory(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${TARGET}/cmake/stm32cubemx
+    ${CMAKE_BINARY_DIR}/stm32cubemx_${TARGET}
 )
-
-add_library(bsp_drivers STATIC 
-    ${BSP_SOURCES}
-)
-
-target_link_libraries(bsp_drivers PUBLIC 
-    stm32cubemx
-)
-
-target_include_directories(bsp_drivers PUBLIC 
-    ${TARGET}/Core/Inc
-)
-
 #------------------------------------------------------------
 #------------- freertos platform specific config ------------
 #------------------------------------------------------------
@@ -35,7 +24,6 @@ else()
 endif()
 
 set( FREERTOS_HEAP "4" CACHE STRING "" FORCE)
-
 #------------------------------------------------------------
 #----------------------- cmsis_core ---------------------
 #------------------------------------------------------------
@@ -57,4 +45,24 @@ target_include_directories(cmsis_core_headers INTERFACE
 target_include_directories(CMSISDSP PRIVATE
     ${TARGET}/Drivers/CMSIS/Include
     ${TARGET}/Drivers/CMSIS/Device/ST/${CMSIS_DEVICE_FAMILY}/Include
+)
+#------------------------------------------------------------
+#----------------------- bsp drivers ---------------------
+#------------------------------------------------------------
+set(BSP_SOURCES
+    ${TARGET}/Core/Src/adc_driver.c
+    ${TARGET}/Core/Src/dac_driver.c
+    ${TARGET}/Core/Src/W25Qxx.c
+)
+
+add_library(bsp_drivers STATIC 
+    ${BSP_SOURCES}
+)
+
+target_link_libraries(bsp_drivers PUBLIC 
+    stm32cubemx
+)
+
+target_include_directories(bsp_drivers PUBLIC 
+    ${TARGET}/Core/Inc
 )
