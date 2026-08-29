@@ -26,7 +26,7 @@
 #include "bsp/board_api.h"
 #include "tusb.h"
 #include "semphr.h"
-#include "fatfs.h"
+//#include "fatfs.h"
 #include "sram_diskio.h"
 #include "flash_diskio.h"
 

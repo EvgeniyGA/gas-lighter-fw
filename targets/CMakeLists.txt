@@ -36,12 +36,8 @@ endif()
 
 set( FREERTOS_HEAP "4" CACHE STRING "" FORCE)
 
-#target_sources(${MAIN_EXECUTABLE} PRIVATE
-#    ${CMAKE_SOURCE_DIR}/support/freertos_support/freertos.c
-#    ${CMAKE_SOURCE_DIR}/support/freertos_support/freertos_hook.c
-#)
 #------------------------------------------------------------
-#----------------------- add cmsis_core ---------------------
+#----------------------- cmsis_core ---------------------
 #------------------------------------------------------------
 add_library(cmsis_core_headers INTERFACE)
 

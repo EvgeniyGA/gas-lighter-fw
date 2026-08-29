@@ -41,18 +41,11 @@ target_compile_definitions(${MAIN_EXECUTABLE} PRIVATE
 
 target_sources(${MAIN_EXECUTABLE} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/modules/FreeRTOS-Plus-CLI/FreeRTOS_CLI.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/support/tinyusb/msc_disk.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/support/tinyusb/usb_descriptors.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src/portable/synopsys/dwc2/dcd_dwc2.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src/portable/synopsys/dwc2/dwc2_common.c
 )
 
 target_include_directories(${MAIN_EXECUTABLE} PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/app/core/inc"
-    "${CMAKE_CURRENT_SOURCE_DIR}/support/tinyusb"
     "${CMAKE_CURRENT_SOURCE_DIR}/modules/FreeRTOS-Plus-CLI"
-    "${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/src"
-    "${CMAKE_CURRENT_SOURCE_DIR}/modules/tinyusb/hw"
     "${CMAKE_BINARY_DIR}/generated"
 )
 
@@ -74,20 +67,21 @@ add_subdirectory(targets)
 add_subdirectory(modules/freertos)
 add_subdirectory(support/freertos_support)
 add_subdirectory(modules/tinyusb/src)
+add_subdirectory(support/tinyusb)
 add_subdirectory(support/fatfs)
 add_subdirectory("${TARGET_CMAKE_DIR}" "${CMAKE_BINARY_DIR}/stm32cubemx_${TARGET}")
 add_subdirectory(app)
 
-tinyusb_target_add(${MAIN_EXECUTABLE})
-
 target_link_libraries(${MAIN_EXECUTABLE} 
-    freertos_support
     freertos_kernel
+    freertos_support
     fatfs_core
     CMSISDSP
     segger_rtt         
     segger_sysview 
     lcd_service
     wave_measure_service
+    tinyusb_support
+    diskio_drivers
     bsp_drivers
 )

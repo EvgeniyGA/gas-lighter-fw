@@ -28,13 +28,13 @@
 //--------------------------------------------------------------------+
 #include "FreeRTOS.h"
 #include "task.h"
-#include "common/tusb_common.h"
-
 
 void vApplicationMallocFailedHook(void)
 {
   taskDISABLE_INTERRUPTS();
-  TU_ASSERT(false, );
+  while(1){
+    __NOP();
+  };
 }
 
 void vApplicationStackOverflowHook(xTaskHandle pxTask, char *pcTaskName)
@@ -43,5 +43,7 @@ void vApplicationStackOverflowHook(xTaskHandle pxTask, char *pcTaskName)
   (void) pcTaskName;
 
   taskDISABLE_INTERRUPTS();
-  TU_ASSERT(false, );
+  while(1){
+    __NOP();
+  };
 }

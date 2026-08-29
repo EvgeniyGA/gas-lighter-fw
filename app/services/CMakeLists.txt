@@ -1,2 +1,3 @@
 add_subdirectory(lcd_printer)
 add_subdirectory(wave_measure)
+add_subdirectory(diskio_drivers)
