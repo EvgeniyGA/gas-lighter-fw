@@ -40,8 +40,6 @@ target_compile_definitions(${MAIN_EXECUTABLE} PRIVATE
 )
 
 target_sources(${MAIN_EXECUTABLE} PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/support/freertos_support/freertos.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/support/freertos_support/freertos_hook.c
     ${CMAKE_CURRENT_SOURCE_DIR}/modules/FreeRTOS-Plus-CLI/FreeRTOS_CLI.c
     ${CMAKE_CURRENT_SOURCE_DIR}/support/tinyusb/msc_disk.c
     ${CMAKE_CURRENT_SOURCE_DIR}/support/tinyusb/usb_descriptors.c
@@ -60,21 +58,6 @@ target_include_directories(${MAIN_EXECUTABLE} PRIVATE
 
 set(TARGET_CMAKE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/cmake/stm32cubemx")
 
-add_library(freertos_config INTERFACE)
-target_include_directories(freertos_config SYSTEM INTERFACE
-    ${CMAKE_SOURCE_DIR}/support/freertos_support
-)
-
-target_link_libraries(freertos_config INTERFACE segger_sysview)
-
-set( FREERTOS_HEAP "4" CACHE STRING "" FORCE)
-if(${TARGET} STREQUAL "stm32f4")
-    set( FREERTOS_PORT GCC_ARM_CM4F)
-elseif(${TARGET} STREQUAL "stm32f7")
-    set( FREERTOS_PORT GCC_ARM_CM7)
-else()
-    message(FATAL_ERROR "Неизвестный TARGET: '${TARGET}'. Добавьте настройку FREERTOS_PORT для этой платформы.")
-endif()
 
 add_library(fatfs_config INTERFACE)
 target_include_directories(fatfs_config SYSTEM INTERFACE
@@ -84,19 +67,21 @@ target_include_directories(fatfs_config SYSTEM INTERFACE
 
 target_link_libraries(fatfs_config INTERFACE freertos_kernel STM32_Drivers)
 
-add_subdirectory(app)
-add_subdirectory(support/fatfs)
+add_subdirectory(modules/CMSIS-DSP)
 add_subdirectory(support/RTT)
 add_subdirectory(support/SystemView)
-add_subdirectory(modules/freertos)
-add_subdirectory(modules/tinyusb/src)
-add_subdirectory(modules/CMSIS-DSP)
-add_subdirectory("${TARGET_CMAKE_DIR}" "${CMAKE_BINARY_DIR}/stm32cubemx_${TARGET}")
 add_subdirectory(targets)
+add_subdirectory(modules/freertos)
+add_subdirectory(support/freertos_support)
+add_subdirectory(modules/tinyusb/src)
+add_subdirectory(support/fatfs)
+add_subdirectory("${TARGET_CMAKE_DIR}" "${CMAKE_BINARY_DIR}/stm32cubemx_${TARGET}")
+add_subdirectory(app)
 
 tinyusb_target_add(${MAIN_EXECUTABLE})
 
 target_link_libraries(${MAIN_EXECUTABLE} 
+    freertos_support
     freertos_kernel
     fatfs_core
     CMSISDSP
@@ -105,5 +90,4 @@ target_link_libraries(${MAIN_EXECUTABLE}
     lcd_service
     wave_measure_service
     bsp_drivers
-    
 )
