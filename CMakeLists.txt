@@ -7,9 +7,6 @@ string(STRIP "${FW_VERSION_RAW}" FW_VERSION)
 
 project(gas-lighter-fw VERSION ${FW_VERSION} LANGUAGES C CXX ASM)
 
-include(version)
-generate_version_header()
-
 if(FOR_QEMU)
     add_compile_definitions(MSC_USE_SRAM)
     add_compile_definitions(PRINTF_UART)
@@ -40,9 +37,8 @@ target_compile_definitions(${MAIN_EXECUTABLE} PRIVATE
     MAIN_TIME_RESOLUTION=${MAIN_TIME_RESOLUTION}
 )
 
-target_include_directories(${MAIN_EXECUTABLE} PRIVATE
-    "${CMAKE_BINARY_DIR}/generated"
-)
+include(cmake/version.cmake)
+generate_version_header()
 
 add_subdirectory(modules/CMSIS-DSP)
 add_subdirectory(targets)
@@ -63,4 +59,5 @@ target_link_libraries(${MAIN_EXECUTABLE}
     tinyusb_support
     diskio_drivers
     bsp_drivers
+    app_version
 )

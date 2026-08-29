@@ -38,4 +38,8 @@ function(generate_version_header)
     set(GIT_HASH ${GIT_HASH} PARENT_SCOPE)
     set(BUILD_DATE ${BUILD_DATE} PARENT_SCOPE)
     set(BUILD_TIME ${BUILD_TIME} PARENT_SCOPE)
+
+    add_library(app_version INTERFACE)
+    target_include_directories(app_version INTERFACE ${CMAKE_BINARY_DIR}/generated)
+    
 endfunction()
