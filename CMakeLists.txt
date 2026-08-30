@@ -64,39 +64,15 @@ target_link_libraries(${MAIN_EXECUTABLE}
     app_version
 )
 
-
-
 find_program(CMAKE_OBJCOPY NAMES arm-none-eabi-objcopy REQUIRED)
 
 add_custom_command(TARGET ${MAIN_EXECUTABLE} POST_BUILD
-    COMMAND ${CMAKE_OBJCOPY} -O ihex 
-        -j .isr_vector 
-        -j .text 
-        -j .rodata 
-        -j .ARM.extab 
-        -j .ARM.exidx 
-        -j .preinit_array 
-        -j .init_array 
-        -j .fini_array 
-        -j .data
-        $<TARGET_FILE:${MAIN_EXECUTABLE}> 
-        ${MAIN_EXECUTABLE}.hex
+    COMMAND ${CMAKE_OBJCOPY} -O ihex $<TARGET_FILE:${MAIN_EXECUTABLE}> ${MAIN_EXECUTABLE}.hex
     BYPRODUCTS ${MAIN_EXECUTABLE}.hex
-    COMMENT "Generating strict Intel HEX file: ${MAIN_EXECUTABLE}.hex"
-    VERBATIM
+    COMMENT "Generating Intel HEX file: ${MAIN_EXECUTABLE}.hex"
 )
-
-if(NOT CMAKE_OBJCOPY)
-    message(WARNING "arm-none-eabi-objcopy not found. HEX/BIN generation disabled.")
-else()
-#    add_custom_command(TARGET ${MAIN_EXECUTABLE} POST_BUILD
-#        COMMAND ${CMAKE_OBJCOPY} -O ihex $<TARGET_FILE:${MAIN_EXECUTABLE}> ${MAIN_EXECUTABLE}.hex
-#        BYPRODUCTS ${MAIN_EXECUTABLE}.hex
-#        COMMENT "Generating Intel HEX file: ${MAIN_EXECUTABLE}.hex"
-#    )
-    add_custom_command(TARGET ${MAIN_EXECUTABLE} POST_BUILD
-        COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${MAIN_EXECUTABLE}> ${MAIN_EXECUTABLE}.bin
-        BYPRODUCTS ${MAIN_EXECUTABLE}.bin
-        COMMENT "Generating binary file: ${MAIN_EXECUTABLE}.bin"
-    )
-endif()
+add_custom_command(TARGET ${MAIN_EXECUTABLE} POST_BUILD
+    COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${MAIN_EXECUTABLE}> ${MAIN_EXECUTABLE}.bin
+    BYPRODUCTS ${MAIN_EXECUTABLE}.bin
+    COMMENT "Generating binary file: ${MAIN_EXECUTABLE}.bin"
+)
