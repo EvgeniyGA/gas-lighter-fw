@@ -168,10 +168,15 @@ static const CLI_Command_Definition_t xColorCommand =
     -1
 };
 
-void CLI_install_commands(void){
-	FreeRTOS_CLIRegisterCommand( &xTasksCommand );
-	FreeRTOS_CLIRegisterCommand( &xEchoCommand );
-	FreeRTOS_CLIRegisterCommand( &xColorCommand );
+BaseType_t CLI_install_commands(void){
+	if(pdPASS == FreeRTOS_CLIRegisterCommand( &xTasksCommand )){
+		if(pdPASS == FreeRTOS_CLIRegisterCommand( &xEchoCommand )){
+			if(pdPASS == FreeRTOS_CLIRegisterCommand( &xColorCommand )){
+				return pdPASS;
+			}
+		}
+	}
+	return pdFAIL;
 }
 
 

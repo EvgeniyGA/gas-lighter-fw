@@ -11,7 +11,6 @@
 #include "fatfs.h"
 #include "FreeRTOS.h"
 #include "FreeRTOS_CLI.h"
-#include "app.h"//todo remove
 
 DIR dir;
 FILINFO Finfo;
@@ -402,7 +401,7 @@ const CLI_Command_Definition_t xRenameCommand =
     2
 };
 
-void CLI_install_commands_fs(void){
+BaseType_t CLI_install_commands_fs(void){
 	FreeRTOS_CLIRegisterCommand(&xMountCommand);
 	FreeRTOS_CLIRegisterCommand(&xUnMountCommand);
 	FreeRTOS_CLIRegisterCommand(&xLsCommand);
@@ -412,4 +411,5 @@ void CLI_install_commands_fs(void){
 	FreeRTOS_CLIRegisterCommand(&xCreateDirCommand);
 	FreeRTOS_CLIRegisterCommand(&xChangeDirCommand);
 	FreeRTOS_CLIRegisterCommand(&xRenameCommand);
+	return pdPASS;
 }

@@ -123,8 +123,6 @@ void cdc_task(void *params) {
 	/* The input and output buffers are declared static to keep them off the stack. */
 	static char pcOutputString[ MAX_OUTPUT_LENGTH ], pcInputString[ MAX_INPUT_LENGTH ];
 
-	CLI_install_commands();
-	CLI_install_commands_fs();
 	cdc_rx_queue = xQueueCreate(8, sizeof(uint32_t));
 	cdc_tx_sem = xSemaphoreCreateBinary();
 

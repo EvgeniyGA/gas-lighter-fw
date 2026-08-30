@@ -8,6 +8,8 @@
 #ifndef INC_CLI_COMMANDS_FS_H_
 #define INC_CLI_COMMANDS_FS_H_
 
-void CLI_install_commands_fs(void);
+#include <FreeRTOS.h>
+
+BaseType_t CLI_install_commands_fs(void);
 
 #endif /* INC_CLI_COMMANDS_FS_H_ */

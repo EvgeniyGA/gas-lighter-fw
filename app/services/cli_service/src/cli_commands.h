@@ -1,6 +1,8 @@
 #ifndef _CLI_COMMANDS_H
 #define _CLI_COMMANDS_H
 
+#include <FreeRTOS.h>
+
 #define CSI					"\x1b["	// Control Sequence Introducer
 //#ifdef ANSI_COLORS
 
@@ -30,6 +32,6 @@
 #define DEFAULT_HELP_COLOR ANSI_COLOR_FOREGROUND_CYAN
 #define DEFAULT_ACCENT_COLOR ANSI_COLOR_FOREGROUND_GREEN
 
-void CLI_install_commands(void);
+BaseType_t CLI_install_commands(void);
 
 #endif

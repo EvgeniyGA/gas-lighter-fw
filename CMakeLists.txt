@@ -50,6 +50,7 @@ target_link_libraries(${MAIN_EXECUTABLE}
     freertos_kernel
     freertos_support
     freertos_cli_core
+    cli_service
     fatfs_core
     CMSISDSP
     segger_rtt         
