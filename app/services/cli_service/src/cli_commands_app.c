@@ -30,7 +30,7 @@ const CLI_Command_Definition_t xSetADC_PeriodDividerCommand =
     "set_div",
 	"set_div: Set Out Freqency Divider\r\n",
 	prvSetADC_PeriodDivider,
-    0
+    1
 };
 
 BaseType_t CLI_install_commands_app(void){
