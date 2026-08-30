@@ -4,6 +4,7 @@
  *  Created on: Aug 11, 2026
  *      Author: evgeny
  */
+#include <stdio.h>
 #include "adc_driver.h"
 #include "pulse_measure.h"
 #include "FreeRTOS.h"
@@ -27,7 +28,7 @@ typedef enum{
 #endif
 
 #define PULSE_MEASURE_ADC_DMA_BUFFER_SIZE 	(Pulse_Measure_ADC_NumbOfCnannels * PULSE_MEASURE_ADC_DMA_STEPS * 2)
-#define PULSE_MEASURE_TASK_STACK_SIZE	(configMINIMAL_STACK_SIZE*2)
+#define PULSE_MEASURE_TASK_STACK_SIZE		(configMINIMAL_STACK_SIZE*2)
 #define PULSE_MEASURE_INDENT_CYCLES			(100)
 
 uint16_t pulse_measure_adc_dma_buffer[PULSE_MEASURE_ADC_DMA_BUFFER_SIZE];

@@ -57,6 +57,7 @@ target_link_libraries(${MAIN_EXECUTABLE}
     lcd_service
     wave_measure_service
     tinyusb_support
+    usb_service
     diskio_drivers
     bsp_drivers
     app_version
