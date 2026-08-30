@@ -2,6 +2,7 @@ add_library(cli_service STATIC
     src/cli_service.c
     src/cli_commands.c 
     src/cli_commands_fs.c
+    src/cli_commands_app.c
 )
 
 target_include_directories(cli_service PUBLIC 

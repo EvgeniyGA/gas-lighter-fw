@@ -11,6 +11,7 @@
 #include "fatfs.h"
 #include "FreeRTOS.h"
 #include "FreeRTOS_CLI.h"
+#include "cli_commands_fs.h"
 
 DIR dir;
 FILINFO Finfo;
