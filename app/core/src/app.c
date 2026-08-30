@@ -76,9 +76,8 @@ void setup(void){
 		printf("FW Hash: %s\r\n", FW_GIT_HASH);
 	}
 
-  lcd_printer_init();
-  //lcd_print(0, 1, "asdf");
-  lcd_print(0, 1, "Version: %s", FW_VERSION_STR);
+  	lcd_printer_init();
+  	lcd_print(0, 1, "Version: %s", FW_VERSION_STR);
 
 	wave_measure_config.main_freqency = MAIN_FREQENCY_HZ;
 	wave_measure_config.time_resolution = MAIN_TIME_RESOLUTION;

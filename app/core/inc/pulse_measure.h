@@ -25,5 +25,6 @@ typedef struct{
 
 void pulse_measure_adc_callback(uint8_t offset);
 void pulse_measure_init(pulseMeasureConfig_s* pulse_measure_config);
+uint8_t puse_measure_set_divider(uint32_t divider);
 
 #endif /* INC_PULSE_MEASURE_C_ */

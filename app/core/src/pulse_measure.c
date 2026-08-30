@@ -35,6 +35,7 @@ uint16_t pulse_measure_adc_dma_buffer[PULSE_MEASURE_ADC_DMA_BUFFER_SIZE];
 
 static TaskHandle_t pulse_measure_task_handle = NULL;
 static StaticTask_t pulse_measure_task_def;
+static uint32_t measure_divider = 1;
 
 void pulse_measure_adc_callback(uint8_t offset){
 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
@@ -51,10 +52,10 @@ void pulse_measure_task(void* param){
 		if (xTaskNotifyWait(0, ULONG_MAX, &offset, portMAX_DELAY) == pdPASS)
 		{
 			memset(result, 0x00, sizeof(result));
-			uint32_t adc_samples_per_ch = pulse_measure_config->buf_adc_in_size /(2 * Pulse_Measure_ADC_NumbOfCnannels);
+			uint32_t adc_samples_per_ch = pulse_measure_config->buf_adc_in_size / measure_divider / (2 * Pulse_Measure_ADC_NumbOfCnannels);
 			offset = offset*pulse_measure_config->buf_adc_in_size/2;
 			for (size_t i = PULSE_MEASURE_INDENT_CYCLES*Pulse_Measure_ADC_NumbOfCnannels; 
-						i < (pulse_measure_config->buf_adc_in_size/2); 
+						i < (pulse_measure_config->buf_adc_in_size/(2 * measure_divider)); 
 						i += Pulse_Measure_ADC_NumbOfCnannels){
 				for(size_t j = 0; j < Pulse_Measure_ADC_NumbOfCnannels; j++){
 					result[j] += pulse_measure_config->buf_adc_in[i + j + offset];
@@ -86,8 +87,18 @@ void pulse_measure_init(pulseMeasureConfig_s* pulse_measure_config){
 	pulse_measure_config->buf_adc_in = pulse_measure_adc_dma_buffer;
 	pulse_measure_config->buf_adc_in_size = sizeof(pulse_measure_adc_dma_buffer)/sizeof(pulse_measure_adc_dma_buffer[0]);
 
-    adc_driver_start(ADC_NUM_1, pulse_measure_adc_dma_buffer, PULSE_MEASURE_ADC_DMA_BUFFER_SIZE);
+    adc_driver_start(ADC_NUM_1, pulse_measure_adc_dma_buffer, PULSE_MEASURE_ADC_DMA_BUFFER_SIZE/measure_divider);
 
 	pulse_measure_task_handle = xTaskCreateStatic(pulse_measure_task, "pulse_measure", PULSE_MEASURE_TASK_STACK_SIZE,
 			pulse_measure_config, configMAX_PRIORITIES - 3 , pulse_measure_stack, &pulse_measure_task_def);
+}
+
+uint8_t puse_measure_set_divider(uint32_t divider){
+	if ( (PULSE_MEASURE_ADC_DMA_BUFFER_SIZE/divider) % (Pulse_Measure_ADC_NumbOfCnannels * 2) != 0){
+		return -1;
+	}
+	measure_divider = divider;
+	adc_driver_stop(ADC_NUM_1);
+	adc_driver_start(ADC_NUM_1, pulse_measure_adc_dma_buffer, PULSE_MEASURE_ADC_DMA_BUFFER_SIZE/measure_divider);
+	return 0;
 }

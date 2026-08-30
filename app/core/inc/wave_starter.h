@@ -20,6 +20,7 @@ extern "C" {
 
 int wave_starter_init(waveGenConfig_s* config);
 int wave_starter_run(waveGenConfig_s* config);
+uint32_t wave_starter_get_divider(void);
 
 #ifdef __cplusplus
 }

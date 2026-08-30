@@ -8,6 +8,7 @@
 #include "dac_driver.h"
 
 uint16_t dac_dma_buff[WAVE_TIME_RESOLUTION];
+uint32_t timer_divider = 1;
 
 int wave_starter_init(waveGenConfig_s* config){
 	config->amplitude = 1.3;
@@ -27,3 +28,12 @@ int wave_starter_run(waveGenConfig_s* config){
 	return -1;
 }
 
+int wave_starter_set_divider(uint32_t divider){
+	timer_divider = divider;
+	dac_timer_set_prescaler(divider*2 - 1);
+	return 0;
+}
+
+uint32_t wave_starter_get_divider(void){
+	return timer_divider;
+}

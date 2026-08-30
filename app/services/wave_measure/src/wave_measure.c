@@ -133,7 +133,7 @@ uint8_t fft_buffer(waveMeasureConfig_s* wave_measure_config, uint8_t channel, ui
 	result->main_phase_deg = fftBufPhases[main_bin]*180.0f / M_PI;
 	int neibour = (main_bin > 1) ? (main_bin - 1) : (main_bin + 1);
 	if(fftBufOut[neibour]*100 < fftBufOut[main_bin]){
-		result->main_freq_Hz = main_freq;
+		result->main_freq_Hz = main_freq / wave_starter_get_divider();
 		return 0;
 	}
 	else{

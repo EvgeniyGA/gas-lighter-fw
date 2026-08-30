@@ -17,6 +17,10 @@ int dac_start(uint16_t* buf, uint32_t size, uint16_t tim_arr){
 	return -1;
 }
 
+void dac_timer_set_prescaler(uint32_t presc){
+	__HAL_TIM_SET_PRESCALER(&htim8, presc);
+}
+
 //inline void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 //  if (htim->Instance == htim8.Instance) {
 //  }
