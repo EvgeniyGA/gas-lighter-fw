@@ -10,7 +10,6 @@
 
 #include <stdint.h>
 #include "wave_gen.h"
-#include "app.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -9,7 +9,6 @@
 #define INC_PULSE_MEASURE_C_
 
 #include <stdint.h>
-#include "app.h"
 
 typedef enum {
 	PULSE_MEASURE_OFFSET_ZERO = 0,

@@ -69,11 +69,11 @@ void pulse_measure_task(void* param){
 			}
 			else{
 				HAL_GPIO_WritePin (en_led2a_GPIO_Port, en_led2a_Pin, GPIO_PIN_RESET);
-				printf("result %04d:%04d:%04d:%04d\n\r", result[0], result[1], result[2], result[3]);
-				lcd_print(0, 0, "%04d:%04d:%04d:%04d\n\r", result[0], result[1], result[2], result[3]);
-				lcd_print(1,  0, "%03d.%05d", (uint32_t)(result[0] / result[1]), 
+				printf("result %04ld:%04ld:%04ld:%04ld\n\r", result[0], result[1], result[2], result[3]);
+				lcd_print(0, 0, "%04ld:%04ld:%04ld:%04ld\n\r", result[0], result[1], result[2], result[3]);
+				lcd_print(1,  0, "%03ld.%05ld", (uint32_t)(result[0] / result[1]), 
 												((uint32_t)(result[0] % result[1])*100000)/result[1]);
-				lcd_print(1, 10, "%03d.%05d", (uint32_t)(result[2] / result[3]), 
+				lcd_print(1, 10, "%03ld.%05ld", (uint32_t)(result[2] / result[3]), 
 												((uint32_t)(result[2] % result[3])*100000)/result[3]);
 			}
 		}

@@ -56,7 +56,9 @@ target_link_libraries(${MAIN_EXECUTABLE}
     segger_rtt         
     segger_sysview 
     lcd_service
+    wave_starter_service
     wave_measure_service
+    pulse_measure_service
     tinyusb_support
     usb_service
     diskio_drivers
