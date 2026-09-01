@@ -18,6 +18,8 @@
 #include "queue.h"
 #include "lcd_printer.h"
 #include "cli_service.h"
+#include "FreeRTOS.h"
+#include "queue.h"
 
 #define STORAGE_STACK_SIZE (configMINIMAL_STACK_SIZE)
 #define BLINKY_STACK_SIZE   configMINIMAL_STACK_SIZE
@@ -39,16 +41,9 @@ enum {
 
 static uint32_t blink_interval_ms = BLINK_NOT_MOUNTED;
 
-#define PRINTER_MESSAGE_LEN   36
-typedef struct{
-  uint8_t* data;
-  uint32_t dataLen;
-}printerMessage_t;
-
-QueueHandle_t print_queue;
-
 void led_blinking_task(void* param);
 void print_task(void* param);
+void data_manager_task(void* param);
 
 void init(void){
 #ifndef FOR_QEMU
@@ -64,6 +59,14 @@ waveGenConfig_s 	wave_gen_config;
 waveMeasureConfig_s wave_measure_config;
 pulseMeasureConfig_s pulse_measure_config;
 
+void pulse_measure_data_ready_callback(pulse_measure_msg_t* data){
+	printf("result %04ld:%04ld:%04ld:%04ld\n\r", data->result[0], data->result[1], data->result[2], data->result[3]);
+	lcd_print(0, 0, "%04ld:%04ld:%04ld:%04ld\n\r", data->result[0], data->result[1], data->result[2], data->result[3]);
+	lcd_print(1,  0, "%03ld.%05ld", (uint32_t)(data->result[0] / data->result[1]), 
+									((uint32_t)(data->result[0] % data->result[1])*100000)/data->result[1]);
+	lcd_print(1, 10, "%03ld.%05ld", (uint32_t)(data->result[2] / data->result[3]), 
+									((uint32_t)(data->result[2] % data->result[3])*100000)/data->result[3]);
+}
 
 void setup(void){
 	printf("Firmware version: %s\n", FW_VERSION_STR);
@@ -89,6 +92,7 @@ void setup(void){
 	wave_starter_init(&wave_gen_config);
 	wave_starter_run(&wave_gen_config);
 
+	pulse_measure_config.data_ready = pulse_measure_data_ready_callback;
 	pulse_measure_init(&pulse_measure_config);
 
 	FATFS_Init();

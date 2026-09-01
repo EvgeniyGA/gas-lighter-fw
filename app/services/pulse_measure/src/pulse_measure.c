@@ -13,14 +13,6 @@
 #include "string.h"
 #include "gpio.h"//todo
 
-typedef enum{
-	Pulse_Measure_ADC_Channel_1 = 0,
-	Pulse_Measure_ADC_Channel_2,
-    Pulse_Measure_ADC_Channel_3,
-    Pulse_Measure_ADC_Channel_4,
-	Pulse_Measure_ADC_NumbOfCnannels
-}pulse_measure_channels_e;
-
 #ifndef FOR_QEMU
 #define PULSE_MEASURE_ADC_DMA_STEPS			(2048)
 #else
@@ -47,6 +39,7 @@ void pulse_measure_task(void* param){
 	pulseMeasureConfig_s* pulse_measure_config = (pulseMeasureConfig_s*)param;
 	uint32_t offset;
 	uint32_t result[Pulse_Measure_ADC_NumbOfCnannels] = {0};
+	pulse_measure_msg_t data_msg;
 	vTaskDelay(5000 / portTICK_PERIOD_MS);
 	while(1){
 		if (xTaskNotifyWait(0, ULONG_MAX, &offset, portMAX_DELAY) == pdPASS)
@@ -69,12 +62,16 @@ void pulse_measure_task(void* param){
 			}
 			else{
 				HAL_GPIO_WritePin (en_led2a_GPIO_Port, en_led2a_Pin, GPIO_PIN_RESET);
-				printf("result %04ld:%04ld:%04ld:%04ld\n\r", result[0], result[1], result[2], result[3]);
-				lcd_print(0, 0, "%04ld:%04ld:%04ld:%04ld\n\r", result[0], result[1], result[2], result[3]);
-				lcd_print(1,  0, "%03ld.%05ld", (uint32_t)(result[0] / result[1]), 
-												((uint32_t)(result[0] % result[1])*100000)/result[1]);
-				lcd_print(1, 10, "%03ld.%05ld", (uint32_t)(result[2] / result[3]), 
-												((uint32_t)(result[2] % result[3])*100000)/result[3]);
+				for(int i = 0; i < Pulse_Measure_ADC_NumbOfCnannels; i++){
+					data_msg.result[i] = result[i];
+				}
+				pulse_measure_config->data_ready(&data_msg);
+				//printf("result %04ld:%04ld:%04ld:%04ld\n\r", result[0], result[1], result[2], result[3]);
+				//lcd_print(0, 0, "%04ld:%04ld:%04ld:%04ld\n\r", result[0], result[1], result[2], result[3]);
+				//lcd_print(1,  0, "%03ld.%05ld", (uint32_t)(result[0] / result[1]), 
+				//								((uint32_t)(result[0] % result[1])*100000)/result[1]);
+				//lcd_print(1, 10, "%03ld.%05ld", (uint32_t)(result[2] / result[3]), 
+			//									((uint32_t)(result[2] % result[3])*100000)/result[3]);
 			}
 		}
 	}
