@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include "FreeRTOS.h"
 #include "task.h"
+#include "adc_driver.h"
 
 #define VREFINT_CAL_VREF_MV                   ( 3300UL)
 #define VREFINT_CAL_ADDR_MV                   ((uint16_t*) (0x1FFF7A2AU))
@@ -95,6 +96,7 @@ int wave_measure_init(waveMeasureConfig_s* wave_measure_config){
 			wave_measure_config->time_resolution/wave_measure_config->numb_of_channels;
 
 	arm_rfft_fast_init_f32(&fftHandler, FFT_BUF_SIZE );
+	adc_driver_register_callback(ADC_NUM_2, wave_measure_adc_callback);
 	adc_driver_start(wave_measure_config->adc_num, adc_dma_buffer, ADC_DMA_BUFFER_SIZE);
 	wave_measure_task_handle = xTaskCreateStatic(wave_measure_task, "wave_measure", WAVE_MEASURE_TASK_STACK_SIZE,
 			wave_measure_config, configMAX_PRIORITIES - 3 , wave_measure_stack, &wave_measure_task_def);

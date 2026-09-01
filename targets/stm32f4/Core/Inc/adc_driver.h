@@ -16,6 +16,14 @@ typedef enum{
     ADC_NUM_3
 }adc_numbers_e;
 
+typedef enum {
+	ADC_DATA_OFFSET_ZERO = 0,
+	ADC_DATA_OFFSET_HALF
+}adc_data_offset_e;
+
+typedef void(*data_ready_callback_adc_t)(uint8_t offset);
+
+int8_t adc_driver_register_callback(uint8_t adc_num, data_ready_callback_adc_t callback);
 uint8_t adc_driver_start(uint8_t adc_num, uint16_t* buff, uint16_t size);
 uint8_t adc_driver_stop(uint8_t adc_num);
 

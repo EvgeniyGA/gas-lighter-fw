@@ -21,4 +21,5 @@ target_link_libraries(wave_measure_service
     CMSISDSP
     cmsis_core_headers
     m
+    bsp_drivers
 )

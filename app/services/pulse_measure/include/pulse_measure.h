@@ -11,7 +11,6 @@
 #include <stdint.h>
 #include "FreeRTOS.h"
 #include "queue.h"
-//#include "pulse_measure_events.h"
 
 typedef enum{
 	Pulse_Measure_ADC_Channel_1 = 0,
@@ -20,11 +19,6 @@ typedef enum{
     Pulse_Measure_ADC_Channel_4,
 	Pulse_Measure_ADC_NumbOfCnannels
 }pulse_measure_channels_e;
-
-typedef enum {
-	PULSE_MEASURE_OFFSET_ZERO = 0,
-	PULSE_MEASURE_OFFSET_HALF
-}pulse_measure_offset_e;
 
 typedef struct{
     uint32_t result[Pulse_Measure_ADC_NumbOfCnannels];
@@ -36,9 +30,7 @@ typedef struct{
 	uint8_t adc_num;
 	uint16_t* buf_adc_in;
 	uint16_t buf_adc_in_size;
-	uint16_t real_measure_count;//todo
 	pulse_measure_data_ready_callback_t data_ready;
-
 }pulseMeasureConfig_s;
 
 void pulse_measure_adc_callback(uint8_t offset);

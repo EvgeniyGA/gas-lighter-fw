@@ -22,11 +22,6 @@ extern "C" {
 #define ADC_DMA_STEPS			(MAIN_TIME_RESOLUTION)
 #define ADC_DMA_CYCLES			(32)//(64)
 
-typedef enum {
-	WAVE_MEASURE_OFFSET_ZERO = 0,
-	WAVE_MEASURE_OFFSET_HALF
-}wave_measure_offset_e;
-
 typedef struct{
 	uint8_t adc_num;
 	uint16_t* buf_adc_in;

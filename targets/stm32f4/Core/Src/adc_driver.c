@@ -6,13 +6,19 @@
  */
 #include "adc_driver.h"
 #include <stdint.h>
-
 #include "adc.h"
 #include "tim.h"
-//#include "wave_measure.h"
 
-extern void pulse_measure_adc_callback(uint8_t offset);
-extern void wave_measure_adc_callback(uint8_t offset);
+data_ready_callback_adc_t adc1_ready, adc2_ready;
+
+int8_t adc_driver_register_callback(uint8_t adc_num, data_ready_callback_adc_t callback){
+	switch(adc_num){
+		case ADC_NUM_1: adc1_ready = callback; return 0;
+		case ADC_NUM_2: adc2_ready = callback; return 0;
+		default: break;
+	}
+	return -1;
+}
 
 uint8_t adc_driver_start(uint8_t adc_num, uint16_t* buff, uint16_t size){
 	if(!size){
@@ -49,18 +55,18 @@ uint8_t adc_driver_stop(uint8_t adc_num){
 
 inline void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
 	if(hadc->Instance == ADC1){
-		pulse_measure_adc_callback (1);//todo
+		adc1_ready(ADC_DATA_OFFSET_HALF);
 	}
 	else if(hadc->Instance == ADC2){
-		wave_measure_adc_callback (1);//todo
+		adc2_ready(ADC_DATA_OFFSET_HALF);
 	}
 }
 
 inline void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef *hadc){
 	if(hadc->Instance == ADC1){
-		pulse_measure_adc_callback (0);//todo
+		adc1_ready(ADC_DATA_OFFSET_ZERO);
 	}
 	else if(hadc->Instance == ADC2){
-		wave_measure_adc_callback (0);//todo
+		adc2_ready(ADC_DATA_OFFSET_ZERO);
 	}
 }

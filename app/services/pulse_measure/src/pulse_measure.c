@@ -40,6 +40,7 @@ void pulse_measure_task(void* param){
 	uint32_t offset;
 	uint32_t result[Pulse_Measure_ADC_NumbOfCnannels] = {0};
 	pulse_measure_msg_t data_msg;
+	adc_driver_register_callback(ADC_NUM_1, pulse_measure_adc_callback);
 	vTaskDelay(5000 / portTICK_PERIOD_MS);
 	while(1){
 		if (xTaskNotifyWait(0, ULONG_MAX, &offset, portMAX_DELAY) == pdPASS)
