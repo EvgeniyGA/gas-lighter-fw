@@ -23,18 +23,7 @@ typedef enum{
     WAVE_MEASURE_ADC_NUM_3
 }wave_measure_adc_numbers_e;
 
-typedef enum{
-	ADC_Channel_1,
-	ADC_Channel_2,
-	ADC_NumbOfCnannels
-}wave_measure_channels_e;
-
-typedef struct{
-	float32_t main_freq_Hz;
-	float32_t main_phase_deg;
-}waveMeasureFFT_result;
-
-#define ADC_DMA_BUFFER_SIZE 	(ADC_NumbOfCnannels * ADC_DMA_STEPS * ADC_DMA_CYCLES * 2)
+#define ADC_DMA_BUFFER_SIZE 	(WAVE_MEASURE_NumbOfCnannels * ADC_DMA_STEPS * ADC_DMA_CYCLES * 2)
 #define FFT_BUF_SIZE			(ADC_DMA_STEPS * ADC_DMA_CYCLES)
 
 #define WAVE_MEASURE_TASK_STACK_SIZE	(configMINIMAL_STACK_SIZE*2)
@@ -47,7 +36,7 @@ arm_rfft_fast_instance_f32 fftHandler;
 static TaskHandle_t wave_measure_task_handle = NULL;
 static StaticTask_t wave_measure_task_def;
 
-static uint8_t fft_buffer(waveMeasureConfig_s* wave_measure_config, uint8_t channel, uint8_t offset, waveMeasureFFT_result* result);
+static uint8_t fft_buffer(waveMeasureConfig_s* wave_measure_config, uint8_t channel, uint8_t offset, waveMeasureFFT_result_t* result);
 
 extern uint8_t adc_driver_start(uint8_t adc_num, uint16_t* buff, uint16_t size);//todo
 
@@ -61,24 +50,26 @@ void wave_measure_task(void* param);
 
 void wave_measure_task(void* param){
 	waveMeasureConfig_s* wave_measure_config = (waveMeasureConfig_s*)param;
-	waveMeasureFFT_result result_ch1, result_ch2;
+	waveMeasureFFT_result_t result[2]; //todo result_ch1, result_ch2;
 	uint32_t offset;
 
 	while(1){
 		if (xTaskNotifyWait(0, ULONG_MAX, &offset, portMAX_DELAY) == pdPASS)
 		{
-			fft_buffer(wave_measure_config, ADC_Channel_1, offset, &result_ch1);
-			fft_buffer(wave_measure_config, ADC_Channel_2, offset, &result_ch2);
+			fft_buffer(wave_measure_config, WAVE_MEASURE_Channel_1, offset, &result[WAVE_MEASURE_Channel_1]);
+			fft_buffer(wave_measure_config, WAVE_MEASURE_Channel_2, offset, &result[WAVE_MEASURE_Channel_2]);
 
-			lcd_print(2, 0, "%5d Hz, %5d Hz", (int)result_ch1.main_freq_Hz, (int)result_ch2.main_freq_Hz);
-			if(result_ch1.main_freq_Hz == result_ch2.main_freq_Hz){
-				float diff = result_ch1.main_phase_deg - result_ch2.main_phase_deg;
-				int diff_x100 = (int)(diff * 100);
-				lcd_print(3, 0, "dPhase: %d.%02d deg", diff_x100/100, abs(diff_x100%100));//todo
-			}
-			else{
-				lcd_print(2, 0, "                    ");
-			}
+			wave_measure_config->data_ready(result);
+
+			// lcd_print(2, 0, "%5d Hz, %5d Hz", (int)result_ch1.main_freq_Hz, (int)result_ch2.main_freq_Hz);
+			// if(result_ch1.main_freq_Hz == result_ch2.main_freq_Hz){
+			// 	float diff = result_ch1.main_phase_deg - result_ch2.main_phase_deg;
+			// 	int diff_x100 = (int)(diff * 100);
+			// 	lcd_print(3, 0, "dPhase: %d.%02d deg", diff_x100/100, abs(diff_x100%100));//todo
+			// }
+			// else{
+			// 	lcd_print(2, 0, "                    ");
+			// }
 		}
 		vTaskDelay(1000);
 	}
@@ -90,7 +81,7 @@ int wave_measure_init(waveMeasureConfig_s* wave_measure_config){
 	wave_measure_config->buf_adc_in = adc_dma_buffer;
 	wave_measure_config->buf_adc_in_size = sizeof(adc_dma_buffer)/sizeof(adc_dma_buffer[0]);
 	wave_measure_config->adc_num = WAVE_MEASURE_ADC_NUM_2;
-	wave_measure_config->numb_of_channels = ADC_NumbOfCnannels;
+	wave_measure_config->numb_of_channels = WAVE_MEASURE_NumbOfCnannels;
 	//wave_measure_config->adc_callback = wave_measure_adc_callback;
 	wave_measure_config->adc_sample_rate = wave_measure_config->main_freqency*
 			wave_measure_config->time_resolution/wave_measure_config->numb_of_channels;
@@ -104,11 +95,11 @@ int wave_measure_init(waveMeasureConfig_s* wave_measure_config){
 }
 
 
-uint8_t fft_buffer(waveMeasureConfig_s* wave_measure_config, uint8_t channel, uint8_t offset, waveMeasureFFT_result* result){
+uint8_t fft_buffer(waveMeasureConfig_s* wave_measure_config, uint8_t channel, uint8_t offset, waveMeasureFFT_result_t* result){
 	float32_t freq = 0, main_freq = 0, tmp_max = 0;
 	uint16_t main_bin = 0;
 	uint16_t offset_ = offset*wave_measure_config->buf_adc_in_size/2;
-	if(channel >= ADC_NumbOfCnannels){
+	if(channel >= WAVE_MEASURE_NumbOfCnannels){
 		return -1;
 	}
 	for(int i = 0; i < FFT_BUF_SIZE; i++){
