@@ -10,7 +10,7 @@
 #define LCD_PRINTER_BUF_LEN     (10)
 
 typedef struct{
-    uint8_t data[LCD_MAX_LEN];
+    char data[LCD_MAX_LEN];
     uint8_t data_len;
     uint8_t line;
     uint8_t offset;
