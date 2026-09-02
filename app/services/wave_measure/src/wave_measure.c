@@ -82,7 +82,6 @@ int wave_measure_init(waveMeasureConfig_s* wave_measure_config){
 	wave_measure_config->buf_adc_in_size = sizeof(adc_dma_buffer)/sizeof(adc_dma_buffer[0]);
 	wave_measure_config->adc_num = WAVE_MEASURE_ADC_NUM_2;
 	wave_measure_config->numb_of_channels = WAVE_MEASURE_NumbOfCnannels;
-	//wave_measure_config->adc_callback = wave_measure_adc_callback;
 	wave_measure_config->adc_sample_rate = wave_measure_config->main_freqency*
 			wave_measure_config->time_resolution/wave_measure_config->numb_of_channels;
 
@@ -135,25 +134,3 @@ uint8_t fft_buffer(waveMeasureConfig_s* wave_measure_config, uint8_t channel, ui
 	}
 }
 
-/*double process_buffer(uint16_t *buffer, uint8_t numb_of_channels) {
-	double phot1 = 0.0;
-	double phot2 = 0.0;
-    uint32_t phot1_sum = 0, phot2_sum = 0;
-    uint16_t phot1_avg, phot2_avg;
-
-    for (int i = 0; i < ADC_DMA_SAMPLES; ++i) {
-    	phot1_sum += buffer[0];
-    	phot2_sum += buffer[1];
-        buffer += 2;
-    }
-
-    phot1_avg = phot1_sum / ADC_DMA_SAMPLES;
-    phot2_avg = phot2_sum / ADC_DMA_SAMPLES;
-
-    phot1 = (float) VREFINT_CAL_VREF_MV * phot1_avg / ADC_RESOLUTION / 1000;
-    phot2 = (float) VREFINT_CAL_VREF_MV * phot2_avg / ADC_RESOLUTION / 1000;
-
-    usbTxBufLen2 = sprintf((char*)usbTxBuf2,"ADC: %1u\r\n",  HAL_GetTick());
-    CDC_Transmit_FS(usbTxBuf2, usbTxBufLen2);
-    return phot2;
-}*/
