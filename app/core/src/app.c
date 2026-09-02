@@ -60,12 +60,33 @@ waveMeasureConfig_s wave_measure_config;
 pulseMeasureConfig_s pulse_measure_config;
 
 void pulse_measure_data_ready_callback(pulse_measure_msg_t* data){
-	printf("result %04ld:%04ld:%04ld:%04ld\n\r", data->result[0], data->result[1], data->result[2], data->result[3]);
-	lcd_print(0, 0, "%04ld:%04ld:%04ld:%04ld\n\r", data->result[0], data->result[1], data->result[2], data->result[3]);
-	lcd_print(1,  0, "%03ld.%05ld", (uint32_t)(data->result[0] / data->result[1]), 
-									((uint32_t)(data->result[0] % data->result[1])*100000)/data->result[1]);
-	lcd_print(1, 10, "%03ld.%05ld", (uint32_t)(data->result[2] / data->result[3]), 
-									((uint32_t)(data->result[2] % data->result[3])*100000)/data->result[3]);
+	printf("result %04ld:%04ld:%04ld:%04ld\n\r", 
+		data->result[Pulse_Measure_ADC_Channel_1], 
+		data->result[Pulse_Measure_ADC_Channel_2], 
+		data->result[Pulse_Measure_ADC_Channel_3], 
+		data->result[Pulse_Measure_ADC_Channel_4]);
+	lcd_print(LCD_PRINTER_LINE1, LCD_PRINTER_OFFSET_ZERO, "%04ld:%04ld %04ld:%04ld\n\r", 
+		data->result[Pulse_Measure_ADC_Channel_1], data->result[Pulse_Measure_ADC_Channel_2], 
+		data->result[Pulse_Measure_ADC_Channel_3], data->result[Pulse_Measure_ADC_Channel_4]);
+	lcd_print(LCD_PRINTER_LINE2,  LCD_PRINTER_OFFSET_ZERO, "%03ld.%05ld", 
+		(uint32_t)(data->result[Pulse_Measure_ADC_Channel_1] / data->result[Pulse_Measure_ADC_Channel_2]), //todo: to float
+		((uint32_t)(data->result[Pulse_Measure_ADC_Channel_1] % data->result[Pulse_Measure_ADC_Channel_2])*100000)/data->result[Pulse_Measure_ADC_Channel_2]);
+	lcd_print(LCD_PRINTER_LINE2, LCD_PRINTER_OFFSET_HALF, "%03ld.%05ld", 
+		(uint32_t)(data->result[Pulse_Measure_ADC_Channel_3] / data->result[Pulse_Measure_ADC_Channel_4]), 
+		((uint32_t)(data->result[Pulse_Measure_ADC_Channel_3] % data->result[Pulse_Measure_ADC_Channel_4])*100000)/data->result[Pulse_Measure_ADC_Channel_4]);
+}
+
+void wave_measure_data_ready_callback(waveMeasureFFT_result_t* result){
+	lcd_print(LCD_PRINTER_LINE3, 0, "%5d Hz, %5d Hz", 	(int)(result[WAVE_MEASURE_Channel_1].main_freq_Hz), 
+										(int)(result[WAVE_MEASURE_Channel_2].main_freq_Hz));
+	if(result[WAVE_MEASURE_Channel_1].main_freq_Hz == result[WAVE_MEASURE_Channel_2].main_freq_Hz){
+		float diff = result[WAVE_MEASURE_Channel_1].main_phase_deg - result[WAVE_MEASURE_Channel_2].main_phase_deg;
+		int diff_x100 = (int)(diff * 100);
+		lcd_print(LCD_PRINTER_LINE4, LCD_PRINTER_OFFSET_ZERO, "dPhase: %d.%02d deg", diff_x100/100, abs(diff_x100%100));//todo
+	}
+	else{
+		lcd_print(LCD_PRINTER_LINE4, LCD_PRINTER_OFFSET_ZERO, "                    ");
+	}
 }
 
 void setup(void){
@@ -80,10 +101,11 @@ void setup(void){
 	}
 
   	lcd_printer_init();
-  	lcd_print(0, 1, "Version: %s", FW_VERSION_STR);
+  	lcd_print(LCD_PRINTER_LINE1, LCD_PRINTER_OFFSET_ZERO + 1, "Version: %s", FW_VERSION_STR);
 
 	wave_measure_config.main_freqency = MAIN_FREQENCY_HZ;
 	wave_measure_config.time_resolution = MAIN_TIME_RESOLUTION;
+	wave_measure_config.data_ready = wave_measure_data_ready_callback;
 	wave_measure_init(&wave_measure_config);
 
 	wave_gen_config.freq = MAIN_FREQENCY_HZ;
