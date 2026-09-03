@@ -17,8 +17,8 @@ typedef enum{
 }adc_numbers_e;
 
 typedef enum {
-	ADC_DATA_OFFSET_ZERO = 0,
-	ADC_DATA_OFFSET_HALF
+	ADC_DATA_READY_HALF = 0,
+	ADC_DATA_READY_FULL
 }adc_data_offset_e;
 
 typedef void(*data_ready_callback_adc_t)(uint8_t offset);

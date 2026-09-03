@@ -43,13 +43,13 @@ typedef struct{
 }waveMeasureConfig_s;
 
 typedef enum{
-	WAVE_MEASURE_Channel_1,
+	WAVE_MEASURE_Channel_1 = 0,
 	WAVE_MEASURE_Channel_2,
 	WAVE_MEASURE_NumbOfCnannels
 }wave_measure_channels_e;
 
 double process_buffer(uint16_t *buffer, uint8_t numb_of_channels);
-void wave_measure_adc_callback(uint8_t offset);
+void wave_measure_adc_callback(uint8_t);
 int wave_measure_init(waveMeasureConfig_s* wave_measure_config);
 
 #ifdef __cplusplus

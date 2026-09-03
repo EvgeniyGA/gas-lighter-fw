@@ -29,25 +29,26 @@ static TaskHandle_t pulse_measure_task_handle = NULL;
 static StaticTask_t pulse_measure_task_def;
 static uint32_t measure_divider = 1;
 
-void pulse_measure_adc_callback(uint8_t offset){
+void pulse_measure_adc_callback(uint8_t event){
 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-	xTaskNotifyFromISR(pulse_measure_task_handle, offset, eSetValueWithOverwrite, &xHigherPriorityTaskWoken);
+	xTaskNotifyFromISR(pulse_measure_task_handle, event, eSetValueWithOverwrite, &xHigherPriorityTaskWoken);
 	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
 void pulse_measure_task(void* param){
 	pulseMeasureConfig_s* pulse_measure_config = (pulseMeasureConfig_s*)param;
-	uint32_t offset;
-	uint32_t result[Pulse_Measure_ADC_NumbOfCnannels] = {0};
+	uint16_t offset;
+	uint32_t event, result[Pulse_Measure_ADC_NumbOfCnannels] = {0};
 	pulse_measure_msg_t data_msg;
 	adc_driver_register_callback(ADC_NUM_1, pulse_measure_adc_callback);
 	vTaskDelay(5000 / portTICK_PERIOD_MS);
 	while(1){
-		if (xTaskNotifyWait(0, ULONG_MAX, &offset, portMAX_DELAY) == pdPASS)
+		if (xTaskNotifyWait(0, ULONG_MAX, &event, portMAX_DELAY) == pdPASS)
 		{
 			memset(result, 0x00, sizeof(result));
 			uint32_t adc_samples_per_ch = pulse_measure_config->buf_adc_in_size / measure_divider / (2 * Pulse_Measure_ADC_NumbOfCnannels);
-			offset = offset*pulse_measure_config->buf_adc_in_size/2;
+			
+			offset = (event == ADC_DATA_READY_HALF) ? 0 : pulse_measure_config->buf_adc_in_size/2;
 			for (size_t i = PULSE_MEASURE_INDENT_CYCLES*Pulse_Measure_ADC_NumbOfCnannels; 
 						i < (pulse_measure_config->buf_adc_in_size/(2 * measure_divider)); 
 						i += Pulse_Measure_ADC_NumbOfCnannels){
@@ -58,13 +59,11 @@ void pulse_measure_task(void* param){
 			for(size_t j = 0; j < Pulse_Measure_ADC_NumbOfCnannels; j++){
 				result[j] /= (adc_samples_per_ch - PULSE_MEASURE_INDENT_CYCLES);
 			}
-			if(offset == 0){
-				//HAL_GPIO_WritePin (en_led2a_GPIO_Port, en_led2a_Pin, GPIO_PIN_SET);
-				pulse_measure_config->event_full();
+			if(event == ADC_DATA_READY_HALF){
+				pulse_measure_config->event_half();
 			}
 			else{
-				//HAL_GPIO_WritePin (en_led2a_GPIO_Port, en_led2a_Pin, GPIO_PIN_RESET);
-				pulse_measure_config->event_half();
+				pulse_measure_config->event_full();
 				for(int i = 0; i < Pulse_Measure_ADC_NumbOfCnannels; i++){
 					data_msg.result[i] = result[i];
 				}

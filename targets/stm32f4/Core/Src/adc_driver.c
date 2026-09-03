@@ -55,18 +55,18 @@ uint8_t adc_driver_stop(uint8_t adc_num){
 
 inline void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
 	if(hadc->Instance == ADC1){
-		adc1_ready(ADC_DATA_OFFSET_HALF);
+		adc1_ready(ADC_DATA_READY_FULL);
 	}
 	else if(hadc->Instance == ADC2){
-		adc2_ready(ADC_DATA_OFFSET_HALF);
+		adc2_ready(ADC_DATA_READY_FULL);
 	}
 }
 
 inline void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef *hadc){
 	if(hadc->Instance == ADC1){
-		adc1_ready(ADC_DATA_OFFSET_ZERO);
+		adc1_ready(ADC_DATA_READY_HALF);
 	}
 	else if(hadc->Instance == ADC2){
-		adc2_ready(ADC_DATA_OFFSET_ZERO);
+		adc2_ready(ADC_DATA_READY_HALF);
 	}
 }

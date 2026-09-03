@@ -36,13 +36,13 @@ arm_rfft_fast_instance_f32 fftHandler;
 static TaskHandle_t wave_measure_task_handle = NULL;
 static StaticTask_t wave_measure_task_def;
 
-static uint8_t fft_buffer(waveMeasureConfig_s* wave_measure_config, uint8_t channel, uint8_t offset, waveMeasureFFT_result_t* result);
+static uint8_t fft_buffer(waveMeasureConfig_s* wave_measure_config, uint8_t channel, uint16_t offset, waveMeasureFFT_result_t* result);
 
 extern uint8_t adc_driver_start(uint8_t adc_num, uint16_t* buff, uint16_t size);//todo
 
-void wave_measure_adc_callback(uint8_t offset){
+void wave_measure_adc_callback(uint8_t event){
 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-	xTaskNotifyFromISR(wave_measure_task_handle, offset, eSetValueWithOverwrite, &xHigherPriorityTaskWoken);
+	xTaskNotifyFromISR(wave_measure_task_handle, event, eSetValueWithOverwrite, &xHigherPriorityTaskWoken);
 	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
@@ -50,26 +50,18 @@ void wave_measure_task(void* param);
 
 void wave_measure_task(void* param){
 	waveMeasureConfig_s* wave_measure_config = (waveMeasureConfig_s*)param;
-	waveMeasureFFT_result_t result[2]; //todo result_ch1, result_ch2;
-	uint32_t offset;
+	waveMeasureFFT_result_t result[WAVE_MEASURE_NumbOfCnannels];
+	uint16_t offset = 0;
+	uint32_t event = 0;
 
 	while(1){
-		if (xTaskNotifyWait(0, ULONG_MAX, &offset, portMAX_DELAY) == pdPASS)
+		if (xTaskNotifyWait(0, ULONG_MAX, &event, portMAX_DELAY) == pdPASS)
 		{
+			offset = (event == ADC_DATA_READY_HALF) ? 0 : wave_measure_config->buf_adc_in_size/2;;
 			fft_buffer(wave_measure_config, WAVE_MEASURE_Channel_1, offset, &result[WAVE_MEASURE_Channel_1]);
 			fft_buffer(wave_measure_config, WAVE_MEASURE_Channel_2, offset, &result[WAVE_MEASURE_Channel_2]);
 
 			wave_measure_config->data_ready(result);
-
-			// lcd_print(2, 0, "%5d Hz, %5d Hz", (int)result_ch1.main_freq_Hz, (int)result_ch2.main_freq_Hz);
-			// if(result_ch1.main_freq_Hz == result_ch2.main_freq_Hz){
-			// 	float diff = result_ch1.main_phase_deg - result_ch2.main_phase_deg;
-			// 	int diff_x100 = (int)(diff * 100);
-			// 	lcd_print(3, 0, "dPhase: %d.%02d deg", diff_x100/100, abs(diff_x100%100));//todo
-			// }
-			// else{
-			// 	lcd_print(2, 0, "                    ");
-			// }
 		}
 		vTaskDelay(1000);
 	}
@@ -94,15 +86,15 @@ int wave_measure_init(waveMeasureConfig_s* wave_measure_config){
 }
 
 
-uint8_t fft_buffer(waveMeasureConfig_s* wave_measure_config, uint8_t channel, uint8_t offset, waveMeasureFFT_result_t* result){
+uint8_t fft_buffer(waveMeasureConfig_s* wave_measure_config, uint8_t channel, uint16_t offset, waveMeasureFFT_result_t* result){
 	float32_t freq = 0, main_freq = 0, tmp_max = 0;
 	uint16_t main_bin = 0;
-	uint16_t offset_ = offset*wave_measure_config->buf_adc_in_size/2;
+	//uint16_t offset_ = offset*wave_measure_config->buf_adc_in_size/2;
 	if(channel >= WAVE_MEASURE_NumbOfCnannels){
 		return -1;
 	}
 	for(int i = 0; i < FFT_BUF_SIZE; i++){
-		fftBufIn[i] = (float32_t)wave_measure_config->buf_adc_in[i*2 + channel + offset_];
+		fftBufIn[i] = (float32_t)wave_measure_config->buf_adc_in[i*2 + channel + offset];
 	}
 	arm_rfft_fast_f32(&fftHandler, fftBufIn, fftBufOut, 0);
 

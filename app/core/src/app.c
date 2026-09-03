@@ -107,7 +107,7 @@ void setup(void){
 
 	pulse_measure_config.data_ready = pulse_measure_data_ready_callback;
 	pulse_measure_config.event_half = pulse_measure_event_half_callback;
-	pulse_measure_config.event_full = pulse_measure_event_half_callback;
+	pulse_measure_config.event_full = pulse_measure_event_full_callback;
 	pulse_measure_init(&pulse_measure_config);
 
 	FATFS_Init();
