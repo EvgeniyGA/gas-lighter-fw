@@ -52,6 +52,7 @@ target_include_directories(CMSISDSP PRIVATE
 set(BSP_SOURCES
     ${TARGET}/Core/Src/adc_driver.c
     ${TARGET}/Core/Src/dac_driver.c
+    ${TARGET}/Core/Src/gpio_driver.c
     ${TARGET}/Core/Src/W25Qxx.c
 )
 

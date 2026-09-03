@@ -25,12 +25,15 @@ typedef struct{
 }pulse_measure_msg_t;
 
 typedef void(*pulse_measure_data_ready_callback_t)(pulse_measure_msg_t* data);
+typedef void(*pulse_measure_change_out_state_callback_t)(void);
 
 typedef struct{
 	uint8_t adc_num;
 	uint16_t* buf_adc_in;
 	uint16_t buf_adc_in_size;
 	pulse_measure_data_ready_callback_t data_ready;
+	pulse_measure_change_out_state_callback_t led_on;
+	pulse_measure_change_out_state_callback_t led_off;
 }pulseMeasureConfig_s;
 
 void pulse_measure_adc_callback(uint8_t offset);

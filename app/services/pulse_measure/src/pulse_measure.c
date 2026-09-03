@@ -59,20 +59,16 @@ void pulse_measure_task(void* param){
 				result[j] /= (adc_samples_per_ch - PULSE_MEASURE_INDENT_CYCLES);
 			}
 			if(offset == 0){
-				HAL_GPIO_WritePin (en_led2a_GPIO_Port, en_led2a_Pin, GPIO_PIN_SET);
+				//HAL_GPIO_WritePin (en_led2a_GPIO_Port, en_led2a_Pin, GPIO_PIN_SET);
+				pulse_measure_config->led_on;
 			}
 			else{
-				HAL_GPIO_WritePin (en_led2a_GPIO_Port, en_led2a_Pin, GPIO_PIN_RESET);
+				//HAL_GPIO_WritePin (en_led2a_GPIO_Port, en_led2a_Pin, GPIO_PIN_RESET);
+				pulse_measure_config->led_off;
 				for(int i = 0; i < Pulse_Measure_ADC_NumbOfCnannels; i++){
 					data_msg.result[i] = result[i];
 				}
 				pulse_measure_config->data_ready(&data_msg);
-				//printf("result %04ld:%04ld:%04ld:%04ld\n\r", result[0], result[1], result[2], result[3]);
-				//lcd_print(0, 0, "%04ld:%04ld:%04ld:%04ld\n\r", result[0], result[1], result[2], result[3]);
-				//lcd_print(1,  0, "%03ld.%05ld", (uint32_t)(result[0] / result[1]), 
-				//								((uint32_t)(result[0] % result[1])*100000)/result[1]);
-				//lcd_print(1, 10, "%03ld.%05ld", (uint32_t)(result[2] / result[3]), 
-			//									((uint32_t)(result[2] % result[3])*100000)/result[3]);
 			}
 		}
 	}

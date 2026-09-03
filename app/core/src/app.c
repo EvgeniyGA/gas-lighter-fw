@@ -20,6 +20,7 @@
 #include "cli_service.h"
 #include "FreeRTOS.h"
 #include "queue.h"
+#include "gpio_driver.h"
 
 #define STORAGE_STACK_SIZE (configMINIMAL_STACK_SIZE)
 #define BLINKY_STACK_SIZE   configMINIMAL_STACK_SIZE
@@ -85,7 +86,7 @@ void setup(void){
 
   	lcd_printer_init();
   	lcd_print(LCD_PRINTER_LINE1, LCD_PRINTER_OFFSET_ZERO + 1, "Version: %s", FW_VERSION_STR);
-
+	
 	wave_measure_config.main_freqency = MAIN_FREQENCY_HZ;
 	wave_measure_config.time_resolution = MAIN_TIME_RESOLUTION;
 	wave_measure_config.data_ready = wave_measure_data_ready_callback;
@@ -98,6 +99,8 @@ void setup(void){
 	wave_starter_run(&wave_gen_config);
 
 	pulse_measure_config.data_ready = pulse_measure_data_ready_callback;
+	pulse_measure_config.led_on = gpio_channel_change_state(GPIO_CHANNEL_2a, GPIO_CHANNEL_ON);
+	pulse_measure_config.led_off = gpio_channel_change_state(GPIO_CHANNEL_2a, GPIO_CHANNEL_OFF);
 	pulse_measure_init(&pulse_measure_config);
 
 	FATFS_Init();
