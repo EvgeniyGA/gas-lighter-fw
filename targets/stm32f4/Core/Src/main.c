@@ -73,7 +73,8 @@ int main(void)
 
   /* USER CODE BEGIN 1 */
 #ifndef FOR_QEMU
-  SCB->VTOR = 0x08040000;
+  SCB->VTOR = 0x08020000;
+  __enable_irq();
 #endif
   /* USER CODE END 1 */
 

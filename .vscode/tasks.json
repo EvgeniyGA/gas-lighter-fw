@@ -29,6 +29,18 @@
 			"detail": "Flash STM32F4 (j-link)."
 		},
 		{
+			"label": "Erase F4 (j-link)",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/C",
+				"((echo r & echo h & echo erase & echo q) > erase.jlink) && (JLink.exe -device STM32F407VG -if SWD -speed 4000 -NoGui 1 -CommandFile erase.jlink)"
+			],
+			"options": { "cwd": "${workspaceFolder}/build" },
+			"group": "build",
+			"detail": "Erase STM32F4 (j-link)."
+		},
+		{
 			"label": "Flash F7 (j-link)",
 			"type": "shell",
 			"command": "cmd",
