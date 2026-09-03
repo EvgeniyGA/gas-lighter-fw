@@ -60,6 +60,13 @@ void pulse_measure_data_ready_callback(pulse_measure_msg_t* data){
 		((uint32_t)(data->result[Pulse_Measure_ADC_Channel_3] % data->result[Pulse_Measure_ADC_Channel_4])*100000)/data->result[Pulse_Measure_ADC_Channel_4]);
 }
 
+void pulse_measure_event_half_callback(void){
+	gpio_channel_change_state(GPIO_CHANNEL_2a, GPIO_CHANNEL_ON);
+}
+void pulse_measure_event_full_callback(void){
+	gpio_channel_change_state(GPIO_CHANNEL_2a, GPIO_CHANNEL_OFF);
+}
+
 void wave_measure_data_ready_callback(waveMeasureFFT_result_t* result){
 	lcd_print(LCD_PRINTER_LINE3, 0, "%5d Hz, %5d Hz", 	(int)(result[WAVE_MEASURE_Channel_1].main_freq_Hz), 
 										(int)(result[WAVE_MEASURE_Channel_2].main_freq_Hz));
@@ -99,15 +106,15 @@ void setup(void){
 	wave_starter_run(&wave_gen_config);
 
 	pulse_measure_config.data_ready = pulse_measure_data_ready_callback;
-	pulse_measure_config.led_on = gpio_channel_change_state(GPIO_CHANNEL_2a, GPIO_CHANNEL_ON);
-	pulse_measure_config.led_off = gpio_channel_change_state(GPIO_CHANNEL_2a, GPIO_CHANNEL_OFF);
+	pulse_measure_config.event_half = pulse_measure_event_half_callback;
+	pulse_measure_config.event_full = pulse_measure_event_half_callback;
 	pulse_measure_init(&pulse_measure_config);
 
 	FATFS_Init();
 	cli_service_init();
 	xTaskCreate(led_blinking_task, "blinky", BLINKY_STACK_SIZE, NULL, 1, NULL);
-	xTaskCreate(usb_device_task, "usbd", USBD_STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
-	xTaskCreate(cdc_task, "cdc", CDC_STACK_SIZE, NULL, configMAX_PRIORITIES - 2, NULL);
+	usb_device_init();
+	usb_cdc_init();
 	vTaskStartScheduler();
 }
 

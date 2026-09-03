@@ -60,11 +60,11 @@ void pulse_measure_task(void* param){
 			}
 			if(offset == 0){
 				//HAL_GPIO_WritePin (en_led2a_GPIO_Port, en_led2a_Pin, GPIO_PIN_SET);
-				pulse_measure_config->led_on;
+				pulse_measure_config->event_full();
 			}
 			else{
 				//HAL_GPIO_WritePin (en_led2a_GPIO_Port, en_led2a_Pin, GPIO_PIN_RESET);
-				pulse_measure_config->led_off;
+				pulse_measure_config->event_half();
 				for(int i = 0; i < Pulse_Measure_ADC_NumbOfCnannels; i++){
 					data_msg.result[i] = result[i];
 				}

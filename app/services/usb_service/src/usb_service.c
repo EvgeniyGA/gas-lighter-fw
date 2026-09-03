@@ -9,11 +9,16 @@
 #include "usb_service.h"
 #include "main.h"
 
+#define USBD_STACK_SIZE    (configMINIMAL_STACK_SIZE * (CFG_TUSB_DEBUG ? 4 : 2))
+#define CDC_STACK_SIZE      (configMINIMAL_STACK_SIZE * (CFG_TUSB_DEBUG ? 3 : 2))
+
+void msc_disk_init(void);
+
 SemaphoreHandle_t cdc_tx_sem;
 QueueHandle_t	  cdc_rx_queue;
 // USB Device Driver task
 // This top level thread process all usb events and invoke callbacks
-void usb_device_task(void *param) {
+static void usb_device_task(void *param) {
   (void) param;
 
   // init device stack on configured roothub port
@@ -115,7 +120,7 @@ void print_char(char character, TickType_t timeout) {
 #define MAX_INPUT_LENGTH    32
 #define MAX_OUTPUT_LENGTH   512
 
-void cdc_task(void *params) {
+static void cdc_task(void *params) {
 	(void) params;
 	char cRxedChar;
 	BaseType_t cInputIndex = 0;
@@ -255,3 +260,10 @@ size_t board_get_unique_id(uint8_t id[], size_t max_len) {
   return len;
 }
 
+void usb_device_init(void){
+	xTaskCreate(usb_device_task, "usbd", USBD_STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
+}
+
+void usb_cdc_init(void){
+	xTaskCreate(cdc_task, "cdc", CDC_STACK_SIZE, NULL, configMAX_PRIORITIES - 2, NULL);
+}
