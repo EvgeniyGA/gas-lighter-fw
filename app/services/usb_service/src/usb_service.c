@@ -48,15 +48,11 @@ static void usb_device_task(void *param) {
 
 // Invoked when device is mounted
 void tud_mount_cb(void) {
-  //blink_interval_ms = BLINK_MOUNTED;
-  //printf("USB device mounted\n\r");
   usb_device_config->mounted();
 }
 
 // Invoked when device is unmounted
 void tud_umount_cb(void) {
-  //blink_interval_ms = BLINK_NOT_MOUNTED;
-  //printf("USB device unmounted\n\r");
   usb_device_config->unmounted();
 }
 
@@ -65,13 +61,11 @@ void tud_umount_cb(void) {
 // Within 7ms, device must draw an average of current less than 2.5 mA from bus
 void tud_suspend_cb(bool remote_wakeup_en) {
   (void) remote_wakeup_en;
-  //blink_interval_ms = BLINK_SUSPENDED;
   printf("USB bus suspended\n\r");
 }
 
 // Invoked when usb bus is resumed
 void tud_resume_cb(void) {
-  //blink_interval_ms = tud_mounted() ? BLINK_MOUNTED : BLINK_NOT_MOUNTED;
   printf("USB bus resumed\n\r");
 }
 
