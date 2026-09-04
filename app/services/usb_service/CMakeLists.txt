@@ -10,4 +10,5 @@ target_link_libraries(usb_service PUBLIC
     freertos_kernel
     freertos_cli_core
     tinyusb_support
+    bsp_drivers
 )

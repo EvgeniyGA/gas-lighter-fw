@@ -7,10 +7,12 @@
 #include "tusb.h"
 #include "usb_descriptors.h"
 #include "usb_service.h"
-#include "main.h"
+//#include "main.h"
 
 #define USBD_STACK_SIZE    (configMINIMAL_STACK_SIZE * (CFG_TUSB_DEBUG ? 4 : 2))
 #define CDC_STACK_SIZE      (configMINIMAL_STACK_SIZE * (CFG_TUSB_DEBUG ? 3 : 2))
+
+static usb_device_config_t* usb_device_config;
 
 void msc_disk_init(void);
 
@@ -47,13 +49,15 @@ static void usb_device_task(void *param) {
 // Invoked when device is mounted
 void tud_mount_cb(void) {
   //blink_interval_ms = BLINK_MOUNTED;
-  printf("USB device mounted\n\r");
+  //printf("USB device mounted\n\r");
+  usb_device_config->mounted();
 }
 
 // Invoked when device is unmounted
 void tud_umount_cb(void) {
   //blink_interval_ms = BLINK_NOT_MOUNTED;
-  printf("USB device unmounted\n\r");
+  //printf("USB device unmounted\n\r");
+  usb_device_config->unmounted();
 }
 
 // Invoked when usb bus is suspended
@@ -247,7 +251,7 @@ void tud_cdc_rx_cb(uint8_t itf) {
 	portYIELD_FROM_ISR(high_priority_task_woken);
 }
 
-size_t board_get_unique_id(uint8_t id[], size_t max_len) {
+/*size_t board_get_unique_id(uint8_t id[], size_t max_len) {
   (void) max_len;
   volatile uint32_t *stm32_uuid = (volatile uint32_t *) UID_BASE;
   uint32_t *id32 = (uint32_t *) (uintptr_t) id;
@@ -258,9 +262,10 @@ size_t board_get_unique_id(uint8_t id[], size_t max_len) {
   id32[2] = stm32_uuid[2];
 
   return len;
-}
+}*/
 
-void usb_device_init(void){
+void usb_device_init(usb_device_config_t* config){
+	usb_device_config = config;
 	xTaskCreate(usb_device_task, "usbd", USBD_STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
 }
 

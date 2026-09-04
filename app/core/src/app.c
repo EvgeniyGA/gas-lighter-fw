@@ -27,6 +27,7 @@
 waveGenConfig_s 	wave_gen_config;
 waveMeasureConfig_s wave_measure_config;
 pulseMeasureConfig_s pulse_measure_config;
+usb_device_config_t usb_device_config;
 
 void init(void){
 #ifndef FOR_QEMU
@@ -75,6 +76,14 @@ void wave_measure_data_ready_callback(waveMeasureFFT_result_t* result){
 	}
 }
 
+void usb_device_mounted_callback(void){
+	printf("USB device mounted\n\r");
+}
+
+void usb_device_unmounted_callback(void){
+	printf("USB device unmounted\n\r");
+}
+
 void setup(void){
 	printf("Firmware version: %s\n", FW_VERSION_STR);
 	printf("Build: %s %s (git: %s)\n", FW_BUILD_DATE, FW_BUILD_TIME, FW_GIT_HASH);
@@ -105,11 +114,14 @@ void setup(void){
 	pulse_measure_config.event_full_adc = pulse_measure_event_full_callback;
 	pulse_measure_init(&pulse_measure_config);
 
+	usb_device_config.mounted = usb_device_mounted_callback;
+	usb_device_config.unmounted = usb_device_unmounted_callback;
+
 	FATFS_Init();
 	cli_service_init();
 	config_service_init();
 	status_service_init();
-	usb_device_init();
+	usb_device_init(&usb_device_config);
 	usb_cdc_init();
 	vTaskStartScheduler();
 }
