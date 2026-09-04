@@ -22,7 +22,7 @@ void led_blinking_task(void* param) {
     SEGGER_SYSVIEW_PrintfHost("BlikTask started");
     vTaskDelay(1000 / portTICK_PERIOD_MS);
 //    led_state = 1 - led_state; // toggle
-	  printf("blink %04d\n\r", led_state);
+//	  printf("blink %04d\n\r", led_state);
 //    lcd_print(0, 1, "counter: %d", i++);
   }
 }
