@@ -60,10 +60,10 @@ void pulse_measure_task(void* param){
 				result[j] /= (adc_samples_per_ch - PULSE_MEASURE_INDENT_CYCLES);
 			}
 			if(event == ADC_DATA_READY_HALF){
-				pulse_measure_config->event_half();
+				pulse_measure_config->event_half_adc();
 			}
 			else{
-				pulse_measure_config->event_full();
+				pulse_measure_config->event_full_adc();
 				for(int i = 0; i < Pulse_Measure_ADC_NumbOfCnannels; i++){
 					data_msg.result[i] = result[i];
 				}

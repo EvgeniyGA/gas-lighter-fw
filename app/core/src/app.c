@@ -21,27 +21,22 @@
 #include "FreeRTOS.h"
 #include "queue.h"
 #include "gpio_driver.h"
+#include "config_service.h"
+#include "status_service.h"
 
-#define STORAGE_STACK_SIZE (configMINIMAL_STACK_SIZE)
-#define BLINKY_STACK_SIZE   configMINIMAL_STACK_SIZE
-
-void led_blinking_task(void* param);
-void print_task(void* param);
-void data_manager_task(void* param);
+waveGenConfig_s 	wave_gen_config;
+waveMeasureConfig_s wave_measure_config;
+pulseMeasureConfig_s pulse_measure_config;
 
 void init(void){
 #ifndef FOR_QEMU
 	SEGGER_RTT_ConfigUpBuffer( 0, NULL, NULL, 0, SEGGER_RTT_MODE_NO_BLOCK_TRIM );
 #endif
-  SEGGER_SYSVIEW_Conf();
-  SEGGER_SYSVIEW_Start();
-  while(SEGGER_SYSVIEW_IsStarted()==0);
-  SEGGER_RTT_WriteString( 0, "SEGGER Real-Time-Terminal Started\n" );
+	SEGGER_SYSVIEW_Conf();
+  	SEGGER_SYSVIEW_Start();
+  	while(SEGGER_SYSVIEW_IsStarted()==0);
+  	SEGGER_RTT_WriteString( 0, "SEGGER Real-Time-Terminal Started\n" );
 }
-
-waveGenConfig_s 	wave_gen_config;
-waveMeasureConfig_s wave_measure_config;
-pulseMeasureConfig_s pulse_measure_config;
 
 void pulse_measure_data_ready_callback(pulse_measure_msg_t* data){
 	printf("result %04ld:%04ld:%04ld:%04ld\n\r", 
@@ -106,29 +101,17 @@ void setup(void){
 	wave_starter_run(&wave_gen_config);
 
 	pulse_measure_config.data_ready = pulse_measure_data_ready_callback;
-	pulse_measure_config.event_half = pulse_measure_event_half_callback;
-	pulse_measure_config.event_full = pulse_measure_event_full_callback;
+	pulse_measure_config.event_half_adc = pulse_measure_event_half_callback;
+	pulse_measure_config.event_full_adc = pulse_measure_event_full_callback;
 	pulse_measure_init(&pulse_measure_config);
 
 	FATFS_Init();
 	cli_service_init();
-	xTaskCreate(led_blinking_task, "blinky", BLINKY_STACK_SIZE, NULL, 1, NULL);
+	config_service_init();
+	status_service_init();
 	usb_device_init();
 	usb_cdc_init();
 	vTaskStartScheduler();
 }
 
-//--------------------------------------------------------------------+
-// BLINKING TASK
-//--------------------------------------------------------------------+
-void led_blinking_task(void* param) {
-  (void) param;
-  static uint8_t led_state = 0;
-  while (1) {
-    SEGGER_SYSVIEW_PrintfHost("BlikTask started");
-    vTaskDelay(250 / portTICK_PERIOD_MS);
-    led_state = 1 - led_state; // toggle
-//	  printf("blink %04d\n\r", i++);
-//    lcd_print(0, 1, "counter: %d", i++);
-  }
-}
+

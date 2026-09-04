@@ -59,6 +59,8 @@ target_link_libraries(${MAIN_EXECUTABLE}
     wave_starter_service
     wave_measure_service
     pulse_measure_service
+    config_service
+    status_service
     tinyusb_support
     usb_service
     diskio_drivers

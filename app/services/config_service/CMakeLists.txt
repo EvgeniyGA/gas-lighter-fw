@@ -1,5 +1,5 @@
 add_library(config_service STATIC 
-    src
+    src/config_service.c
 )
 
 target_include_directories(config_service PUBLIC 
