@@ -7,7 +7,6 @@
 #include "tusb.h"
 #include "usb_descriptors.h"
 #include "usb_service.h"
-//#include "main.h"
 
 #define USBD_STACK_SIZE    (configMINIMAL_STACK_SIZE * (CFG_TUSB_DEBUG ? 4 : 2))
 #define CDC_STACK_SIZE      (configMINIMAL_STACK_SIZE * (CFG_TUSB_DEBUG ? 3 : 2))

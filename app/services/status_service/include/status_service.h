@@ -1,3 +1,5 @@
 #include <stdint.h>
 
-uint8_t status_service_init(void);
+typedef void(*status_heartbit_t)(void);
+
+uint8_t status_service_init(status_heartbit_t);

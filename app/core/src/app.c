@@ -6,14 +6,10 @@
 #include "SEGGER_SYSVIEW.h"
 #include "tusb.h"
 #include "fatfs.h"
-#include "usb_service.h"
 #include "version.h"
 #include "version_check.h"
 #include "app.h"
 #include "arm_math.h"
-#include "wave_starter.h"
-#include "wave_measure.h"
-#include "pulse_measure.h"
 #include "main.h"
 #include "queue.h"
 #include "lcd_printer.h"
@@ -23,11 +19,20 @@
 #include "gpio_driver.h"
 #include "config_service.h"
 #include "status_service.h"
+#ifndef FOR_QEMU
+	#include "wave_starter.h"
+	#include "wave_measure.h"
+	#include "pulse_measure.h"
+	#include "usb_service.h"
+#endif
 
 waveGenConfig_s 	wave_gen_config;
 waveMeasureConfig_s wave_measure_config;
 pulseMeasureConfig_s pulse_measure_config;
+
+#ifndef FOR_QEMU
 usb_device_config_t usb_device_config;
+#endif
 
 void init(void){
 #ifndef FOR_QEMU
@@ -84,6 +89,14 @@ void usb_device_unmounted_callback(void){
 	printf("USB device unmounted\n\r");
 }
 
+void heartbit_callback(void){
+//	printf("status callback\n\r");
+	static int_val = 0, loaded_int_val = 0;
+	config_save_int("var1", int_val++);
+	config_load_int("var1", &loaded_int_val);
+	printf("loaded %d\n\r", loaded_int_val);
+}
+
 void setup(void){
 	printf("Firmware version: %s\n", FW_VERSION_STR);
 	printf("Build: %s %s (git: %s)\n", FW_BUILD_DATE, FW_BUILD_TIME, FW_GIT_HASH);
@@ -97,7 +110,7 @@ void setup(void){
 
   	lcd_printer_init();
   	lcd_print(LCD_PRINTER_LINE1, LCD_PRINTER_OFFSET_ZERO + 1, "Version: %s", FW_VERSION_STR);
-	
+#ifndef FOR_QEMU	
 	wave_measure_config.main_freqency = MAIN_FREQENCY_HZ;
 	wave_measure_config.time_resolution = MAIN_TIME_RESOLUTION;
 	wave_measure_config.data_ready = wave_measure_data_ready_callback;
@@ -116,13 +129,15 @@ void setup(void){
 
 	usb_device_config.mounted = usb_device_mounted_callback;
 	usb_device_config.unmounted = usb_device_unmounted_callback;
-
+#endif
 	FATFS_Init();
 	cli_service_init();
 	config_service_init();
-	status_service_init();
+	status_service_init(heartbit_callback);
+#ifndef FOR_QEMU
 	usb_device_init(&usb_device_config);
 	usb_cdc_init();
+#endif
 	vTaskStartScheduler();
 }
 

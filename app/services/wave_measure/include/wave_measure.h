@@ -20,8 +20,12 @@ extern "C" {
 #endif
 
 #define ADC_DMA_STEPS			(MAIN_TIME_RESOLUTION)
-#define ADC_DMA_CYCLES			(32)//(64)
 
+#ifndef FOR_QEMU
+#define ADC_DMA_CYCLES			(32)//(64)
+#else
+#define ADC_DMA_CYCLES			(1)
+#endif
 typedef struct{
 	float32_t main_freq_Hz;
 	float32_t main_phase_deg;

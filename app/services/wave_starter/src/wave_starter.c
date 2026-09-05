@@ -7,6 +7,7 @@
 #include <wave_starter.h>
 #include "dac_driver.h"
 
+
 uint16_t dac_dma_buff[WAVE_TIME_RESOLUTION];
 uint32_t timer_divider = 1;
 

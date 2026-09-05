@@ -5,3 +5,8 @@ add_library(config_service STATIC
 target_include_directories(config_service PUBLIC 
     include
 )
+
+target_link_libraries(config_service PUBLIC 
+    freertos_kernel
+    fatfs_core
+)

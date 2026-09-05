@@ -7,8 +7,8 @@
 
 void led_blinking_task(void* param);
 
-uint8_t status_service_init(void){
-    xTaskCreate(led_blinking_task, "blinky", BLINKY_STACK_SIZE, NULL, 1, NULL);
+uint8_t status_service_init(status_heartbit_t status_heartbit_callback){
+    xTaskCreate(led_blinking_task, "blinky", BLINKY_STACK_SIZE, status_heartbit_callback, 1, NULL);//todo
     return 0;
 }
 
@@ -16,11 +16,11 @@ uint8_t status_service_init(void){
 // BLINKING TASK
 //--------------------------------------------------------------------+
 void led_blinking_task(void* param) {
-  (void) param;
   static uint8_t led_state = 0;
   while (1) {
     SEGGER_SYSVIEW_PrintfHost("BlikTask started");
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    ((status_heartbit_t)param)();
+    vTaskDelay(10000 / portTICK_PERIOD_MS);
 //    led_state = 1 - led_state; // toggle
 //	  printf("blink %04d\n\r", led_state);
 //    lcd_print(0, 1, "counter: %d", i++);
