@@ -26,11 +26,10 @@
 	#include "usb_service.h"
 #endif
 
+#ifndef FOR_QEMU
 waveGenConfig_s 	wave_gen_config;
 waveMeasureConfig_s wave_measure_config;
 pulseMeasureConfig_s pulse_measure_config;
-
-#ifndef FOR_QEMU
 usb_device_config_t usb_device_config;
 #endif
 
@@ -44,6 +43,7 @@ void init(void){
   	SEGGER_RTT_WriteString( 0, "SEGGER Real-Time-Terminal Started\n" );
 }
 
+#ifndef FOR_QEMU
 void pulse_measure_data_ready_callback(pulse_measure_msg_t* data){
 	printf("result %04ld:%04ld:%04ld:%04ld\n\r", 
 		data->result[Pulse_Measure_ADC_Channel_1], 
@@ -88,6 +88,7 @@ void usb_device_mounted_callback(void){
 void usb_device_unmounted_callback(void){
 	printf("USB device unmounted\n\r");
 }
+#endif
 
 void heartbit_callback(void){
 //	printf("status callback\n\r");
