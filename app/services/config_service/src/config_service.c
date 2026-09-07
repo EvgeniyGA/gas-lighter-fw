@@ -83,6 +83,12 @@ SemaphoreHandle_t storage_get_fs_mutex(void){
 void config_service_tx_task(void* param){
     static uint8_t storage_queue_buffer[STORAGE_QUEUE_LEN * sizeof(storage_service_msg_tx_t)];
     storage_service_msg_tx_t msg;
+    static FRESULT res;
+    static DIR dir;
+    static FILINFO fno;
+    static FIL fil;
+    static uint32_t byteswritten, len;
+    static char wdata[32];
     storage_tx_queue_handle = xQueueCreateStatic(STORAGE_QUEUE_LEN, sizeof(storage_service_msg_tx_t), storage_queue_buffer, &storage_rx_queue_def);
     while(1){
         if(xQueueReceive(storage_tx_queue_handle, &msg, portMAX_DELAY)){
@@ -91,18 +97,6 @@ void config_service_tx_task(void* param){
                 int tmp;
                 memcpy(&tmp, msg.data, msg.datalen);
                 printf("storage will save %d\n\r", tmp);
-                
-/*                FRESULT res;
-                DIR dir;
-                FILINFO fno;
-                static FIL fil;
-                uint32_t byteswritten;
-                uint8_t wdata[10];// = "321";
-
-                FIL file;
-                char buf[32];
-                UINT bw;
-                int len = 0;
 
                 if(f_opendir(&dir, "/") == 0){
                     f_readdir(&dir, &fno);
@@ -110,14 +104,18 @@ void config_service_tx_task(void* param){
 
                     }
                     else{
-                        len = snprintf(buf, sizeof(buf), "%d", msg.val);
-                        res = f_write(&fil, wdata, sizeof(wdata), (void*)&byteswritten)
-                        if((bytessritten == 0) || (res != FR_OK)){
-
+                        len = snprintf(wdata, sizeof(wdata), "%d", tmp);//todo
+                        wdata[len] = 0;
+                        res = f_write(&fil, wdata, sizeof(wdata), (void*)&byteswritten);
+                        if((byteswritten == 0) || (res != FR_OK)){
+                            printf("write error\n\r");
+                        }
+                        else{
+                            printf("written string %s\n\r", wdata);
                         }
                         f_close(&fil);
                     }
-                }*/
+                }
             }
             else{
 
