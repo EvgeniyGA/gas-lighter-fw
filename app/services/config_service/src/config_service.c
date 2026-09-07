@@ -104,7 +104,7 @@ void config_service_tx_task(void* param){
     storage_service_msg_tx_t msg;
     static FRESULT res;
     static uint32_t byteswritten, len;
-    storage_tx_queue_handle = xQueueCreateStatic(STORAGE_QUEUE_LEN, sizeof(storage_service_msg_tx_t), storage_queue_buffer, &storage_rx_queue_def);
+    storage_tx_queue_handle = xQueueCreateStatic(STORAGE_QUEUE_LEN, sizeof(storage_service_msg_tx_t), storage_queue_buffer, &storage_tx_queue_def);
     while(1){
         if(xQueueReceive(storage_tx_queue_handle, &msg, portMAX_DELAY)){
             xSemaphoreTake(fs_mutex, portMAX_DELAY);
@@ -133,7 +133,7 @@ void config_service_tx_task(void* param){
 void config_service_rx_task(void* param){
     static uint8_t storage_queue_buffer[STORAGE_QUEUE_LEN * sizeof(storage_service_msg_rx_t)];
     storage_service_msg_rx_t msg;
-    storage_rx_queue_handle = xQueueCreateStatic(STORAGE_QUEUE_LEN, sizeof(storage_service_msg_rx_t), storage_queue_buffer, &storage_tx_queue_def);
+    storage_rx_queue_handle = xQueueCreateStatic(STORAGE_QUEUE_LEN, sizeof(storage_service_msg_rx_t), storage_queue_buffer, &storage_rx_queue_def);
     static UINT br;
     
     while(1){
@@ -163,7 +163,8 @@ void config_service_rx_task(void* param){
 uint8_t config_service_init(void){
     static StackType_t storage_stack_tx[STORAGE_TASK_STACK_SIZE];
     static StackType_t storage_stack_rx[STORAGE_TASK_STACK_SIZE];
-    fs_mutex = xSemaphoreCreateMutex();
+    static StaticSemaphore_t mutex_def;
+    fs_mutex = xSemaphoreCreateMutexStatic(&mutex_def);//xSemaphoreCreateMutex();
     config_tx_task_handle = xTaskCreateStatic(config_service_tx_task, "config_tx", STORAGE_TASK_STACK_SIZE,
                 NULL, STORAGE_TASK_PRIORITY, storage_stack_tx, &config_tx_task_def);
     config_rx_task_handle = xTaskCreateStatic(config_service_rx_task, "config_rx", STORAGE_TASK_STACK_SIZE,

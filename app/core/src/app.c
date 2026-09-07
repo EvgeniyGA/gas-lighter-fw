@@ -91,11 +91,11 @@ void usb_device_unmounted_callback(void){
 #endif
 
 void heartbit_callback(void){
-//	printf("status callback\n\r");
 	static int_val = 0, loaded_int_val = 0;
 	config_save_int("var1", int_val++);
 	config_load_int("var1", &loaded_int_val);
 	printf("loaded %d\n\r", loaded_int_val);
+	lcd_print(LCD_PRINTER_LINE4, LCD_PRINTER_OFFSET_FULL_NEXT - 3, "%3d", loaded_int_val);
 }
 
 void setup(void){

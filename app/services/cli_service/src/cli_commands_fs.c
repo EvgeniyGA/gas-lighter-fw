@@ -126,6 +126,9 @@ static BaseType_t prvReadCommand( char *pcWriteBuffer,
 	static TickType_t start_time;
 	char buffer[512];
 
+	SemaphoreHandle_t mutex = storage_get_fs_mutex();
+	xSemaphoreTake(mutex, portMAX_DELAY);
+
 	switch (state) {
 		case 0:
 			goto open_file;
@@ -143,8 +146,6 @@ static BaseType_t prvReadCommand( char *pcWriteBuffer,
                                          (UBaseType_t)1,
                                          (BaseType_t*)&xParameter1StringLength );
 
-	SemaphoreHandle_t mutex = storage_get_fs_mutex();
-	xSemaphoreTake(mutex, portMAX_DELAY);
 	if (filename != NULL){
 		if (f_open(&file, filename, FA_READ) == FR_OK)
 		{
@@ -174,6 +175,7 @@ static BaseType_t prvReadCommand( char *pcWriteBuffer,
 					(void)memcpy(pcWriteBuffer, buffer, s2);
 					pcWriteBuffer += s2;
 				}
+				xSemaphoreGive(mutex);
 				return pdTRUE;
 				read_file:
 			}
