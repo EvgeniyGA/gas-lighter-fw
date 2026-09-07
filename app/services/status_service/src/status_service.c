@@ -20,7 +20,11 @@ void led_blinking_task(void* param) {
   while (1) {
     SEGGER_SYSVIEW_PrintfHost("BlikTask started");
     ((status_heartbit_t)param)();
+#ifndef FOR_QEMU
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+#else
     vTaskDelay(10000 / portTICK_PERIOD_MS);
+#endif
 //    led_state = 1 - led_state; // toggle
 //	  printf("blink %04d\n\r", led_state);
 //    lcd_print(0, 1, "counter: %d", i++);
