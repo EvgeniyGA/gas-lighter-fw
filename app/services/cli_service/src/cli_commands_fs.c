@@ -12,6 +12,9 @@
 #include "FreeRTOS.h"
 #include "FreeRTOS_CLI.h"
 #include "cli_commands_fs.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
+#include "config_service.h"//todo
 
 DIR dir;
 FILINFO Finfo;
@@ -25,7 +28,8 @@ static BaseType_t prvLSCommand( char *pcWriteBuffer,
 	int len;
 	FATFS   *fs;				// Pointer to file system object*/
     char *path = sramPath;
-
+	SemaphoreHandle_t mutex = storage_get_fs_mutex();
+	xSemaphoreTake(mutex, portMAX_DELAY);
     //if (!state){
         // Abre o diretório
     	p1 = s1 = s2 = 0;
@@ -86,6 +90,7 @@ static BaseType_t prvLSCommand( char *pcWriteBuffer,
         return pdFALSE;
     }
     */
+   xSemaphoreGive(mutex);
 }
 
 static BaseType_t prvMountCommand( char *pcWriteBuffer,
@@ -137,6 +142,9 @@ static BaseType_t prvReadCommand( char *pcWriteBuffer,
 	filename = FreeRTOS_CLIGetParameter( pcCommandString,
                                          (UBaseType_t)1,
                                          (BaseType_t*)&xParameter1StringLength );
+
+	SemaphoreHandle_t mutex = storage_get_fs_mutex();
+	xSemaphoreTake(mutex, portMAX_DELAY);
 	if (filename != NULL){
 		if (f_open(&file, filename, FA_READ) == FR_OK)
 		{
@@ -182,7 +190,7 @@ static BaseType_t prvReadCommand( char *pcWriteBuffer,
 		sprintf(pcWriteBuffer, "You need to specify a filename!\r\n");
 		state = 0;
 	}
-
+	xSemaphoreGive(mutex);
     /* There is only a single line of output produced in all cases. pdFALSE is
        returned because there is no more output to be generated. */
     return pdFALSE;

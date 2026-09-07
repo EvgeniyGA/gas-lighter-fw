@@ -25,10 +25,11 @@
 
 #include "bsp/board_api.h"
 #include "tusb.h"
+#include "FreeRTOS.h"
 #include "semphr.h"
-//#include "fatfs.h"
 #include "sram_diskio.h"
 #include "flash_diskio.h"
+#include "config_service.h"//todo
 
 #if CFG_TUD_MSC
 
@@ -82,6 +83,8 @@ static void io_task(void *params) {
   while (1) {
     if (xQueueReceive(io_queue, &io_ops, portMAX_DELAY)) {
 			int32_t nbytes = (int32_t) io_ops.bufsize;
+      SemaphoreHandle_t mutex = storage_get_fs_mutex();
+      xSemaphoreTake(mutex, portMAX_DELAY);
 			if (io_ops.is_read) {
 #ifdef MSC_USE_SRAM
 				SRAMDISK_read(io_ops.lun, io_ops.buffer, io_ops.lba, 1);
@@ -99,6 +102,7 @@ static void io_task(void *params) {
 				nbytes = -1; // failed to write
 #endif
 			}
+      xSemaphoreGive(mutex);
 			tusb_time_delay_ms_api(CFG_EXAMPLE_MSC_IO_DELAY_MS);
 			tud_msc_async_io_done(nbytes, false);
     }

@@ -16,4 +16,5 @@ target_link_libraries(tinyusb_support PUBLIC
     freertos_kernel
     diskio_drivers
     STM32_Drivers
+    config_service
 )

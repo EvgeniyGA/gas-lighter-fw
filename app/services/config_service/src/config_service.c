@@ -1,5 +1,4 @@
 #include "config_service.h"
-#include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
 #include <string.h> 
@@ -15,7 +14,7 @@ static StaticTask_t config_tx_task_def, config_rx_task_def;
 static TaskHandle_t config_tx_task_handle, config_rx_task_handle;
 static QueueHandle_t storage_rx_queue_handle, storage_tx_queue_handle;
 static StaticQueue_t storage_rx_queue_def, storage_tx_queue_def;
-static SemaphoreHandle_t fs_mutex = NULL;
+SemaphoreHandle_t fs_mutex = NULL;
 
 static uint8_t massive_for_saving[STORAGE_MAX_SAVING_SIZE];
 

@@ -13,7 +13,8 @@ typedef enum{
 
 typedef enum{
     LCD_PRINTER_OFFSET_ZERO = 0,
-    LCD_PRINTER_OFFSET_HALF = 10 //check
+    LCD_PRINTER_OFFSET_HALF = 10, //check
+    LCD_PRINTER_OFFSET_FULL_NEXT = 20
 }lcd_printer_offset_e;
 
 __attribute__((format(printf, 3, 4)))
