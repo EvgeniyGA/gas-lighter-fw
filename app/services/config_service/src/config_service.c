@@ -4,7 +4,7 @@
 #include <string.h> 
 #include "fatfs.h"
 
-#define STORAGE_TASK_STACK_SIZE         (configMINIMAL_STACK_SIZE * 2)
+#define STORAGE_TASK_STACK_SIZE         (configMINIMAL_STACK_SIZE * 8)
 #define STORAGE_TASK_PRIORITY           (configMAX_PRIORITIES - 5)
 
 #define STORAGE_QUEUE_LEN               (1)
@@ -30,7 +30,8 @@ typedef struct{
     char* name;
     uint8_t type;
     uint8_t* data;
-    uint16_t datalen;
+    uint8_t elements_size;
+    uint8_t element_count;
     uint8_t result;
 }storage_service_msg_tx_t;
 
@@ -38,42 +39,70 @@ typedef struct{
     char* name;
     uint8_t type;
     uint8_t* data;
-    uint16_t datalen;
+    uint8_t element_size;
+    uint8_t element_count;
     SemaphoreHandle_t done;
     uint8_t result;
 }storage_service_msg_rx_t;
 
-uint8_t config_save_mas(char* name, uint8_t* data){
-    storage_service_msg_tx_t msg;
+uint8_t config_save_mas(char* name, uint8_t* data, uint8_t element_size, uint8_t element_count){
+    static storage_service_msg_tx_t msg;
     msg.name = name;
     msg.type = STORAGE_MSG_SAVE_MAS;
-    msg.data = massive_for_saving;
-    msg.datalen = sizeof(data);
+    msg.data = data;
+    msg.elements_size = element_size;
+    msg.element_count = element_count;
     msg.result = -1;
-    return 0;
-}
-
-uint8_t config_save_int(char* name, uint32_t data){
-    storage_service_msg_tx_t msg;
-    msg.name = name;
-    msg.type = STORAGE_MSG_SAVE_INT;
-    msg.data = massive_for_saving;
-    msg.datalen = sizeof(data);
-    msg.result = -1;
-    memcpy(msg.data, &data, msg.datalen);
-
     if(xQueueSendToBack(storage_tx_queue_handle, &msg, portMAX_DELAY) != pdPASS){
-        return - 1;
+        return -1;
     }
     return 0;
 }
 
-uint8_t config_load_int(char* name, uint32_t* data){
-    storage_service_msg_rx_t msg;
+uint8_t config_save_int(char* name, uint32_t data){
+    static storage_service_msg_tx_t msg;
+    msg.name = name;
+    msg.type = STORAGE_MSG_SAVE_INT;
+    msg.data = massive_for_saving;
+    msg.elements_size = sizeof(data);//todo
+    msg.element_count = 1;
+    msg.result = -1;
+    memcpy(msg.data, &data, msg.elements_size);
+
+    if(xQueueSendToBack(storage_tx_queue_handle, &msg, portMAX_DELAY) != pdPASS){
+        return -1;
+    }
+    return 0;
+}
+
+uint8_t config_load_mas(char* name, uint8_t* data, uint8_t element_size, uint8_t element_count){
+    static storage_service_msg_rx_t msg;
     msg.name = name;
     msg.type = STORAGE_MSG_LOAD_INT;
     msg.data = (uint8_t*)data;
-    msg.datalen = sizeof(*data);
+    msg.element_size = element_size;
+    msg.element_count = element_count;
+    msg.done = xSemaphoreCreateBinary();
+    msg.result = -1;
+    if(xQueueSendToBack(storage_rx_queue_handle, &msg, portMAX_DELAY) != pdPASS){
+        vSemaphoreDelete(msg.done);
+        return -1;
+    }
+    if(xSemaphoreTake(msg.done, portMAX_DELAY)){
+        vSemaphoreDelete(msg.done);
+        return 0;
+    }
+    vSemaphoreDelete(msg.done);
+    return -1;
+}
+
+uint8_t config_load_int(char* name, uint32_t* data){
+    static storage_service_msg_rx_t msg;
+    msg.name = name;
+    msg.type = STORAGE_MSG_LOAD_INT;
+    msg.data = (uint8_t*)data;
+    msg.element_size = sizeof(*data);//todo
+    msg.element_count = 1;
     msg.done = xSemaphoreCreateBinary();
     msg.result = -1;
     if(xQueueSendToBack(storage_rx_queue_handle, &msg, portMAX_DELAY) != pdPASS){
@@ -108,23 +137,29 @@ void config_service_tx_task(void* param){
     while(1){
         if(xQueueReceive(storage_tx_queue_handle, &msg, portMAX_DELAY)){
             xSemaphoreTake(fs_mutex, portMAX_DELAY);
-            if(msg.type == STORAGE_MSG_SAVE_INT){
-                int tmp;
-                memcpy(&tmp, msg.data, msg.datalen);
-
+            //if(msg.type == STORAGE_MSG_SAVE_INT)
+            {
+                int tmp = 0;
+                uint16_t i = 0;
                 if(f_open(&fil, msg.name, FA_CREATE_ALWAYS | FA_WRITE) == FR_OK){
-                    len = snprintf(buf, sizeof(buf), "%d", tmp);//todo
-                    buf[len] = 0;
-                    res = f_write(&fil, buf, sizeof(buf), (void*)&byteswritten);
-                    if((byteswritten != 0) && (res == FR_OK)){
-                        msg.result = 0;
+                    while(msg.element_count--){
+                        memcpy(&tmp, msg.data + (i * msg.elements_size), msg.elements_size);
+                        i++;
+                        portENTER_CRITICAL();
+                        len = snprintf(buf, sizeof(buf), "%d", tmp);//todo
+                        portEXIT_CRITICAL();
+                        buf[len] = 0;
+                        res = f_write(&fil, buf, len + 1, (void*)&byteswritten);
+                        if((byteswritten != 0) && (res == FR_OK)){
+                            msg.result = 0;
+                        }
                     }
                     f_close(&fil);
                 }
             }
-            else{
+            //else if(msg.type == STORAGE_MSG_SAVE_MAS){
 //todo
-            }
+            //}
             xSemaphoreGive(fs_mutex);
         }
     }
@@ -140,18 +175,21 @@ void config_service_rx_task(void* param){
         if(xQueueReceive(storage_rx_queue_handle, &msg, portMAX_DELAY)){
             xSemaphoreTake(fs_mutex, portMAX_DELAY);
 
-            if(msg.type == STORAGE_MSG_LOAD_INT){
-                uint32_t loaded_val = 0;
+            //if(msg.type == STORAGE_MSG_LOAD_INT)
+            {
+                int loaded_val = 0;
+                uint16_t i = 0;
                 if(f_open(&file, msg.name, FA_READ) == FR_OK){
-                    f_read(&file, buf, sizeof(buf) - 1, &br);
-                    f_close(&file);
-                    buf[br] = '\0';
-                    if(msg.type == STORAGE_MSG_LOAD_INT){
+                    while(msg.element_count--){
+                        f_read(&file, buf, 4/*msg.element_size*/, &br);
+                        //buf[br] = '\0';
                         loaded_val = atoi(buf);
+                        memcpy(msg.data + i * msg.element_size, &loaded_val, sizeof(loaded_val));
                         msg.result = 0;
+                        i++;
                     }
+                    f_close(&file);
                 }
-                memcpy(msg.data, &loaded_val, sizeof(loaded_val));
             }
 
             xSemaphoreGive(fs_mutex);
