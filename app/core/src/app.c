@@ -90,15 +90,15 @@ void usb_device_unmounted_callback(void){
 }
 #endif
 
-uint16_t for_load[] = {123, 321};
-uint16_t for_check[2];
-int val = 0;
+float for_load[] = {123, 321};
+float for_check[2];
+float val = 0;
 void heartbit_callback(void){
-	int loaded_int_val = 0;
+	float loaded_int_val = 0;
 	val++;
-	config_save_mas("mas1", for_load, sizeof(for_load[0]), sizeof(for_load)/sizeof(for_load[0]));
+	config_save_float("mas1", for_load, sizeof(for_load[0]), sizeof(for_load)/sizeof(for_load[0]));
 	vTaskDelay(100);
-	config_load_mas("mas1", for_check, sizeof(for_check[0]), sizeof(for_check)/sizeof(for_check[0]));
+	config_load_float("mas1", for_check, sizeof(for_check[0]), sizeof(for_check)/sizeof(for_check[0]));
 
 	printf("___________\n\r");
 	printf("loaded mas: \n\r");
@@ -106,9 +106,9 @@ void heartbit_callback(void){
 		printf("%d\n\r", for_check[i]);
 	}
 
-	config_save_int("var1", val*100);
+	config_save_float("var1", &val, sizeof(val), 1);
 	vTaskDelay(100);
-	config_load_int("var1", &loaded_int_val);
+	config_load_float("var1", &loaded_int_val, sizeof(loaded_int_val), 1);
 	printf("loaded %d\n\r", loaded_int_val);
 	lcd_print(LCD_PRINTER_LINE4, LCD_PRINTER_OFFSET_FULL_NEXT - 3, "%3d", loaded_int_val);
 }

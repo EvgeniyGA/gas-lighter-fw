@@ -3,7 +3,7 @@
 #include "task.h"
 #include "stdio.h"
 
-#define BLINKY_STACK_SIZE   configMINIMAL_STACK_SIZE * 8
+#define BLINKY_STACK_SIZE   configMINIMAL_STACK_SIZE
 
 void led_blinking_task(void* param);
 
