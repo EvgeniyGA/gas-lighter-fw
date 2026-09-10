@@ -19,19 +19,16 @@
 #include "gpio_driver.h"
 #include "config_service.h"
 #include "status_service.h"
-#ifndef FOR_QEMU
-	#include "wave_starter.h"
-	#include "wave_measure.h"
-	#include "pulse_measure.h"
-	#include "usb_service.h"
-#endif
 
-#ifndef FOR_QEMU
+#include "wave_starter.h"
+#include "wave_measure.h"
+#include "pulse_measure.h"
+#include "usb_service.h"
+
 waveGenConfig_s 	wave_gen_config;
 waveMeasureConfig_s wave_measure_config;
 pulseMeasureConfig_s pulse_measure_config;
 usb_device_config_t usb_device_config;
-#endif
 
 void init(void){
 #ifndef FOR_QEMU
@@ -43,7 +40,6 @@ void init(void){
   	SEGGER_RTT_WriteString( 0, "SEGGER Real-Time-Terminal Started\n" );
 }
 
-#ifndef FOR_QEMU
 void pulse_measure_data_ready_callback(pulse_measure_msg_t* data){
 	printf("result %04ld:%04ld:%04ld:%04ld\n\r", 
 		data->result[Pulse_Measure_ADC_Channel_1], 
@@ -88,29 +84,37 @@ void usb_device_mounted_callback(void){
 void usb_device_unmounted_callback(void){
 	printf("USB device unmounted\n\r");
 }
-#endif
 
-float for_load[] = {123, 321};
-float for_check[2];
-float val = 0;
-void heartbit_callback(void){
+#define CONFIG_CHECK_MAS_SIzE	10
+void check_config_float(void){
+	float for_load[CONFIG_CHECK_MAS_SIzE] = {1.23, 32.14, 4.3, 5.6, 7.8, 9.1, 98776.1, 8.5, 3.2, 1.1};
+	float for_check[CONFIG_CHECK_MAS_SIzE] = {0, 0};
+	float test_val = 56.78;
 	float loaded_int_val = 0;
-	val++;
-	config_save_float("mas1", for_load, sizeof(for_load[0]), sizeof(for_load)/sizeof(for_load[0]));
-	vTaskDelay(100);
-	config_load_float("mas1", for_check, sizeof(for_check[0]), sizeof(for_check)/sizeof(for_check[0]));
 
-	printf("___________\n\r");
+	config_save_float("masf", for_load, sizeof(for_load[0]), sizeof(for_load)/sizeof(for_load[0]));
+	vTaskDelay(100);
+	config_load_float("masf", for_check, sizeof(for_check[0]), sizeof(for_check)/sizeof(for_check[0]));
+	
 	printf("loaded mas: \n\r");
 	for(int i = 0; i < sizeof(for_check)/sizeof(for_check[0]); i++){
-		printf("%d\n\r", for_check[i]);
+		printf("%f\n\r", for_check[i]);
 	}
 
-	config_save_float("var1", &val, sizeof(val), 1);
+	config_save_float("var1", &test_val, sizeof(test_val), 1);
 	vTaskDelay(100);
 	config_load_float("var1", &loaded_int_val, sizeof(loaded_int_val), 1);
-	printf("loaded %d\n\r", loaded_int_val);
-	lcd_print(LCD_PRINTER_LINE4, LCD_PRINTER_OFFSET_FULL_NEXT - 3, "%3d", loaded_int_val);
+	printf("loaded %f\n\r", loaded_int_val);
+//	lcd_print(LCD_PRINTER_LINE4, LCD_PRINTER_OFFSET_FULL_NEXT - 3, "%3d", loaded_int_val);
+}
+
+void heartbit_callback(void){
+
+}
+
+void initial_task(void* param){
+	check_config_float();
+	vTaskDelete(NULL);
 }
 
 void setup(void){
@@ -126,7 +130,7 @@ void setup(void){
 
   	lcd_printer_init();
   	lcd_print(LCD_PRINTER_LINE1, LCD_PRINTER_OFFSET_ZERO + 1, "Version: %s", FW_VERSION_STR);
-#ifndef FOR_QEMU	
+
 	wave_measure_config.main_freqency = MAIN_FREQENCY_HZ;
 	wave_measure_config.time_resolution = MAIN_TIME_RESOLUTION;
 	wave_measure_config.data_ready = wave_measure_data_ready_callback;
@@ -145,15 +149,14 @@ void setup(void){
 
 	usb_device_config.mounted = usb_device_mounted_callback;
 	usb_device_config.unmounted = usb_device_unmounted_callback;
-#endif
+
 	FATFS_Init();
 	cli_service_init();
 	config_service_init();
 	status_service_init(heartbit_callback);
-#ifndef FOR_QEMU
 	usb_device_init(&usb_device_config);
 	usb_cdc_init();
-#endif
+	xTaskCreate(initial_task, "init", 256, NULL, 1, NULL);
 	vTaskStartScheduler();
 }
 

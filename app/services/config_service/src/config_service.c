@@ -24,7 +24,6 @@ static StaticQueue_t storage_tx_queue_def;
 static SemaphoreHandle_t fs_mutex = NULL;
 
 static FIL fil;
-static char buf[10];
 
 typedef struct{
     char* name;
@@ -64,17 +63,22 @@ uint8_t config_save_float(char* name, uint8_t* data, uint8_t element_size, uint8
 }
 
 uint8_t config_load(char* name, uint8_t* data, uint8_t element_size, uint8_t element_count){
-    static UINT br;
+    UINT br;
     uint8_t res = -1;
     int loaded_val = 0;
     uint16_t i = 0;
+    char* endptr;
+    char buf[20];
     if(f_open(&file, name, FA_READ) == FR_OK){
         while(element_count--){
-            f_read(&file, buf, 4/*msg.element_size*/, &br);
-            loaded_val = atoi(buf);
-            memcpy(data + (i * element_size), &loaded_val, element_size);
-            res = 0;
+            //f_read(&file, buf, 4/*msg.element_size*/, &br);
+            f_getc(buf, sizeof(buf), &file);
+            loaded_val = strtoi((const char*)buf, &endptr);
+            memcpy((void*)&data + (i * element_size), &loaded_val, element_size);
             i++;
+        }
+        if(*endptr == '\n'){
+            res = 0;
         }
         f_close(&file);
     }
@@ -83,20 +87,22 @@ uint8_t config_load(char* name, uint8_t* data, uint8_t element_size, uint8_t ele
 }
 
 uint8_t config_load_float(char* name, float* data, uint8_t element_size, uint8_t element_count){
-    static UINT br;
+    UINT br;
     uint8_t res = -1;
     float loaded_val = 0;
     uint16_t i = 0;
     char* endptr;
+    char buf[20];
     if(f_open(&file, name, FA_READ) == FR_OK){
         while(element_count--){
-            f_read(&file, buf, 9/*msg.element_size*/, &br);
-            buf[br] = '\0';
-            //loaded_val = atof(buf);
+            f_gets(buf, sizeof(buf), &file);
             loaded_val = strtof((const char*)buf, &endptr);
-            memcpy((void*)&data + (i * element_size), &loaded_val, element_size);
+            memcpy((void*)data + (i * element_size), &loaded_val, element_size);
             res = 0;
             i++;
+        }
+        if(*endptr == '\n'){
+            res = 0;
         }
         f_close(&file);
     }
@@ -117,6 +123,7 @@ void config_service_tx_task(void* param){
     static storage_service_msg_tx_t msg;
     static FRESULT res;
     static uint32_t byteswritten, len;
+    char buf[20];
     storage_tx_queue_handle = xQueueCreateStatic(STORAGE_QUEUE_LEN, sizeof(storage_service_msg_tx_t), storage_queue_buffer, &storage_tx_queue_def);
     while(1){
         if(xQueueReceive(storage_tx_queue_handle, &msg, portMAX_DELAY)){
@@ -131,18 +138,17 @@ void config_service_tx_task(void* param){
                     if(msg.data_type == CONFIG_DATA_TYPE_INT){
                         int tmp = 0;
                         memcpy((void*)&tmp, msg.data + ((i++) * msg.elements_size), msg.elements_size);
-                        len = snprintf(buf, sizeof(buf), "%d", tmp);
+                        len = snprintf(buf, sizeof(buf), "%d\n", tmp);
                     }
                     else if(msg.data_type == CONFIG_DATA_TYPE_FLOAT){
                         float tmp = 0;
                         memcpy((void*)&tmp, msg.data + ((i++) * msg.elements_size), msg.elements_size);
-                        len = snprintf(buf, sizeof(buf) - 1, "%.3f", tmp);    
+                        len = snprintf(buf, sizeof(buf) - 1, "%.3f\n", tmp);    
                     }
 
-
-                    buf[len] = 0;
+                    //buf[len] = 0;
                     
-                    res = f_write(&fil, buf, len + 1, (void*)&byteswritten);
+                    res = f_write(&fil, buf, len, (void*)&byteswritten);
                     if((byteswritten != 0) && (res == FR_OK)){
                         msg.result = 0;
                     }

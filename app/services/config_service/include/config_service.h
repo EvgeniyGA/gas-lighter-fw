@@ -8,6 +8,10 @@
 
 uint8_t config_service_init(void);
 SemaphoreHandle_t storage_get_fs_mutex(void);
-uint8_t config_read(char* name, uint8_t* data, uint16_t datalen);
+
+uint8_t config_save(char* name, uint8_t* data, uint8_t element_size, uint8_t element_count);
+uint8_t config_save_float(char* name, uint8_t* data, uint8_t element_size, uint8_t element_count);
+uint8_t config_load(char* name, uint8_t* data, uint8_t element_size, uint8_t element_count);
+uint8_t config_load_float(char* name, float* data, uint8_t element_size, uint8_t element_count);
 
 #endif
