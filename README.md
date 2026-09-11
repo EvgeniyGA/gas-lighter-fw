@@ -2,8 +2,9 @@
 
 todo
 - [ ] move lcd_driver to target
-- [ ] add config service
-- [ ] remove redundant linker script
+- [X] add config service
+- [X] remove redundant linker script
 - [ ] remove redundant startup file
 - [ ] support CPP
-- [ ] add status service
+- [X] add status service
+- [ ] add device config

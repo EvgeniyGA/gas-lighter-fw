@@ -127,7 +127,7 @@ void check_config_int(void){
 	vTaskDelay(100);
 	config_load("var1", &loaded_int_val, sizeof(loaded_int_val), 1);
 	printf("loaded %d\n\r", loaded_int_val);
-//	lcd_print(LCD_PRINTER_LINE4, LCD_PRINTER_OFFSET_FULL_NEXT - 3, "%3d", loaded_int_val);
+	lcd_print(LCD_PRINTER_LINE4, LCD_PRINTER_OFFSET_FULL_NEXT - 3, "%3d", loaded_int_val);
 }
 
 void heartbit_callback(void){
