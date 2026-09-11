@@ -8,3 +8,4 @@ todo
 - [ ] support CPP
 - [X] add status service
 - [ ] add device config
+- [ ] add return codes

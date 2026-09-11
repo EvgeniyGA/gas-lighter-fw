@@ -24,6 +24,7 @@
 #include "wave_measure.h"
 #include "pulse_measure.h"
 #include "usb_service.h"
+#include "device.h"
 
 waveGenConfig_s 	wave_gen_config;
 waveMeasureConfig_s wave_measure_config;
@@ -106,6 +107,7 @@ void check_config_float(void){
 	config_load_float("var1", &loaded_int_val, sizeof(loaded_int_val), 1);
 	printf("loaded %.3f\n\r", loaded_int_val);
 //	lcd_print(LCD_PRINTER_LINE4, LCD_PRINTER_OFFSET_FULL_NEXT - 3, "%3d", loaded_int_val);
+	load_configs();
 }
 
 void check_config_int(void){
