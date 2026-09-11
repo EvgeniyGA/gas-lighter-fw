@@ -9,8 +9,7 @@
 #define STORAGE_TASK_STACK_SIZE         (configMINIMAL_STACK_SIZE * 2)
 #define STORAGE_TASK_PRIORITY           (configMAX_PRIORITIES - 5)
 
-#define STORAGE_QUEUE_LEN               (1)
-#define STORAGE_MAX_SAVING_SIZE         (100)
+#define STORAGE_QUEUE_LEN               (10)
 
 typedef enum{
     CONFIG_DATA_TYPE_INT,
@@ -22,8 +21,6 @@ static TaskHandle_t config_tx_task_handle;
 static QueueHandle_t storage_tx_queue_handle;
 static StaticQueue_t storage_tx_queue_def;
 static SemaphoreHandle_t fs_mutex = NULL;
-
-static FIL fil;
 
 typedef struct{
     char* name;
@@ -63,36 +60,35 @@ uint8_t config_save_float(char* name, uint8_t* data, uint8_t element_size, uint8
 }
 
 uint8_t config_load(char* name, uint8_t* data, uint8_t element_size, uint8_t element_count){
-    UINT br;
     uint8_t res = -1;
     int loaded_val = 0;
     uint16_t i = 0;
     char* endptr;
     char buf[20];
+    xSemaphoreTake(fs_mutex, portMAX_DELAY);
     if(f_open(&file, name, FA_READ) == FR_OK){
         while(element_count--){
-            //f_read(&file, buf, 4/*msg.element_size*/, &br);
-            f_getc(buf, sizeof(buf), &file);
-            loaded_val = strtoi((const char*)buf, &endptr);
-            memcpy((void*)&data + (i * element_size), &loaded_val, element_size);
+            f_gets(buf, sizeof(buf), &file);
+            loaded_val = strtol((const char*)buf, &endptr, 10);
+            memcpy((void*)data + (i * element_size), &loaded_val, element_size);
             i++;
         }
-        if(*endptr == '\n'){
+        if(endptr != buf){
             res = 0;
         }
         f_close(&file);
     }
-
+    xSemaphoreGive(fs_mutex);
     return res;
 }
 
 uint8_t config_load_float(char* name, float* data, uint8_t element_size, uint8_t element_count){
-    UINT br;
     uint8_t res = -1;
     float loaded_val = 0;
     uint16_t i = 0;
     char* endptr;
     char buf[20];
+    xSemaphoreTake(fs_mutex, portMAX_DELAY);
     if(f_open(&file, name, FA_READ) == FR_OK){
         while(element_count--){
             f_gets(buf, sizeof(buf), &file);
@@ -101,17 +97,13 @@ uint8_t config_load_float(char* name, float* data, uint8_t element_size, uint8_t
             res = 0;
             i++;
         }
-        if(*endptr == '\n'){
+        if(endptr != buf){
             res = 0;
         }
         f_close(&file);
     }
-
+    xSemaphoreGive(fs_mutex);
     return res;
-}
-
-void config_set_readonly(uint8_t event){
-
 }
 
 SemaphoreHandle_t storage_get_fs_mutex(void){
@@ -129,10 +121,8 @@ void config_service_tx_task(void* param){
         if(xQueueReceive(storage_tx_queue_handle, &msg, portMAX_DELAY)){
             xSemaphoreTake(fs_mutex, portMAX_DELAY);
 
-            //int tmp = 0;
-            //uint8_t tmp[8];
             uint16_t i = 0;
-            if(f_open(&fil, msg.name, FA_CREATE_ALWAYS | FA_WRITE) == FR_OK){
+            if(f_open(&file, msg.name, FA_CREATE_ALWAYS | FA_WRITE) == FR_OK){
                 while(msg.element_count--){
                     
                     if(msg.data_type == CONFIG_DATA_TYPE_INT){
@@ -145,15 +135,13 @@ void config_service_tx_task(void* param){
                         memcpy((void*)&tmp, msg.data + ((i++) * msg.elements_size), msg.elements_size);
                         len = snprintf(buf, sizeof(buf) - 1, "%.3f\n", tmp);    
                     }
-
-                    //buf[len] = 0;
                     
-                    res = f_write(&fil, buf, len, (void*)&byteswritten);
+                    res = f_write(&file, buf, len, (void*)&byteswritten);
                     if((byteswritten != 0) && (res == FR_OK)){
                         msg.result = 0;
                     }
                 }
-                f_close(&fil);
+                f_close(&file);
             }
             
             xSemaphoreGive(fs_mutex);
@@ -170,3 +158,6 @@ uint8_t config_service_init(void){
     return 0;
 }
 
+void config_set_readonly(uint8_t event){
+//todo
+}

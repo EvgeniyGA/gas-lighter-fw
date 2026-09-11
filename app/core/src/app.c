@@ -98,13 +98,35 @@ void check_config_float(void){
 	
 	printf("loaded mas: \n\r");
 	for(int i = 0; i < sizeof(for_check)/sizeof(for_check[0]); i++){
-		printf("%f\n\r", for_check[i]);
+		printf("%.3f\n\r", for_check[i]);
 	}
 
 	config_save_float("var1", &test_val, sizeof(test_val), 1);
 	vTaskDelay(100);
 	config_load_float("var1", &loaded_int_val, sizeof(loaded_int_val), 1);
-	printf("loaded %f\n\r", loaded_int_val);
+	printf("loaded %.3f\n\r", loaded_int_val);
+//	lcd_print(LCD_PRINTER_LINE4, LCD_PRINTER_OFFSET_FULL_NEXT - 3, "%3d", loaded_int_val);
+}
+
+void check_config_int(void){
+	int16_t for_load[CONFIG_CHECK_MAS_SIzE] = {123, -123, 321, -321, 555, 666, 777, 888, 0, 999};
+	int16_t for_check[CONFIG_CHECK_MAS_SIzE] = {0, 0};
+	uint16_t test_val = 543;
+	uint16_t loaded_int_val = 0;
+
+	config_save("masi", for_load, sizeof(for_load[0]), sizeof(for_load)/sizeof(for_load[0]));
+	vTaskDelay(100);
+	config_load("masi", for_check, sizeof(for_check[0]), sizeof(for_check)/sizeof(for_check[0]));
+	
+	printf("loaded mas: \n\r");
+	for(int i = 0; i < sizeof(for_check)/sizeof(for_check[0]); i++){
+		printf("%d\n\r", for_check[i]);
+	}
+
+	config_save("var1", &test_val, sizeof(test_val), 1);
+	vTaskDelay(100);
+	config_load("var1", &loaded_int_val, sizeof(loaded_int_val), 1);
+	printf("loaded %d\n\r", loaded_int_val);
 //	lcd_print(LCD_PRINTER_LINE4, LCD_PRINTER_OFFSET_FULL_NEXT - 3, "%3d", loaded_int_val);
 }
 
@@ -113,7 +135,7 @@ void heartbit_callback(void){
 }
 
 void initial_task(void* param){
-	check_config_float();
+	check_config_int();
 	vTaskDelete(NULL);
 }
 
