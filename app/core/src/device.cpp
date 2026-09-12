@@ -1,11 +1,15 @@
 #include "device.h"
 #include "config_service.h"
+#include <cstdio>
+//extern "C"{
+//    #include <stdio.h>
+//}
 
 device_config_t dev_config = {
-        .main_freqency_Hz.name = "freq.txt",
-        .main_freqency_Hz.default_value = 1000,
-        .dac_ampl.name = "dac_ampl.txt",
-        .dac_ampl.default_value = 12.34
+        .main_freqency_Hz = {
+            .name = "freq.txt",
+            .default_value = 1000
+        }
 };
 
 uint16_t set_val = 321;
@@ -23,6 +27,6 @@ uint8_t load_configs(void){
         sizeof(dev_config.main_freqency_Hz.value), 
         1
     );
-    printf("ldd %d\n\r", dev_config.main_freqency_Hz.value);
+    std::printf("ldd %d\n\r", dev_config.main_freqency_Hz.value);
     return 0;
 }

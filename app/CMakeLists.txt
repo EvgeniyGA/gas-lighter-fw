@@ -5,8 +5,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 )
 
 target_sources(${PROJECT_NAME} PRIVATE
-    core/src/app.c
-    core/src/device.c
+    core/src/app.cpp
+    core/src/device.cpp
     core/src/retarget.c
     core/src/wrapper.c
     core/src/version_check.c

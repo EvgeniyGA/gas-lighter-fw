@@ -1,3 +1,4 @@
+extern "C"{
 #include <stdio.h>
 #include <ctype.h>
 #include <FreeRTOS.h>
@@ -24,12 +25,20 @@
 #include "wave_measure.h"
 #include "pulse_measure.h"
 #include "usb_service.h"
+}
 #include "device.h"
+#include <array>
+#include <cstdio>
 
 waveGenConfig_s 	wave_gen_config;
 waveMeasureConfig_s wave_measure_config;
 pulseMeasureConfig_s pulse_measure_config;
 usb_device_config_t usb_device_config;
+
+void* operator new(size_t size) = delete;
+void* operator new[](size_t size) = delete;
+
+void operator delete(void* ptr) noexcept = delete;
 
 void init(void){
 #ifndef FOR_QEMU
@@ -58,13 +67,6 @@ void pulse_measure_data_ready_callback(pulse_measure_msg_t* data){
 		((uint32_t)(data->result[Pulse_Measure_ADC_Channel_3] % data->result[Pulse_Measure_ADC_Channel_4])*100000)/data->result[Pulse_Measure_ADC_Channel_4]);
 }
 
-void pulse_measure_event_half_callback(void){
-	gpio_channel_change_state(GPIO_CHANNEL_2a, GPIO_CHANNEL_ON);
-}
-void pulse_measure_event_full_callback(void){
-	gpio_channel_change_state(GPIO_CHANNEL_2a, GPIO_CHANNEL_OFF);
-}
-
 void wave_measure_data_ready_callback(waveMeasureFFT_result_t* result){
 	lcd_print(LCD_PRINTER_LINE3, 0, "%5d Hz, %5d Hz", 	(int)(result[WAVE_MEASURE_Channel_1].main_freq_Hz), 
 										(int)(result[WAVE_MEASURE_Channel_2].main_freq_Hz));
@@ -78,16 +80,9 @@ void wave_measure_data_ready_callback(waveMeasureFFT_result_t* result){
 	}
 }
 
-void usb_device_mounted_callback(void){
-	printf("USB device mounted\n\r");
-}
-
-void usb_device_unmounted_callback(void){
-	printf("USB device unmounted\n\r");
-}
 
 #define CONFIG_CHECK_MAS_SIzE	10
-void check_config_float(void){
+/*void check_config_float(void){
 	float for_load[CONFIG_CHECK_MAS_SIzE] = {1.23, 32.14, 4.3, 5.6, 7.8, 9.1, 98776.1, 8.5, 3.2, 1.1};
 	float for_check[CONFIG_CHECK_MAS_SIzE] = {0, 0};
 	float test_val = 56.78;
@@ -130,10 +125,14 @@ void check_config_int(void){
 	config_load("var1", &loaded_int_val, sizeof(loaded_int_val), 1);
 	printf("loaded %d\n\r", loaded_int_val);
 	lcd_print(LCD_PRINTER_LINE4, LCD_PRINTER_OFFSET_FULL_NEXT - 3, "%3d", loaded_int_val);
-}
+}*/
 
+constexpr std::array<int, 3> tst_data = {1,2,3};
 void heartbit_callback(void){
-
+	for(const auto& i: tst_data){
+		std::printf("%d\n", i);
+	}
+	std::printf("--------\n");
 }
 
 void initial_task(void* param){
@@ -168,12 +167,12 @@ void setup(void){
 	wave_starter_run(&wave_gen_config);
 
 	pulse_measure_config.data_ready = pulse_measure_data_ready_callback;
-	pulse_measure_config.event_half_adc = pulse_measure_event_half_callback;
-	pulse_measure_config.event_full_adc = pulse_measure_event_full_callback;
+	pulse_measure_config.event_half_adc = [](){ gpio_channel_change_state(GPIO_CHANNEL_2a, GPIO_CHANNEL_ON); };
+	pulse_measure_config.event_full_adc = [](){ gpio_channel_change_state(GPIO_CHANNEL_2a, GPIO_CHANNEL_OFF); };
 	pulse_measure_init(&pulse_measure_config);
 
-	usb_device_config.mounted = usb_device_mounted_callback;
-	usb_device_config.unmounted = usb_device_unmounted_callback;
+	usb_device_config.mounted = [](){ std::printf("USB device mounted\n\r"); };
+	usb_device_config.unmounted = [](){ std::printf("USB unmounted"); };
 
 	FATFS_Init();
 	cli_service_init();

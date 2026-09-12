@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 typedef struct{
-    const char* name;
+    char* name;
     uint32_t default_value;
     uint32_t value;
 }device_param_int_t;

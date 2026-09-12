@@ -23,7 +23,7 @@ void led_blinking_task(void* param) {
 #ifndef FOR_QEMU
     vTaskDelay(1000 / portTICK_PERIOD_MS);
 #else
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    vTaskDelay(10000 / portTICK_PERIOD_MS);
 #endif
 //    led_state = 1 - led_state; // toggle
 //	  printf("blink %04d\n\r", led_state);
