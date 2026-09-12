@@ -111,10 +111,10 @@ void check_config_float(void){
 }
 
 void check_config_int(void){
+	uint16_t loaded_int_val = 0;
 	int16_t for_load[CONFIG_CHECK_MAS_SIzE] = {123, -123, 321, -321, 555, 666, 777, 888, 0, 999};
 	int16_t for_check[CONFIG_CHECK_MAS_SIzE] = {0, 0};
 	uint16_t test_val = 543;
-	uint16_t loaded_int_val = 0;
 
 	config_save("masi", for_load, sizeof(for_load[0]), sizeof(for_load)/sizeof(for_load[0]));
 	vTaskDelay(100);
@@ -137,7 +137,8 @@ void heartbit_callback(void){
 }
 
 void initial_task(void* param){
-	check_config_int();
+	//check_config_int();
+	load_configs();
 	vTaskDelete(NULL);
 }
 
