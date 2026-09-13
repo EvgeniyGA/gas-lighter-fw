@@ -10,6 +10,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     core/src/retarget.c
     core/src/wrapper.c
     core/src/version_check.c
+    core/src/no_heap.cpp
 )
 
 add_subdirectory(services)

@@ -10,13 +10,16 @@
 #include "FreeRTOS.h"
 #include "semphr.h"
 
+typedef enum{
+    CONFIG_DATA_TYPE_INT,
+    CONFIG_DATA_TYPE_FLOAT
+}config_data_type_e;
+
 uint8_t config_service_init(void);
 SemaphoreHandle_t storage_get_fs_mutex(void);
 
-uint8_t config_save(char* name, uint8_t* data, uint8_t element_size, uint8_t element_count);
-uint8_t config_save_float(char* name, uint8_t* data, uint8_t element_size, uint8_t element_count);
-uint8_t config_load(char* name, uint8_t* data, uint8_t element_size, uint8_t element_count);
-uint8_t config_load_float(char* name, float* data, uint8_t element_size, uint8_t element_count);
+uint8_t config_save_raw(const char* name, uint8_t* data, uint8_t element_size, uint8_t element_count, uint8_t type);
+uint8_t config_load_raw(const char* name, uint8_t* data, uint8_t element_size, uint8_t element_count, uint8_t type);
 
 #ifdef __cplusplus
  }

@@ -11,11 +11,6 @@
 
 #define STORAGE_QUEUE_LEN               (10)
 
-typedef enum{
-    CONFIG_DATA_TYPE_INT,
-    CONFIG_DATA_TYPE_FLOAT
-}config_data_type_e;
-
 static StaticTask_t config_tx_task_def;
 static TaskHandle_t config_tx_task_handle;
 static QueueHandle_t storage_tx_queue_handle;
@@ -31,13 +26,13 @@ typedef struct{
     uint8_t result;
 }storage_service_msg_tx_t;
 
-uint8_t config_save(char* name, uint8_t* data, uint8_t element_size, uint8_t element_count){
+uint8_t config_save_raw(const char* name, uint8_t* data, uint8_t element_size, uint8_t element_count, uint8_t type){
     storage_service_msg_tx_t msg;
     msg.name = name;
     msg.data = data;
     msg.elements_size = element_size;
     msg.element_count = element_count;
-    msg.data_type = CONFIG_DATA_TYPE_INT;
+    msg.data_type = type;
     msg.result = -1;
     if(xQueueSendToBack(storage_tx_queue_handle, &msg, portMAX_DELAY) != pdPASS){
         return -1;
@@ -45,56 +40,29 @@ uint8_t config_save(char* name, uint8_t* data, uint8_t element_size, uint8_t ele
     return 0;
 }
 
-uint8_t config_save_float(char* name, uint8_t* data, uint8_t element_size, uint8_t element_count){
-    storage_service_msg_tx_t msg;
-    msg.name = name;
-    msg.data = data;
-    msg.elements_size = element_size;
-    msg.element_count = element_count;
-    msg.data_type = CONFIG_DATA_TYPE_FLOAT;
-    msg.result = -1;
-    if(xQueueSendToBack(storage_tx_queue_handle, &msg, portMAX_DELAY) != pdPASS){
-        return -1;
-    }
-    return 0;
-}
-
-uint8_t config_load(char* name, uint8_t* data, uint8_t element_size, uint8_t element_count){
+uint8_t config_load_raw(const char* name, uint8_t* data, uint8_t element_size, uint8_t element_count, uint8_t type){
     uint8_t res = -1;
-    int loaded_val = 0;
     uint16_t i = 0;
-    char* endptr;
     char buf[20];
+    char* endptr = buf;
+    int loaded_val_int = 0;
+    int loaded_val_float = 0;
     xSemaphoreTake(fs_mutex, portMAX_DELAY);
     if(f_open(&file, name, FA_READ) == FR_OK){
         while(element_count--){
             f_gets(buf, sizeof(buf), &file);
-            loaded_val = strtol((const char*)buf, &endptr, 10);
-            memcpy((void*)data + (i * element_size), &loaded_val, element_size);
-            i++;
-        }
-        if(endptr != buf){
-            res = 0;
-        }
-        f_close(&file);
-    }
-    xSemaphoreGive(fs_mutex);
-    return res;
-}
-
-uint8_t config_load_float(char* name, float* data, uint8_t element_size, uint8_t element_count){
-    uint8_t res = -1;
-    float loaded_val = 0;
-    uint16_t i = 0;
-    char* endptr;
-    char buf[20];
-    xSemaphoreTake(fs_mutex, portMAX_DELAY);
-    if(f_open(&file, name, FA_READ) == FR_OK){
-        while(element_count--){
-            f_gets(buf, sizeof(buf), &file);
-            loaded_val = strtof((const char*)buf, &endptr);
-            memcpy((void*)data + (i * element_size), &loaded_val, element_size);
-            res = 0;
+            switch(type){
+                case(CONFIG_DATA_TYPE_INT):
+                    loaded_val_int = strtol((const char*)buf, &endptr, 10);
+                    memcpy((void*)data + (i * element_size), &loaded_val_int, element_size);
+                    break;
+                case(CONFIG_DATA_TYPE_FLOAT):
+                    loaded_val_float = strtof((const char*)buf, &endptr);
+                    memcpy((void*)data + (i * element_size), &loaded_val_float, element_size);
+                    break;
+                default: break;
+            }
+            
             i++;
         }
         if(endptr != buf){

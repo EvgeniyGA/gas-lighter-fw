@@ -29,16 +29,12 @@ extern "C"{
 #include "device.h"
 #include <array>
 #include <cstdio>
+#include "config_wrapper.hpp"
 
 waveGenConfig_s 	wave_gen_config;
 waveMeasureConfig_s wave_measure_config;
 pulseMeasureConfig_s pulse_measure_config;
 usb_device_config_t usb_device_config;
-
-void* operator new(size_t size) = delete;
-void* operator new[](size_t size) = delete;
-
-void operator delete(void* ptr) noexcept = delete;
 
 void init(void){
 #ifndef FOR_QEMU
