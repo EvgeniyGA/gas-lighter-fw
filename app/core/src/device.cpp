@@ -6,7 +6,13 @@
 DeviceConfig dev_config;
 
 uint8_t load_configs(void){
-    dev_config.main_freq.load();
+    printf("freq loaded: %d \n\r", (int)dev_config.main_freq.load());
+    dev_config.main_freq.save(4321);
+    std::array<int, 6> readed_mas = dev_config.calibration.load();
+    for(const auto& elem: readed_mas){
+        printf(" %d", elem);
+    }
+//    dev_config.calibration.save(std::array<int, 6>{9,8,7});
     return 0;
 }
 
