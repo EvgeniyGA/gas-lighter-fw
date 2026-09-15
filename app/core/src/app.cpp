@@ -5,7 +5,7 @@ extern "C"{
 #include "task.h"
 #include "SEGGER_RTT.h"
 #include "SEGGER_SYSVIEW.h"
-#include "tusb.h"
+
 #include "fatfs.h"
 #include "version.h"
 #include "version_check.h"
@@ -76,65 +76,8 @@ void wave_measure_data_ready_callback(waveMeasureFFT_result_t* result){
 	}
 }
 
-
-#define CONFIG_CHECK_MAS_SIzE	10
-/*void check_config_float(void){
-	float for_load[CONFIG_CHECK_MAS_SIzE] = {1.23, 32.14, 4.3, 5.6, 7.8, 9.1, 98776.1, 8.5, 3.2, 1.1};
-	float for_check[CONFIG_CHECK_MAS_SIzE] = {0, 0};
-	float test_val = 56.78;
-	float loaded_int_val = 0;
-
-	config_save_float("masf", for_load, sizeof(for_load[0]), sizeof(for_load)/sizeof(for_load[0]));
-	vTaskDelay(100);
-	config_load_float("masf", for_check, sizeof(for_check[0]), sizeof(for_check)/sizeof(for_check[0]));
-	
-	printf("loaded mas: \n\r");
-	for(int i = 0; i < sizeof(for_check)/sizeof(for_check[0]); i++){
-		printf("%.3f\n\r", for_check[i]);
-	}
-
-	config_save_float("var1", &test_val, sizeof(test_val), 1);
-	vTaskDelay(100);
-	config_load_float("var1", &loaded_int_val, sizeof(loaded_int_val), 1);
-	printf("loaded %.3f\n\r", loaded_int_val);
-//	lcd_print(LCD_PRINTER_LINE4, LCD_PRINTER_OFFSET_FULL_NEXT - 3, "%3d", loaded_int_val);
-	load_configs();
-}
-
-void check_config_int(void){
-	uint16_t loaded_int_val = 0;
-	int16_t for_load[CONFIG_CHECK_MAS_SIzE] = {123, -123, 321, -321, 555, 666, 777, 888, 0, 999};
-	int16_t for_check[CONFIG_CHECK_MAS_SIzE] = {0, 0};
-	uint16_t test_val = 543;
-
-	config_save("masi", for_load, sizeof(for_load[0]), sizeof(for_load)/sizeof(for_load[0]));
-	vTaskDelay(100);
-	config_load("masi", for_check, sizeof(for_check[0]), sizeof(for_check)/sizeof(for_check[0]));
-	
-	printf("loaded mas: \n\r");
-	for(int i = 0; i < sizeof(for_check)/sizeof(for_check[0]); i++){
-		printf("%d\n\r", for_check[i]);
-	}
-
-	config_save("var1", &test_val, sizeof(test_val), 1);
-	vTaskDelay(100);
-	config_load("var1", &loaded_int_val, sizeof(loaded_int_val), 1);
-	printf("loaded %d\n\r", loaded_int_val);
-	lcd_print(LCD_PRINTER_LINE4, LCD_PRINTER_OFFSET_FULL_NEXT - 3, "%3d", loaded_int_val);
-}*/
-
-constexpr std::array<int, 3> tst_data = {1,2,3};
 void heartbit_callback(void){
-	for(const auto& i: tst_data){
-		std::printf("%d\n", i);
-	}
-	std::printf("--------\n");
-}
-
-void initial_task(void* param){
-	//check_config_int();
-	load_configs();
-	vTaskDelete(NULL);
+	//lcd_print(LCD_PRINTER_LINE4, LCD_PRINTER_OFFSET_FULL_NEXT - 3, "%3d", loaded_int_val);
 }
 
 void setup(void){
@@ -171,12 +114,17 @@ void setup(void){
 	usb_device_config.unmounted = [](){ std::printf("USB unmounted"); };
 
 	FATFS_Init();
-	cli_service_init();
-	config_service_init();
-	status_service_init(heartbit_callback);
-	usb_device_init(&usb_device_config);
-	usb_cdc_init();
-	xTaskCreate(initial_task, "init", 256, NULL, 1, NULL);
+	xTaskCreate([](void* param){
+		cli_service_init();
+		config_service_init();
+		status_service_init(heartbit_callback);
+		usb_device_init(&usb_device_config);
+		usb_cdc_init();
+		load_configs();
+		vTaskDelete(NULL);
+	}, "init", 256, NULL, 1, NULL);
+
+	
 	vTaskStartScheduler();
 }
 

@@ -54,7 +54,7 @@ uint8_t FATFS_Init(void) {
     FRESULT fr = f_open(&file, "0:/README.TXT", FA_OPEN_ALWAYS | FA_WRITE);
     if (fr == FR_OK) {
         if (f_size(&file) == 0) {
-            char data[] = "Hello from External Flash disk!";
+            char data[] = "Status OK!";
             UINT bw;
             f_write(&file, data, sizeof(data) - 1, &bw);
             f_sync(&file);

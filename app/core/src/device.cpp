@@ -2,69 +2,40 @@
 #include "config_service.h"
 #include <cstdio>
 #include "config_wrapper.hpp"
+#include <algorithm>
+
+struct DeviceConfig{
+    ConfigItem<uint32_t> main_freq{"freq.txt", 444u};
+    ConfigItem<float> dac_set{"dac.txt", 32.23f};
+    ConfigItem<std::array<int, 6>> calibration{"calibr.txt", {1, 2, 3, 4}};
+};
 
 DeviceConfig dev_config;
 
 uint8_t load_configs(void){
-    printf("freq loaded: %d \n\r", (int)dev_config.main_freq.load());
-    dev_config.main_freq.save(4321);
-    std::array<int, 6> readed_mas = dev_config.calibration.load();
-    for(const auto& elem: readed_mas){
-        printf(" %d", elem);
+    auto freq = dev_config.main_freq.load();
+    if(freq.from_file == true){
+        printf("freq loaded from file: %d\n\r", static_cast<int>(freq.value));
+        dev_config.main_freq.save(freq.value + 1);
     }
-//    dev_config.calibration.save(std::array<int, 6>{9,8,7});
+    else{
+        printf("freq use default");
+    }
+
+    auto calibr = dev_config.calibration.load();
+    if(calibr.from_file == true){
+        printf("calibration:\n\r");
+        for(auto& elem: calibr.value){
+            printf(" %d\n\r", elem);
+            elem++;
+        }
+        dev_config.calibration.save(calibr.value);//dev_config.calibration.save({9, 8, 7, 6, 5, 4});
+    }
+    else{
+        printf("use default calibration\n\r");
+    }
+
     return 0;
 }
 
-
-device_config_t device_config = {
-    .main_freqency_Hz = {
-        .name = "freq.txt",
-        .default_value = 1000
-    },
-    .dac_ampl = {
-        .name = "dac.txt",
-        .default_value = 1.23f
-    }
-
-};
-
-uint16_t set_val_int = 777;
-float set_val_float = 12.34f;
-uint8_t load_configs_(void){
-    config_save_raw(
-        device_config.main_freqency_Hz.name,
-        (uint8_t*)&set_val_int,
-        sizeof(device_config.main_freqency_Hz.value), 
-        1,
-        CONFIG_DATA_TYPE_INT
-    );
-
-    config_load_raw(
-        device_config.main_freqency_Hz.name,
-        (uint8_t*)&device_config.main_freqency_Hz.value, 
-        sizeof(device_config.main_freqency_Hz.value), 
-        1,
-        CONFIG_DATA_TYPE_INT
-    );
-
-    config_save_raw(
-        device_config.dac_ampl.name,
-        (uint8_t*)&set_val_float,
-        sizeof(device_config.dac_ampl.value), 
-        1,
-        CONFIG_DATA_TYPE_FLOAT
-    );
-
-    config_load_raw(
-        device_config.dac_ampl.name,
-        (uint8_t*)&device_config.dac_ampl.value, 
-        sizeof(device_config.dac_ampl.value), 
-        1,
-        CONFIG_DATA_TYPE_FLOAT
-    );
-
-    std::printf("ldd %d\n\r", device_config.main_freqency_Hz.value);
-    return 0;
-}
 

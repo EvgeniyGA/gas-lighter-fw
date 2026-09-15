@@ -1,14 +1,14 @@
 # cmake/version.cmake
 
 function(generate_version_header)
-    file(READ "${CMAKE_SOURCE_DIR}/VERSION" FW_VERSION_RAW)
-    string(STRIP "${FW_VERSION_RAW}" FW_VERSION)
+#    file(READ "${CMAKE_SOURCE_DIR}/VERSION" FW_VERSION_RAW)
+#    string(STRIP "${FW_VERSION_RAW}" FW_VERSION)
     
-    string(REGEX MATCH "^([0-9]+)\\.([0-9]+)\\.([0-9]+)" _ "${FW_VERSION}")
-    set(PROJECT_VERSION_MAJOR ${CMAKE_MATCH_1})
-    set(PROJECT_VERSION_MINOR ${CMAKE_MATCH_2})
-    set(PROJECT_VERSION_PATCH ${CMAKE_MATCH_3})
-    set(PROJECT_VERSION "${FW_VERSION}")
+#    string(REGEX MATCH "^([0-9]+)\\.([0-9]+)\\.([0-9]+)" _ "${FW_VERSION}")
+#    set(PROJECT_VERSION_MAJOR ${CMAKE_MATCH_1})
+#    set(PROJECT_VERSION_MINOR ${CMAKE_MATCH_2})
+#    set(PROJECT_VERSION_PATCH ${CMAKE_MATCH_3})
+#    set(PROJECT_VERSION "${FW_VERSION}")
     
     execute_process(
         COMMAND git rev-parse --short HEAD
