@@ -77,7 +77,7 @@ void wave_measure_data_ready_callback(waveMeasureFFT_result_t* result){
 }
 
 void heartbit_callback(void){
-	//lcd_print(LCD_PRINTER_LINE4, LCD_PRINTER_OFFSET_FULL_NEXT - 3, "%3d", loaded_int_val);
+
 }
 
 void setup(void){
@@ -121,8 +121,9 @@ void setup(void){
 		usb_device_init(&usb_device_config);
 		usb_cdc_init();
 		load_configs();
+		load_configs();
 		vTaskDelete(NULL);
-	}, "init", 256, NULL, 1, NULL);
+	}, "init", configMINIMAL_STACK_SIZE * 2, NULL, 1, NULL);
 
 	
 	vTaskStartScheduler();

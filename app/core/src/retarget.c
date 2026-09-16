@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "app.h"
 #include "SEGGER_RTT.h"
 #ifdef STM32F746xx
@@ -8,6 +9,31 @@
 #endif
 
 extern UART_HandleTypeDef huart1;
+
+int print_raw(const char *str) {
+    if (str == NULL) {
+        return -1;
+    }
+
+    int len = strlen(str);
+    if (len == 0) {
+        return 0;
+    }
+
+#ifdef PRINTF_RTT
+    return SEGGER_RTT_Write(0, str, len);
+    
+#elif defined(PRINTF_UART)
+    HAL_StatusTypeDef status = HAL_UART_Transmit(&huart1, (uint8_t*)str, len, HAL_MAX_DELAY);
+    if (status == HAL_OK) {
+        return len;
+    }
+    return -1;
+    
+#else
+    return -1;
+#endif
+}
 
 int _write(int file, char *ptr, int len) {
     (void)file;

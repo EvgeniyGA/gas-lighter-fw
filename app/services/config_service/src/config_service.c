@@ -18,15 +18,15 @@ static StaticQueue_t storage_tx_queue_def;
 static SemaphoreHandle_t fs_mutex = NULL;
 
 typedef struct{
-    char* name;
+    const char* name;
     uint8_t* data;
     uint8_t data_type;
     uint8_t elements_size;
-    uint8_t element_count;
+    uint16_t element_count;
     uint8_t result;
 }storage_service_msg_tx_t;
 
-uint8_t config_save_raw(const char* name, uint8_t* data, uint8_t element_size, uint8_t element_count, uint8_t type){
+uint8_t config_save_raw(const char* name, uint8_t* data, uint8_t element_size, uint16_t element_count, uint8_t type){
     storage_service_msg_tx_t msg;
     msg.name = name;
     msg.data = data;
@@ -40,7 +40,7 @@ uint8_t config_save_raw(const char* name, uint8_t* data, uint8_t element_size, u
     return 0;
 }
 
-uint8_t config_load_raw(const char* name, uint8_t* data, uint8_t element_size, uint8_t element_count, uint8_t type){
+uint8_t config_load_raw(const char* name, uint8_t* data, uint8_t element_size, uint16_t element_count, uint8_t type){
     uint8_t res = -1;
     uint16_t i = 0;
     char buf[20];

@@ -65,7 +65,7 @@ static BaseType_t prvLSCommand( char *pcWriteBuffer,
 				len = sprintf(pcWriteBuffer, "  %s\n\r", Finfo.fname);
 				pcWriteBuffer += len;
 		#else
-				printf("\n\r");
+				print_raw("\n\r");
 		#endif
 			}
 

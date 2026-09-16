@@ -18,8 +18,8 @@ typedef enum{
 uint8_t config_service_init(void);
 SemaphoreHandle_t storage_get_fs_mutex(void);
 
-uint8_t config_save_raw(const char* name, uint8_t* data, uint8_t element_size, uint8_t element_count, uint8_t type);
-uint8_t config_load_raw(const char* name, uint8_t* data, uint8_t element_size, uint8_t element_count, uint8_t type);
+uint8_t config_save_raw(const char* name, uint8_t* data, uint8_t element_size, uint16_t element_count, uint8_t type);
+uint8_t config_load_raw(const char* name, uint8_t* data, uint8_t element_size, uint16_t element_count, uint8_t type);
 
 #ifdef __cplusplus
  }
