@@ -22,3 +22,34 @@ int _write(int file, char *ptr, int len) {
 #endif
     return -1;
 }
+
+int debug_console_getchar(void) {
+    uint8_t c;
+#ifdef PRINTF_RTT
+    if (SEGGER_RTT_Read(0, &c, 1) == 1) {
+        return c;
+    }
+#elif PRINTF_UART
+    if (HAL_UART_Receive(&huart1, &c, 1, 0) == HAL_OK) {
+        return c;
+    }
+#endif
+    return -1;
+}
+
+int _read(int file, char *ptr, int len) {
+    if (file == 0) {
+        int count = 0;
+        while (count < len) {
+            int c = debug_console_getchar();
+            if (c == -1) {
+                break;
+            }
+            *ptr++ = c;
+            count++;
+            if (c == '\n' || c == '\r') break; 
+        }
+        return count;
+    }
+    return -1;
+}
