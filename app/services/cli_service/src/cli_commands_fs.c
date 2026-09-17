@@ -16,6 +16,8 @@
 #include "semphr.h"
 #include "config_service.h"//todo
 
+//#define _USE_LFN  (1)
+
 DIR dir;
 FILINFO Finfo;
 static BaseType_t prvLSCommand( char *pcWriteBuffer,
@@ -48,7 +50,7 @@ static BaseType_t prvLSCommand( char *pcWriteBuffer,
 					s1++;
 					p1 += Finfo.fsize;
 				}
-				len = sprintf(pcWriteBuffer,"%c%c%c%c%c %u/%02u/%02u %02u:%02u %9lu  %s",
+				len = sprintf(pcWriteBuffer,"%c%c%c%c%c %u/%02u/%02u %02u:%02u %9lu  %s\n\r",
 						(Finfo.fattrib & AM_DIR) ? 'D' : '-',
 						(Finfo.fattrib & AM_RDO) ? 'R' : '-',
 						(Finfo.fattrib & AM_HID) ? 'H' : '-',
@@ -81,6 +83,7 @@ static BaseType_t prvLSCommand( char *pcWriteBuffer,
 			sprintf(pcWriteBuffer, "Erro ao abrir diretório: %d\n", f_res);
 		}
 
+		xSemaphoreGive(mutex);
         //return pdTRUE;
         return pdFALSE;
         /*
@@ -90,7 +93,6 @@ static BaseType_t prvLSCommand( char *pcWriteBuffer,
         return pdFALSE;
     }
     */
-   xSemaphoreGive(mutex);
 }
 
 static BaseType_t prvMountCommand( char *pcWriteBuffer,

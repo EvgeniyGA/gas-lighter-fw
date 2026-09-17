@@ -121,7 +121,6 @@ void setup(void){
 		usb_device_init(&usb_device_config);
 		usb_cdc_init();
 		load_configs();
-		load_configs();
 		vTaskDelete(NULL);
 	}, "init", configMINIMAL_STACK_SIZE * 2, NULL, 1, NULL);
 
