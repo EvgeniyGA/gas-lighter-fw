@@ -11,6 +11,7 @@
 #include "task.h"
 #include "limits.h"
 #include "string.h"
+#include <errno.h>
 #include "gpio.h"//todo
 
 #ifndef FOR_QEMU
@@ -88,7 +89,7 @@ void pulse_measure_init(pulseMeasureConfig_s* pulse_measure_config){
 
 uint8_t puse_measure_set_divider(uint32_t divider){
 	if ( (PULSE_MEASURE_ADC_DMA_BUFFER_SIZE/divider) % (Pulse_Measure_ADC_NumbOfCnannels * 2) != 0){
-		return -1;
+		return EINVAL;
 	}
 	measure_divider = divider;
 	adc_driver_stop(ADC_NUM_1);

@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include "adc.h"
 #include "tim.h"
+#include <errno.h>
 
 data_ready_callback_adc_t adc1_ready, adc2_ready;
 
@@ -17,15 +18,15 @@ int8_t adc_driver_register_callback(uint8_t adc_num, data_ready_callback_adc_t c
 		case ADC_NUM_2: adc2_ready = callback; return 0;
 		default: break;
 	}
-	return -1;
+	return EINVAL;
 }
 
 uint8_t adc_driver_start(uint8_t adc_num, uint16_t* buff, uint16_t size){
 	if(!size){
-		return -1;
+		return EINVAL;
 	}
 	if(buff == NULL){
-		return -1;
+		return EINVAL;
 	}
 	if(adc_num == ADC_NUM_1){
 		HAL_ADC_Start_DMA (&hadc1, (uint32_t*) buff, size) ;

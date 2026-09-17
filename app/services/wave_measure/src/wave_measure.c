@@ -12,6 +12,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "adc_driver.h"
+#include <errno.h>
 
 #define VREFINT_CAL_VREF_MV                   ( 3300UL)
 #define VREFINT_CAL_ADDR_MV                   ((uint16_t*) (0x1FFF7A2AU))
@@ -91,7 +92,7 @@ uint8_t fft_buffer(waveMeasureConfig_s* wave_measure_config, uint8_t channel, ui
 	uint16_t main_bin = 0;
 	//uint16_t offset_ = offset*wave_measure_config->buf_adc_in_size/2;
 	if(channel >= WAVE_MEASURE_NumbOfCnannels){
-		return -1;
+		return EINVAL;
 	}
 	for(int i = 0; i < FFT_BUF_SIZE; i++){
 		fftBufIn[i] = (float32_t)wave_measure_config->buf_adc_in[i*2 + channel + offset];
@@ -122,7 +123,7 @@ uint8_t fft_buffer(waveMeasureConfig_s* wave_measure_config, uint8_t channel, ui
 	}
 	else{
 		result->main_freq_Hz = 0;
-		return -1;
+		return EIO;
 	}
 }
 

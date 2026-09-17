@@ -1,5 +1,6 @@
 #include "fatfs.h"
 #include "W25Qxx.h"
+#include <errno.h>
 
 char sramPath[4];
 FATFS USERFatFS;
@@ -24,7 +25,7 @@ uint8_t FATFS_Init(void) {
     if (FATFS_LinkDriver(&USER_Driver, sramPath) != 0) {
 #endif
         printf("ERROR: Cannot link Disk driver\n");
-        return -1;
+        return EAGAIN;
     }
 
     FRESULT res = f_mount(&USERFatFS, sramPath, 1);
@@ -36,7 +37,7 @@ uint8_t FATFS_Init(void) {
 
         if (fr != FR_OK) {
             printf("ERROR: Formatting failed! Code: %d\n", fr);
-            return -1;
+            return EAGAIN;
         }
         printf("Formatting successful!\n");
         res = f_mount(&USERFatFS, sramPath, 1);
@@ -44,7 +45,7 @@ uint8_t FATFS_Init(void) {
 
     if (res != FR_OK) {
         printf("ERROR: Cannot mount FS! Code: %d\n", res);
-        return -1;
+        return EAGAIN;
     }
 
     printf("FatFS mounted successfully!\n");
@@ -65,7 +66,7 @@ uint8_t FATFS_Init(void) {
         f_close(&file);
     } else {
         printf("ERROR: Failed to open/create README.TXT: %d\n", fr);
-        return -1;
+        return EAGAIN;
     }
     return 0;
 

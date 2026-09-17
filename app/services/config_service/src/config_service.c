@@ -5,6 +5,7 @@
 #include "fatfs.h"
 #include "stdlib.h"
 #include "stdint.h"
+#include <errno.h>
 
 #define STORAGE_TASK_STACK_SIZE         (configMINIMAL_STACK_SIZE * 2)
 #define STORAGE_TASK_PRIORITY           (configMAX_PRIORITIES - 5)
@@ -35,7 +36,7 @@ uint8_t config_save_raw(const char* name, uint8_t* data, uint8_t element_size, u
     msg.data_type = type;
     msg.result = -1;
     if(xQueueSendToBack(storage_tx_queue_handle, &msg, portMAX_DELAY) != pdPASS){
-        return -1;
+        return EAGAIN;
     }
     return 0;
 }

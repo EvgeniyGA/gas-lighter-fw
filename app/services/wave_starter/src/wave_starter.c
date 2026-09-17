@@ -6,7 +6,7 @@
  */
 #include <wave_starter.h>
 #include "dac_driver.h"
-
+#include <errno.h>
 
 uint16_t dac_dma_buff[WAVE_TIME_RESOLUTION];
 uint32_t timer_divider = 1;
@@ -26,7 +26,7 @@ int wave_starter_run(waveGenConfig_s* config){
 	if(initWaveMas(config) == 0){
 		return dac_start(config->buf, config->numb_of_steps, config->timer_arr);
 	}
-	return -1;
+	return EINVAL;
 }
 
 int wave_starter_set_divider(uint32_t divider){

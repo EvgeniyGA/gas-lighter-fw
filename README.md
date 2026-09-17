@@ -5,7 +5,7 @@ todo
 - [X] add config service
 - [X] remove redundant linker script
 - [ ] remove redundant startup file
-- [ ] support CPP
+- [X] support CPP
 - [X] add status service
-- [ ] add device config
+- [X] add device config
 - [ ] add return codes

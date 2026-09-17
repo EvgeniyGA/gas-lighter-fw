@@ -6,6 +6,7 @@
  */
 #include "wave_gen.h"
 #include <math.h>
+#include <errno.h>
 
 uint16_t calc_sample(waveGenConfig_s* config, float step){
 	uint32_t dac_max_dig = pow(2, config->dac_resolution) - 1;
@@ -17,20 +18,20 @@ uint16_t calc_sample(waveGenConfig_s* config, float step){
 
 int initWaveMas(waveGenConfig_s* config){
 	if(!config->numb_of_steps || !config->freq || !config->timer_frequency){
-		return -1;
+		return EINVAL;
 	}
 
 	uint64_t tmp =  (uint64_t)config->timer_frequency / ((uint64_t)config->numb_of_steps * (uint64_t)config->freq);
 
 	if(tmp > 0xFFFF){
-		return -1;
+		return EINVAL;
 	}
 
 	config->timer_arr = tmp;
 
 	if((config->midpoint + config->amplitude > config->dac_reference) ||
 	   (config->midpoint < config->amplitude)){
-		return -1;
+		return EINVAL;
 	}
 
 	float step_change = 2 * M_PI / config->numb_of_steps;

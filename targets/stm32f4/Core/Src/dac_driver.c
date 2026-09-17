@@ -1,5 +1,5 @@
+#include <errno.h>
 #include "dac_driver.h"
-
 #include "dac.h"
 #include "tim.h"
 
@@ -14,7 +14,7 @@ int dac_start(uint16_t* buf, uint32_t size, uint16_t tim_arr){
 			DAC_ALIGN_12B_R) == HAL_OK){
 		return 0;
 	}
-	return -1;
+	return EAGAIN;
 }
 
 void dac_timer_set_prescaler(uint32_t presc){
