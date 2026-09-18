@@ -71,8 +71,7 @@ void cli_task(void* param){
                 {
                     /* Ignore carriage returns. */
                 }
-                //else if( cRxedChar == '\b' )
-                else if( cRxedChar == 0x7F )
+                else if (( cRxedChar == 0x7F ) || ( cRxedChar == '\b' ) || ( cRxedChar == 127 ))
                 {
                     /* Backspace was pressed.  Erase the last character in the input
                     buffer - if there are any. */
@@ -80,7 +79,8 @@ void cli_task(void* param){
                     {
                         cInputIndex--;
                         pcInputString[ cInputIndex ] = (char)'\0';
-                        print_raw(echo_buf);
+                        char buf[3] = {(char)cRxedChar, '\b \b'};
+                        print_raw(buf);
                     }
                 }
                 else
