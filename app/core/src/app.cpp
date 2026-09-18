@@ -13,17 +13,14 @@ extern "C"{
 #include "arm_math.h"
 #include "main.h"
 #include "queue.h"
-//#include "lcd_printer.h"
+
 #include "cli_service.h"
 #include "FreeRTOS.h"
 #include "queue.h"
-//#include "gpio_driver.h"
+
 #include "config_service.h"
 #include "status_service.h"
 
-//#include "wave_starter.h"
-//#include "wave_measure.h"
-//#include "pulse_measure.h"
 #include "usb_service.h"
 }
 #include "device.h"
@@ -43,10 +40,7 @@ void init(void){
   	SEGGER_RTT_WriteString( 0, "SEGGER Real-Time-Terminal Started\n" );
 }
 
-
 void setup(void){
-	
-
 	printf("Firmware version: %s\n", FW_VERSION_STR);
 	printf("Build: %s %s (git: %s)\n", FW_BUILD_DATE, FW_BUILD_TIME, FW_GIT_HASH);
 	printf("Version: %d.%d.%d\n", FW_VERSION_MAJOR, FW_VERSION_MINOR, FW_VERSION_PATCH);

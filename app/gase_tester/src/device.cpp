@@ -13,8 +13,6 @@
 #include "version.h"
 #include "version_check.h"
 
-//#include "app.h"
-
 struct DeviceConfig{
     config::Item<uint32_t> main_freq{"freq.txt", 444u};
     config::Item<float> dac_set{"dac.txt", 32.23f};
@@ -86,7 +84,6 @@ void wave_measure_data_ready_callback(waveMeasureFFT_result_t* result){
 void heartbit_callback(void){
 
 }
-
 
 void init_device(void){
   	lcd_printer_init();

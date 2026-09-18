@@ -6,7 +6,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 target_sources(${PROJECT_NAME} PRIVATE
     core/src/app.cpp
-    core/src/device.cpp
     core/src/retarget.c
     core/src/wrapper.c
     core/src/version_check.c
@@ -14,3 +13,12 @@ target_sources(${PROJECT_NAME} PRIVATE
 )
 
 add_subdirectory(services)
+
+if(${TARGET} STREQUAL "stm32f4")
+    message(STATUS "configure gaselighter device")
+    add_subdirectory(gase_tester)
+elseif(${TARGET} STREQUAL "stm32f7")
+
+else()
+    message(FATAL_ERROR "unsupported target ${TARGET}")
+endif()
