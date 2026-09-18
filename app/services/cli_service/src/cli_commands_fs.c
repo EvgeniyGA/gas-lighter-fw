@@ -8,6 +8,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <errno.h>
 #include "fatfs.h"
 #include "FreeRTOS.h"
 #include "FreeRTOS_CLI.h"
@@ -20,79 +21,82 @@
 
 DIR dir;
 FILINFO Finfo;
+static uint32_t p1, s1, s2;
+static BaseType_t state = 0; 
 static BaseType_t prvLSCommand( char *pcWriteBuffer,
                                 size_t xWriteBufferLen,
 								const char *pcCommandString )
 {
-    //static BaseType_t state = 0;
 	FRESULT f_res;
-	uint32_t  p1, s1, s2;
 	int len;
-	FATFS   *fs;				// Pointer to file system object*/
+	FATFS *fs;				
     char *path = sramPath;
 	SemaphoreHandle_t mutex = storage_get_fs_mutex();
-	xSemaphoreTake(mutex, portMAX_DELAY);
-    //if (!state){
-        // Abre o diretório
-    	p1 = s1 = s2 = 0;
-    	f_res = f_opendir(&dir, ".");
-        if (f_res == FR_OK) {
 
-            for(;;)
-			{
-				f_res = f_readdir(&dir, &Finfo);
-				if ((f_res != FR_OK) || !Finfo.fname[0]) break;
-				if (Finfo.fattrib & AM_DIR)
-				{
-					s2++;
-				} else
-				{
-					s1++;
-					p1 += Finfo.fsize;
-				}
-				len = sprintf(pcWriteBuffer,"%c%c%c%c%c %u/%02u/%02u %02u:%02u %9lu  %s\n\r",
-						(Finfo.fattrib & AM_DIR) ? 'D' : '-',
-						(Finfo.fattrib & AM_RDO) ? 'R' : '-',
-						(Finfo.fattrib & AM_HID) ? 'H' : '-',
-						(Finfo.fattrib & AM_SYS) ? 'S' : '-',
-						(Finfo.fattrib & AM_ARC) ? 'A' : '-',
-						(Finfo.fdate >> 9) + 1980, (Finfo.fdate >> 5) & 15, Finfo.fdate & 31,
-						(Finfo.ftime >> 11), (Finfo.ftime >> 5) & 63,
-						Finfo.fsize, &(Finfo.fname[0]));
-				pcWriteBuffer += len;
-
-			  Finfo.fname[0] = 0;
-
-		#if _USE_LFN
-				len = sprintf(pcWriteBuffer, "  %s\n\r", Finfo.fname);
-				pcWriteBuffer += len;
-		#else
-				print_raw("\n\r");
-		#endif
-			}
-
-			len = sprintf(pcWriteBuffer, "%4lu File(s), %lu bytes total \n\r%4lu Dir(s)", s1, p1, s2);
-			pcWriteBuffer += len;
-			if (f_getfree(path, (DWORD*)&p1, &fs) == FR_OK)
-			{
-				len = sprintf(pcWriteBuffer, ", %lu bytes free \n\r", p1 * fs->csize * 512);
-			}
-
-			f_closedir(&dir);
-		} else {
-			sprintf(pcWriteBuffer, "Erro ao abrir diretório: %d\n", f_res);
-		}
-
-		xSemaphoreGive(mutex);
-        //return pdTRUE;
-        return pdFALSE;
-        /*
-    }else{
-        state = 0;
-        strcpy(pcWriteBuffer, "\n\r");
-        return pdFALSE;
+    if (state == 0) {
+        xSemaphoreTake(mutex, portMAX_DELAY);
+        
+        p1 = s1 = s2 = 0;
+        f_res = f_opendir(&dir, ".");
+        if (f_res != FR_OK) {
+            sprintf(pcWriteBuffer, "Error dir: %d\n\r", f_res);
+            xSemaphoreGive(mutex);
+            return pdFALSE;
+        }
+        
+        sprintf(pcWriteBuffer, "Type   Date       Time      Size  Name\n\r");
+        state = 1;
+        return pdTRUE;
     }
-    */
+
+    else if (state == 1) {
+        f_res = f_readdir(&dir, &Finfo);
+        
+        if (f_res == FR_OK && Finfo.fname[0] != 0) {
+            if (Finfo.fattrib & AM_DIR) {
+                s2++;
+            } else {
+                s1++;
+                p1 += Finfo.fsize;
+            }
+            
+            sprintf(pcWriteBuffer, "%c%c%c%c%c %u/%02u/%02u %02u:%02u %9lu  %s\n\r",
+                    (Finfo.fattrib & AM_DIR) ? 'D' : '-',
+                    (Finfo.fattrib & AM_RDO) ? 'R' : '-',
+                    (Finfo.fattrib & AM_HID) ? 'H' : '-',
+                    (Finfo.fattrib & AM_SYS) ? 'S' : '-',
+                    (Finfo.fattrib & AM_ARC) ? 'A' : '-',
+                    (Finfo.fdate >> 9) + 1980, (Finfo.fdate >> 5) & 15, Finfo.fdate & 31,
+                    (Finfo.ftime >> 11), (Finfo.ftime >> 5) & 63,
+                    (unsigned long)Finfo.fsize, Finfo.fname);
+            
+            return pdTRUE;
+        } 
+        else {
+            f_closedir(&dir);
+            state = 2;
+            return pdTRUE;
+        }
+    }
+    
+    else if (state == 2) {
+        sprintf(pcWriteBuffer, "%4lu File(s), %lu bytes total \n\r%4lu Dir(s)", 
+                (unsigned long)s1, (unsigned long)p1, (unsigned long)s2);
+        
+        if (f_getfree(path, (DWORD*)&p1, &fs) == FR_OK) {
+            sprintf(pcWriteBuffer + strlen(pcWriteBuffer), ", %lu bytes free \n\r", 
+                    (unsigned long)(p1 * fs->csize * 512));
+        }
+        sprintf(pcWriteBuffer + strlen(pcWriteBuffer), "\n\r");
+
+        xSemaphoreGive(mutex);
+        
+        state = 0; 
+        
+        return pdFALSE; 
+    }
+
+    return pdFALSE;
 }
 
 static BaseType_t prvMountCommand( char *pcWriteBuffer,
