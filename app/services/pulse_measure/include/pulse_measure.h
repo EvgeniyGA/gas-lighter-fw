@@ -12,6 +12,10 @@
 #include "FreeRTOS.h"
 #include "queue.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef enum{
 	Pulse_Measure_ADC_Channel_1 = 0,
 	Pulse_Measure_ADC_Channel_2,
@@ -40,5 +44,9 @@ typedef struct{
 void pulse_measure_adc_callback(uint8_t offset);
 void pulse_measure_init(pulseMeasureConfig_s* pulse_measure_config);
 uint8_t puse_measure_set_divider(uint32_t divider);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* INC_PULSE_MEASURE_C_ */

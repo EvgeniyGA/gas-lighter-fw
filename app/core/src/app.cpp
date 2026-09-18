@@ -13,17 +13,17 @@ extern "C"{
 #include "arm_math.h"
 #include "main.h"
 #include "queue.h"
-#include "lcd_printer.h"
+//#include "lcd_printer.h"
 #include "cli_service.h"
 #include "FreeRTOS.h"
 #include "queue.h"
-#include "gpio_driver.h"
+//#include "gpio_driver.h"
 #include "config_service.h"
 #include "status_service.h"
 
-#include "wave_starter.h"
-#include "wave_measure.h"
-#include "pulse_measure.h"
+//#include "wave_starter.h"
+//#include "wave_measure.h"
+//#include "pulse_measure.h"
 #include "usb_service.h"
 }
 #include "device.h"
@@ -31,9 +31,6 @@ extern "C"{
 #include <cstdio>
 #include "config_wrapper.hpp"
 
-waveGenConfig_s 	wave_gen_config;
-waveMeasureConfig_s wave_measure_config;
-pulseMeasureConfig_s pulse_measure_config;
 usb_device_config_t usb_device_config;
 
 void init(void){
@@ -46,41 +43,10 @@ void init(void){
   	SEGGER_RTT_WriteString( 0, "SEGGER Real-Time-Terminal Started\n" );
 }
 
-void pulse_measure_data_ready_callback(pulse_measure_msg_t* data){
-	printf("result %04ld:%04ld:%04ld:%04ld\n\r", 
-		data->result[Pulse_Measure_ADC_Channel_1], 
-		data->result[Pulse_Measure_ADC_Channel_2], 
-		data->result[Pulse_Measure_ADC_Channel_3], 
-		data->result[Pulse_Measure_ADC_Channel_4]);
-	lcd_print(LCD_PRINTER_LINE1, LCD_PRINTER_OFFSET_ZERO, "%04ld:%04ld %04ld:%04ld\n\r", 
-		data->result[Pulse_Measure_ADC_Channel_1], data->result[Pulse_Measure_ADC_Channel_2], 
-		data->result[Pulse_Measure_ADC_Channel_3], data->result[Pulse_Measure_ADC_Channel_4]);
-	lcd_print(LCD_PRINTER_LINE2,  LCD_PRINTER_OFFSET_ZERO, "%03ld.%05ld", 
-		(uint32_t)(data->result[Pulse_Measure_ADC_Channel_1] / data->result[Pulse_Measure_ADC_Channel_2]), //todo: to float
-		((uint32_t)(data->result[Pulse_Measure_ADC_Channel_1] % data->result[Pulse_Measure_ADC_Channel_2])*100000)/data->result[Pulse_Measure_ADC_Channel_2]);
-	lcd_print(LCD_PRINTER_LINE2, LCD_PRINTER_OFFSET_HALF, "%03ld.%05ld", 
-		(uint32_t)(data->result[Pulse_Measure_ADC_Channel_3] / data->result[Pulse_Measure_ADC_Channel_4]), 
-		((uint32_t)(data->result[Pulse_Measure_ADC_Channel_3] % data->result[Pulse_Measure_ADC_Channel_4])*100000)/data->result[Pulse_Measure_ADC_Channel_4]);
-}
-
-void wave_measure_data_ready_callback(waveMeasureFFT_result_t* result){
-	lcd_print(LCD_PRINTER_LINE3, 0, "%5d Hz, %5d Hz", 	(int)(result[WAVE_MEASURE_Channel_1].main_freq_Hz), 
-										(int)(result[WAVE_MEASURE_Channel_2].main_freq_Hz));
-	if(result[WAVE_MEASURE_Channel_1].main_freq_Hz == result[WAVE_MEASURE_Channel_2].main_freq_Hz){
-		float diff = result[WAVE_MEASURE_Channel_1].main_phase_deg - result[WAVE_MEASURE_Channel_2].main_phase_deg;
-		int diff_x100 = (int)(diff * 100);
-		lcd_print(LCD_PRINTER_LINE4, LCD_PRINTER_OFFSET_ZERO, "dPhase: %d.%02d deg", diff_x100/100, abs(diff_x100%100));//todo
-	}
-	else{
-		lcd_print(LCD_PRINTER_LINE4, LCD_PRINTER_OFFSET_ZERO, "                    ");
-	}
-}
-
-void heartbit_callback(void){
-
-}
 
 void setup(void){
+	
+
 	printf("Firmware version: %s\n", FW_VERSION_STR);
 	printf("Build: %s %s (git: %s)\n", FW_BUILD_DATE, FW_BUILD_TIME, FW_GIT_HASH);
 	printf("Version: %d.%d.%d\n", FW_VERSION_MAJOR, FW_VERSION_MINOR, FW_VERSION_PATCH);
@@ -91,28 +57,11 @@ void setup(void){
 		printf("FW Hash: %s\r\n", FW_GIT_HASH);
 	}
 
-  	lcd_printer_init();
-  	lcd_print(LCD_PRINTER_LINE1, LCD_PRINTER_OFFSET_ZERO + 1, "Version: %s", FW_VERSION_STR);
-
-	wave_measure_config.main_freqency = MAIN_FREQENCY_HZ;
-	wave_measure_config.time_resolution = MAIN_TIME_RESOLUTION;
-	wave_measure_config.data_ready = wave_measure_data_ready_callback;
-	wave_measure_init(&wave_measure_config);
-
-	wave_gen_config.freq = MAIN_FREQENCY_HZ;
-	wave_gen_config.numb_of_steps = MAIN_TIME_RESOLUTION;
-	wave_gen_config.fun = arm_cos_f32;
-	wave_starter_init(&wave_gen_config);
-	wave_starter_run(&wave_gen_config);
-
-	pulse_measure_config.data_ready = pulse_measure_data_ready_callback;
-	pulse_measure_config.event_half_adc = [](){ gpio_channel_change_state(GPIO_CHANNEL_2a, GPIO_CHANNEL_ON); };
-	pulse_measure_config.event_full_adc = [](){ gpio_channel_change_state(GPIO_CHANNEL_2a, GPIO_CHANNEL_OFF); };
-	pulse_measure_init(&pulse_measure_config);
-
 	usb_device_config.mounted = [](){ std::printf("USB device mounted\n\r"); };
 	usb_device_config.unmounted = [](){ std::printf("USB unmounted"); };
-
+	
+	init_device();
+	
 	FATFS_Init();
 	xTaskCreate([](void* param){
 		cli_service_init();

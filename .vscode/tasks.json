@@ -77,7 +77,12 @@
 			"args": [
 				"-M", "netduinoplus2",
 				"-nographic", 
-				"-serial", "mon:stdio",     
+				"-serial", "mon:stdio",
+				//"-device", "stm32f2xx-adc,id=adc0,channel=0,value=2048",
+				//"-device", "m25p80,drive=flash0",
+				//"-blockdev", "driver=file,node-name=flash0,filename=flash.bin",
+				//"-d", "unimp,guest_errors",
+				//"-D", "qemu_debug.log",
 				"-kernel", "${command:cmake.launchTargetPath}"
 			],
 			"isBackground": true,

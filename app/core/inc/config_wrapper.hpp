@@ -5,6 +5,9 @@
 #include <type_traits>
 #include "config_service.h"
 
+//namespace Config
+//{
+
 template <typename T, std::size_t... Is>
 constexpr std::array<T, sizeof...(Is)> make_sequence_array_impl(std::index_sequence<Is...>) {
     return { static_cast<T>(Is + 1)... };
@@ -69,4 +72,5 @@ struct ConfigItem{
     }
 };
 
+//}
 

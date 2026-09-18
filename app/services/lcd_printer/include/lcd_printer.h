@@ -3,6 +3,10 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef enum{
     LCD_PRINTER_LINE1 = 0,
     LCD_PRINTER_LINE2,
@@ -20,5 +24,9 @@ typedef enum{
 __attribute__((format(printf, 3, 4)))
 uint8_t lcd_print(uint8_t line, uint8_t offset, const char* format, ...);
 void lcd_printer_init(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

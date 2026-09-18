@@ -4,6 +4,10 @@
 #include "main.h"
 #include <stdio.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef enum {
     GPIO_CHANNEL_OFF = 0,
     GPIO_CHANNEL_ON
@@ -20,5 +24,9 @@ typedef enum {
 }channel_number_e;
 
 int8_t gpio_channel_change_state(uint8_t channel, uint8_t new_state);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
