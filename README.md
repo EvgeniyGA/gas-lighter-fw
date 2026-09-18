@@ -8,4 +8,5 @@ todo
 - [X] support CPP
 - [X] add status service
 - [X] add device config
-- [ ] add return codes
+- [X] add return codes
+- [ ] subscribe image for mcuboot
