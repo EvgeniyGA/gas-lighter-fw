@@ -5,8 +5,8 @@
 #include <type_traits>
 #include "config_service.h"
 
-//namespace Config
-//{
+namespace config
+{
 
 template <typename T, std::size_t... Is>
 constexpr std::array<T, sizeof...(Is)> make_sequence_array_impl(std::index_sequence<Is...>) {
@@ -36,11 +36,11 @@ struct TypeInfo<std::array<T, N>>{
 };
 
 template <TriviallyCopyable T>
-struct ConfigItem{
+struct Item{
     const char* name;
     const T def_value;
     T value;
-    constexpr ConfigItem(const char* param_name, T default_value) noexcept
+    constexpr Item(const char* param_name, T default_value) noexcept
         : name(param_name), def_value(default_value){};
 
     [[nodiscard]] bool load() noexcept {
@@ -72,5 +72,5 @@ struct ConfigItem{
     }
 };
 
-//}
+}
 

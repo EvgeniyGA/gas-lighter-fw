@@ -16,9 +16,9 @@
 //#include "app.h"
 
 struct DeviceConfig{
-    ConfigItem<uint32_t> main_freq{"freq.txt", 444u};
-    ConfigItem<float> dac_set{"dac.txt", 32.23f};
-    ConfigItem<std::array<int, 10>> calibration{"cal.txt", make_sequence_array<int, 10>()};
+    config::Item<uint32_t> main_freq{"freq.txt", 444u};
+    config::Item<float> dac_set{"dac.txt", 32.23f};
+    config::Item<std::array<int, 10>> calibration{"cal.txt", config::make_sequence_array<int, 10>()};
 };
 
 
