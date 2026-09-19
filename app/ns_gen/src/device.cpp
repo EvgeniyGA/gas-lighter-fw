@@ -10,6 +10,8 @@
 #include "version.h"
 #include "version_check.h"
 
+namespace device{
+
 struct DeviceConfig{
     config::Item<uint32_t> main_freq{"freq.txt", 444u};
     config::Item<float> dac_set{"dac.txt", 32.23f};
@@ -47,8 +49,10 @@ void heartbit_callback(void){
 
 }
 
-void init_device(void){
+void init(void){
   	lcd_printer_init();
   	lcd_print(LCD_PRINTER_LINE1, LCD_PRINTER_OFFSET_ZERO + 1, "Version: %s", FW_VERSION_STR);
+
+}
 
 }

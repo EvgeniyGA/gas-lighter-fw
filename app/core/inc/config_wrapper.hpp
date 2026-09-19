@@ -4,6 +4,7 @@
 #include <array>
 #include <type_traits>
 #include "config_service.h"
+#include "device.h"
 
 namespace config
 {

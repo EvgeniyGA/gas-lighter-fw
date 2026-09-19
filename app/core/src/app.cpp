@@ -1,34 +1,28 @@
-extern "C"{
+#include "app.h"
+#include "main.h"
 #include <stdio.h>
 #include <ctype.h>
-#include <FreeRTOS.h>
-#include "task.h"
 #include "SEGGER_RTT.h"
 #include "SEGGER_SYSVIEW.h"
-
 #include "fatfs.h"
 #include "version.h"
 #include "version_check.h"
-#include "app.h"
-#include "arm_math.h"
-#include "main.h"
-#include "queue.h"
-
 #include "cli_service.h"
-#include "FreeRTOS.h"
-#include "queue.h"
-
-#include "config_service.h"
 #include "status_service.h"
-
 #include "usb_service.h"
-}
+#include <FreeRTOS.h>
+#include "task.h"
 #include "device.h"
 #include <array>
 #include <cstdio>
 #include "config_wrapper.hpp"
 
-usb_device_config_t usb_device_config;
+usb_device_config_t usb_device_config = {
+	.mounted = [](){ std::printf("USB device mounted\n\r"); },
+	.unmounted = [](){ std::printf("USB unmounted"); }
+};
+
+uint8_t load_configs(void);
 
 void init(void){
 #ifndef FOR_QEMU
@@ -50,17 +44,14 @@ void setup(void){
 	} else {
 		printf("FW Hash: %s\r\n", FW_GIT_HASH);
 	}
-
-	usb_device_config.mounted = [](){ std::printf("USB device mounted\n\r"); };
-	usb_device_config.unmounted = [](){ std::printf("USB unmounted"); };
 	
-	init_device();
+	device::init();
 	
 	FATFS_Init();
 	xTaskCreate([](void* param){
 		cli_service_init();
 		config_service_init();
-		status_service_init(heartbit_callback);
+		status_service_init(device::heartbit_callback);
 		usb_device_init(&usb_device_config);
 		usb_cdc_init();
 		load_configs();
@@ -70,5 +61,18 @@ void setup(void){
 	
 	vTaskStartScheduler();
 }
+
+uint8_t load_configs(void){
+	device::config.apply([](auto& item){
+		if(item.load() == true){
+			std::printf("[%s] loaded\n\r", item.name);
+		}
+		else{
+			std::printf("[%s] use default\n\r", item.name);
+		}
+	});
+    return 0;
+}
+
 
 
