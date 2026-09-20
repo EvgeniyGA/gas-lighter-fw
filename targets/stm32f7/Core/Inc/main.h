@@ -65,16 +65,20 @@ void Error_Handler(void);
 #define led_mode2_GPIO_Port GPIOE
 #define led_mode3_Pin GPIO_PIN_6
 #define led_mode3_GPIO_Port GPIOE
+#define led_mode4_Pin GPIO_PIN_14
+#define led_mode4_GPIO_Port GPIOC
+#define led_mode5_Pin GPIO_PIN_15
+#define led_mode5_GPIO_Port GPIOC
 #define btn_go_Pin GPIO_PIN_3
 #define btn_go_GPIO_Port GPIOD
 #define CS_Pin GPIO_PIN_6
 #define CS_GPIO_Port GPIOD
 #define btn_mode_Pin GPIO_PIN_9
 #define btn_mode_GPIO_Port GPIOB
-#define led_mode4_Pin GPIO_PIN_0
-#define led_mode4_GPIO_Port GPIOE
-#define led_mode5_Pin GPIO_PIN_1
-#define led_mode5_GPIO_Port GPIOE
+#define led_go_Pin GPIO_PIN_0
+#define led_go_GPIO_Port GPIOE
+#define led_status_Pin GPIO_PIN_1
+#define led_status_GPIO_Port GPIOE
 
 /* USER CODE BEGIN Private defines */
 

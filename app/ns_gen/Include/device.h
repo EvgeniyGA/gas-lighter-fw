@@ -12,14 +12,14 @@ struct DeviceConfig{
     config::Item<uint32_t> sdiv{"sdiv.txt", 1u};
 	config::Item<uint32_t> pdiv{"pdiv.txt", 1u};
     config::Item<float> dac_set{"dac.txt", 32.23f};
-    config::Item<std::array<int, 10>> calibration{"cal.txt", config::make_sequence_array<int, 10>()};
+    config::Item<std::array<int, 10>> config1{"conf1.txt", config::make_sequence_array<int, 10>()};
 
 	template<typename T>
 	void apply(T&& visitor){
 		visitor(sdiv);
 		visitor(pdiv);
 		visitor(dac_set);
-		visitor(calibration);
+		visitor(config1);
 	}
 };
 

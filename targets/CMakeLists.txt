@@ -60,6 +60,7 @@ set(BSP_SOURCES
 )
 elseif(${TARGET} STREQUAL "stm32f7")
 set(BSP_SOURCES
+    ${TARGET}/Core/Src/gpio_driver.c
     ${TARGET}/Core/Src/W25Qxx.c
     ${TARGET}/Core/Src/common.c
 )
