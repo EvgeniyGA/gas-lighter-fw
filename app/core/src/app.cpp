@@ -16,6 +16,7 @@
 #include <array>
 #include <cstdio>
 #include "config_wrapper.hpp"
+#include <type_traits>
 
 usb_device_config_t usb_device_config = {
 	.mounted = [](){ std::printf("USB device mounted\n\r"); },
@@ -23,6 +24,7 @@ usb_device_config_t usb_device_config = {
 };
 
 uint8_t load_configs(void);
+void print_configs(void);
 
 void init(void){
 #ifndef FOR_QEMU
@@ -45,8 +47,6 @@ void setup(void){
 		printf("FW Hash: %s\r\n", FW_GIT_HASH);
 	}
 	
-	device::init();
-	
 	FATFS_Init();
 	xTaskCreate([](void* param){
 		cli_service_init();
@@ -55,6 +55,8 @@ void setup(void){
 		usb_device_init(&usb_device_config);
 		usb_cdc_init();
 		load_configs();
+		print_configs();
+		device::init();
 		vTaskDelete(NULL);
 	}, "init", configMINIMAL_STACK_SIZE * 2, NULL, 1, NULL);
 
@@ -63,16 +65,46 @@ void setup(void){
 }
 
 uint8_t load_configs(void){
+	std::printf("Load configs ...\n\r");
 	device::config.apply([](auto& item){
 		if(item.load() == true){
-			std::printf("[%s] loaded\n\r", item.name);
+			std::printf("\t[%s] loaded\n\r", item.name);
 		}
 		else{
-			std::printf("[%s] use default\n\r", item.name);
+			std::printf("\t[%s] use default\n\r", item.name);
 		}
 	});
     return 0;
 }
 
+template <typename T>
+struct is_std_array : std::false_type {};
 
+template <typename T, std::size_t N>
+struct is_std_array<std::array<T, N>> : std::true_type {};
+
+template <typename T>
+inline constexpr bool is_std_array_v = is_std_array<T>::value;
+
+void print_configs(void){
+	std::printf("Print configs...\n\r");
+	device::config.apply([](auto& item){
+		using UsedType = std::decay_t<decltype(item.value)>;
+		if constexpr (std::is_same_v<UsedType, uint32_t>){
+			std::printf("\t[%s] = %d\n\r", item.name, static_cast<int>(item.value));
+		}
+		else if constexpr (std::is_same_v<UsedType, float>){
+			std::printf("\t[%s] = %.3f\n\r", item.name, item.value);
+		}
+		else if constexpr (is_std_array_v<UsedType>){
+			std::printf("\t [%s] =\n\r", item.name);
+			for(const auto& i: item.value){
+				std::printf("\t\t%d\n\r", i);
+			}
+		}
+		else{
+			std::printf("\tError! [%s] - unsupported type", item.name);
+		}
+	});
+}
 

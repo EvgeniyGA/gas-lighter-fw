@@ -30,9 +30,15 @@ int wave_starter_run(waveGenConfig_s* config){
 }
 
 int wave_starter_set_divider(uint32_t divider){
-	timer_divider = divider;
-	dac_timer_set_prescaler(divider*2 - 1);
-	return 0;
+	if ((divider > 0) && (divider <= 10000))
+	{
+		timer_divider = divider;
+		dac_timer_set_prescaler(divider*2 - 1);
+		return 0;
+	}
+	else{ 
+		return -1;
+	}
 }
 
 uint32_t wave_starter_get_divider(void){

@@ -81,6 +81,26 @@ void init(void){
 	wave_starter_init(&wave_gen_config);
 	wave_starter_run(&wave_gen_config);
 	pulse_measure_init(&pulse_measure_config);
+
+	if(puse_measure_set_divider(config.pdiv.value) == 0){
+		std::printf("pulse period divider %ld setted\r\n", config.pdiv.value);
+	}
+	else{
+		std::printf("ERROR! pulse period divider wrong value\r\n");
+	}
+
+	if(wave_starter_set_divider(config.sdiv.value) == 0){
+		std::printf("adc period divider %ld setted\r\n", config.sdiv.value);
+	}else {
+		std::printf("ERROR! adc period divider wrong\r\n");
+	}
+
+	if(true){//todo
+		std::printf("device init finished:\t\t\t OK\n\r");
+	}
+	else{
+		std::printf("device init finished: \t\t\t FALSE\n\r");
+	}
 }
 
 }
