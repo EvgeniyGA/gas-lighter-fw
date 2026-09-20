@@ -16,7 +16,8 @@ static BaseType_t prvSetADC_PeriodDivider( char *pcWriteBuffer,
     divider = atoi(FreeRTOS_CLIGetParameter(pcCommandString, (UBaseType_t)1, (BaseType_t*)&xParameter1StringLength));
 
 	if (divider > 0){
-		if(puse_measure_set_divider(divider) == 0){
+		if(0)//(puse_measure_set_divider(divider) == 0)
+		{
 			sprintf(pcWriteBuffer, "adc period divider %ld setted\r\n", divider);
 		}
 		else{
@@ -39,7 +40,8 @@ static BaseType_t prvSetDAC_TimerDivider( char *pcWriteBuffer,
     divider = atoi(FreeRTOS_CLIGetParameter(pcCommandString, (UBaseType_t)1, (BaseType_t*)&xParameter1StringLength));
 
 	if ((divider > 0) && (divider <= 10000)){
-		if(wave_starter_set_divider(divider) == 0){
+		if(0)//(wave_starter_set_divider(divider) == 0)
+		{
 			sprintf(pcWriteBuffer, "adc period divider %ld setted\r\n", divider);
 		}
 	}else {

@@ -14,10 +14,12 @@ if(FOR_QEMU)
     set(MAIN_TIME_RESOLUTION 1 CACHE STRING "buffer size")
     set(DISKIO_DRIVER_SRC "drivers/sram_diskio.c")
 else()
-    add_compile_definitions(MSC_USE_FLASH)
+    #add_compile_definitions(MSC_USE_FLASH)
+    add_compile_definitions(MSC_USE_SRAM)
     add_compile_definitions(PRINTF_RTT)
     set(MAIN_TIME_RESOLUTION 32 CACHE STRING "buffer size")
-    set(DISKIO_DRIVER_SRC "drivers/flash_diskio.c")
+    #set(DISKIO_DRIVER_SRC "drivers/flash_diskio.c")
+    set(DISKIO_DRIVER_SRC "drivers/sram_diskio.c")
 endif()
 
 set(CMAKE_C_STANDARD 11)
@@ -40,33 +42,59 @@ target_compile_definitions(${MAIN_EXECUTABLE} PRIVATE
 include(cmake/version.cmake)
 generate_version_header()
 
+#if(${TARGET} STREQUAL "stm32f4")
 add_subdirectory(modules/CMSIS-DSP)
+#endif()
+
 add_subdirectory(targets)
 add_subdirectory(modules)
 add_subdirectory(support)
 add_subdirectory(app)
 
-target_link_libraries(${MAIN_EXECUTABLE} 
-    freertos_kernel
-    freertos_support
-    freertos_cli_core
-    cli_service
-    fatfs_core
-    CMSISDSP
-    segger_rtt         
-    segger_sysview 
-    lcd_service
-    wave_starter_service
-    wave_measure_service
-    pulse_measure_service
-    config_service
-    status_service
-    tinyusb_support
-    usb_service
-    diskio_drivers
-    bsp_drivers
-    app_version
-)
+if(${TARGET} STREQUAL "stm32f4")
+    target_link_libraries(${MAIN_EXECUTABLE} 
+        freertos_kernel
+        freertos_support
+        freertos_cli_core
+        cli_service
+        fatfs_core
+        CMSISDSP
+        segger_rtt         
+        segger_sysview 
+        lcd_service
+        wave_starter_service
+        wave_measure_service
+        pulse_measure_service
+        config_service
+        status_service
+        tinyusb_support
+        usb_service
+        diskio_drivers
+        bsp_drivers
+        app_version
+    )
+elseif(${TARGET} STREQUAL "stm32f7")
+    target_link_libraries(${MAIN_EXECUTABLE} 
+        freertos_kernel
+        freertos_support
+        freertos_cli_core
+        cli_service
+        fatfs_core
+        CMSISDSP
+        segger_rtt         
+        segger_sysview 
+        config_service
+        status_service
+        tinyusb_support
+        usb_service
+        diskio_drivers
+        bsp_drivers
+        app_version
+    )
+else()
+    message(FATAL_ERROR "unsupported target ${TARGET}")
+endif()
+
 
 find_program(CMAKE_OBJCOPY NAMES arm-none-eabi-objcopy REQUIRED)
 

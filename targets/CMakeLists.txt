@@ -49,6 +49,8 @@ target_include_directories(CMSISDSP PRIVATE
 #------------------------------------------------------------
 #----------------------- bsp drivers ---------------------
 #------------------------------------------------------------
+
+if(${TARGET} STREQUAL "stm32f4")
 set(BSP_SOURCES
     ${TARGET}/Core/Src/adc_driver.c
     ${TARGET}/Core/Src/dac_driver.c
@@ -56,6 +58,14 @@ set(BSP_SOURCES
     ${TARGET}/Core/Src/W25Qxx.c
     ${TARGET}/Core/Src/common.c
 )
+elseif(${TARGET} STREQUAL "stm32f7")
+set(BSP_SOURCES
+    ${TARGET}/Core/Src/W25Qxx.c
+    ${TARGET}/Core/Src/common.c
+)
+else()
+    message(FATAL_ERROR "Неизвестный TARGET: '${TARGET}'. Добавьте настройку FREERTOS_PORT для этой платформы.")
+endif()
 
 add_library(bsp_drivers STATIC 
     ${BSP_SOURCES}
