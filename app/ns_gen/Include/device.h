@@ -6,7 +6,7 @@
 
 namespace device{
 
-inline constexpr size_t calibrations_size = 1000;
+inline constexpr size_t calibrations_size = 100;
 
 struct DeviceConfig{
     config::Item<uint32_t> ampl{"ampl.txt", 1u};
@@ -17,11 +17,11 @@ struct DeviceConfig{
 	};
 	
 	using CalibrationType = decltype(config1);
-	CalibrationType config2 {"conf2.txt", {}};
-	CalibrationType config3 {"conf3.txt", {}};
-	CalibrationType config4 {"conf4.txt", {}};
-	CalibrationType config5 {"conf5.txt", {}};
-	CalibrationType config6 {"conf6.txt", {}};
+	CalibrationType config2 {"conf2.txt", config::make_sequence_array<int, calibrations_size>()};
+	CalibrationType config3 {"conf3.txt", config::make_sequence_array<int, calibrations_size>()};
+	CalibrationType config4 {"conf4.txt", config::make_sequence_array<int, calibrations_size>()};
+	CalibrationType config5 {"conf5.txt", config::make_sequence_array<int, calibrations_size>()};
+	CalibrationType config6 {"conf6.txt", config::make_sequence_array<int, calibrations_size>()};
 
 	CalibrationType& getConfig(size_t conf){
 		CalibrationType* cal_ptrs[6] = {
