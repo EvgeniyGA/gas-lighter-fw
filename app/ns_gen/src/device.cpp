@@ -8,6 +8,8 @@
 #include "version.h"
 #include "version_check.h"
 #include "timers.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 namespace device{
 
@@ -44,32 +46,44 @@ void vRunTimerCallback( TimerHandle_t xTimer ) {
 }
 
 void refresh_task(void* param){
-  if(is_button_mode_pressed()){
-    gpio_led_status_change_state(GPIO_LED_ON);
-    config_step = (config_step < config_steps) ? (config_step + 1) : 0;
-    xTimerStop(fire_away_timer, 0);
-  }
+  gpio_led_mode_change_state(config_step, GPIO_LED_ON);
+  while(1){
+    if(is_button_mode_pressed()){
+      gpio_led_status_change_state(GPIO_LED_ON);
+      gpio_led_mode_change_state(config_step, GPIO_LED_OFF);
+      config_step = (config_step < config_steps) ? (config_step + 1) : 0;
+      gpio_led_mode_change_state(config_step, GPIO_LED_ON);
+      xTimerStop(fire_away_timer, 0);
+    }
 
-  do{
-    vTaskDelay(100 / portTICK_PERIOD_MS);
-  }
-  while(is_button_mode_pressed());
-  gpio_led_status_change_state(GPIO_LED_OFF);
-
-  if(is_button_go_pressed() ){
-    start_generation(); 
     do{
       vTaskDelay(100 / portTICK_PERIOD_MS);
-    }while(is_button_go_pressed());
-  }
+    }
+    while(is_button_mode_pressed());
+    gpio_led_status_change_state(GPIO_LED_OFF);
 
-  vTaskDelay(10 / portTICK_PERIOD_MS);
+    if(is_button_go_pressed() ){
+      start_generation(); 
+      do{
+        vTaskDelay(100 / portTICK_PERIOD_MS);
+      }while(is_button_go_pressed());
+    }
+
+    vTaskDelay(10 / portTICK_PERIOD_MS);
+  }
 }
 
+#define   refresh_task_stack_size     configMINIMAL_STACK_SIZE*2
+
+StaticTask_t refresh_task_taskdef;
+
 void init(void){
+  static StackType_t refresh_task_stack[refresh_task_stack_size];
   fire_away_timer = xTimerCreate("go_timer", pdMS_TO_TICKS(100), pdTRUE, 0, vRunTimerCallback);
-  xTimerStart(fire_away_timer, 0);
-  xTaskCreate(refresh_task, "refresh_task", configMINIMAL_STACK_SIZE * 2, NULL, 0, NULL);
+ // xTimerStart(fire_away_timer, 0);
+  
+  xTaskCreateStatic(refresh_task, "refresh_task", refresh_task_stack_size, 
+    NULL, configMAX_PRIORITIES - 3, refresh_task_stack, &refresh_task_taskdef);
 }
 
 }
