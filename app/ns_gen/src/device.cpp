@@ -17,7 +17,7 @@ DeviceConfig config;
 
 uint8_t config_step = 0;
 inline constexpr uint8_t config_steps = LED_MODE_COUNT - 1;//???
-TimerHandle_t fire_away_timer;
+TimerHandle_t fire_away_timer, xLedOffTimer;
 
 void heartbit_callback(void){
 }
@@ -79,7 +79,11 @@ StaticTask_t refresh_task_taskdef;
 
 void init(void){
   static StackType_t refresh_task_stack[refresh_task_stack_size];
-  fire_away_timer = xTimerCreate("go_timer", pdMS_TO_TICKS(100), pdTRUE, 0, vRunTimerCallback);
+  fire_away_timer = xTimerCreate("go_timer", pdMS_TO_TICKS(100), pdTRUE, (void*)0, vRunTimerCallback);
+  xLedOffTimer = xTimerCreate("led_off_timer", pdMS_TO_TICKS(200), pdFALSE, (void*)0,
+    [](TimerHandle_t xTimer){gpio_led_go_change_state(GPIO_LED_OFF);}
+  );
+  xTimerStart(xLedOffTimer, portMAX_DELAY);
  // xTimerStart(fire_away_timer, 0);
   
   xTaskCreateStatic(refresh_task, "refresh_task", refresh_task_stack_size, 
