@@ -13,16 +13,17 @@
 
 namespace device{
 
-DeviceConfig config;
-
-uint8_t config_step = 0;
 inline constexpr uint8_t config_steps = LED_MODE_COUNT - 1;//???
+inline constexpr int refresh_task_stack_size = configMINIMAL_STACK_SIZE * 2;
+
+DeviceConfig config;
+uint8_t config_step = 0;
 TimerHandle_t fire_away_timer, xLedOffTimer;
+StaticTask_t refresh_task_taskdef;
+uint8_t is_started = 0;
 
 void heartbit_callback(void){
 }
-
-uint8_t is_started = 0;
 
 void update_period(){
   auto period = config.getConfig(config_step).value[0];
@@ -89,10 +90,6 @@ void refresh_task(void* param){
     vTaskDelay(10 / portTICK_PERIOD_MS);
   }
 }
-
-#define   refresh_task_stack_size     configMINIMAL_STACK_SIZE*2
-
-StaticTask_t refresh_task_taskdef;
 
 void init(void){
   static StackType_t refresh_task_stack[refresh_task_stack_size];

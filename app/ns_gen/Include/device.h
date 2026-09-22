@@ -6,7 +6,7 @@
 
 namespace device{
 
-inline constexpr size_t calibrations_size = 100;
+inline constexpr size_t calibrations_size = 1000;
 
 struct DeviceConfig{
     config::Item<uint32_t> ampl{"ampl.txt", 1u};

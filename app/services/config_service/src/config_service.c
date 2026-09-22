@@ -56,19 +56,21 @@ uint8_t config_load_raw(const char* name, uint8_t* data, uint8_t element_size, u
                 case(CONFIG_DATA_TYPE_INT):
                     loaded_val_int = strtol((const char*)buf, &endptr, 10);
                     memcpy((void*)data + (i * element_size), &loaded_val_int, element_size);
+                    res = 0;
                     break;
                 case(CONFIG_DATA_TYPE_FLOAT):
                     loaded_val_float = strtof((const char*)buf, &endptr);
                     memcpy((void*)data + (i * element_size), &loaded_val_float, element_size);
+                    res = 0;
                     break;
                 default: break;
             }
             
             i++;
         }
-        if(endptr != buf){
-            res = 0;
-        }
+//        if(endptr != buf){
+//            res = 0;
+//        }
         f_close(&file);
     }
     xSemaphoreGive(fs_mutex);
