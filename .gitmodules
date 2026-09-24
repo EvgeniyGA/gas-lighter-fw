@@ -16,3 +16,6 @@
 [submodule "modules/SystemView"]
 	path = modules/SystemView
 	url = https://github.com/SEGGERMicro/SystemView.git
+[submodule "modules/mcuboot"]
+	path = modules/mcuboot
+	url = https://github.com/mcu-tools/mcuboot.git
