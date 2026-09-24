@@ -2,21 +2,6 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"type": "cmake",
-			"label": "CMake: build",
-			"command": "build",
-			"targets": [
-				"all"
-			],
-			"preset": "Debug",
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			},
-			"problemMatcher": [],
-			"detail": "CMake template build task"
-		},
-		{
 			"label": "Flash F4 (j-link)",
 			"type": "shell",
 			"command": "cmd",
