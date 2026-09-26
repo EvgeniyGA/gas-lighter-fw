@@ -10,4 +10,13 @@
     "cortex-debug.gdbPath.linux": "arm-none-eabi-gdb",
     "cortex-debug.gdbPath.windows": "C:/arm/arm-none-eabi/bin/arm-none-eabi-gdb.exe",
     "cortex-debug.JLinkGDBServerPath.windows": "C:/Program Files/SEGGER/JLink_V918/JLinkGDBServerCL.exe",
+
+    "search.exclude": {
+        "**/modules": true,
+    },
+    "files.exclude": {
+        "**/modules": true,
+        "**/.git": true,
+        "**/.DS_Store": true,
+    }
 }

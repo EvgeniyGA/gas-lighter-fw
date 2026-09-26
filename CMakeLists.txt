@@ -111,8 +111,8 @@ add_custom_command(TARGET ${MAIN_EXECUTABLE} POST_BUILD
 
 set(MCUBOOT_IMGTOOL "${CMAKE_SOURCE_DIR}/modules/mcuboot/scripts/imgtool.py")
 set(MCUBOOT_KEY "${CMAKE_SOURCE_DIR}/modules/mcuboot/root-ec-p256.pem")
-set(FW_BIN "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.bin")
-set(SIGNED_FW_BIN "${CMAKE_BINARY_DIR}/${PROJECT_NAME}_signed.bin")
+set(FW_BIN "${CMAKE_BINARY_DIR}/${MAIN_EXECUTABLE}.bin")
+set(SIGNED_FW_BIN "${CMAKE_BINARY_DIR}/${MAIN_EXECUTABLE}_signed.bin")
 
 add_custom_command(
     OUTPUT ${SIGNED_FW_BIN}
@@ -126,7 +126,7 @@ add_custom_command(
         ${FW_BIN} 
         ${SIGNED_FW_BIN}
     DEPENDS ${FW_BIN} ${MCUBOOT_IMGTOOL} ${MCUBOOT_KEY}
-    COMMENT "MCUboot: Sign firmware ${PROJECT_NAME}.bin, version ${FW_VERSION}"
+    COMMENT "MCUboot: Sign firmware ${MAIN_EXECUTABLE}.bin, version ${FW_VERSION}"
     VERBATIM
 )
 

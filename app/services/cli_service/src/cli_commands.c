@@ -31,7 +31,9 @@ static BaseType_t prvTaskStatsCommand( char *pcWriteBuffer,
         return pdTRUE;
     }else{
         state = 0;
-        strcpy(pcWriteBuffer, "\n\r");
+		sprintf(pcWriteBuffer, "\n\rheap free: %u (%u ever free) bytes\n\r", 
+			xPortGetFreeHeapSize(), xPortGetMinimumEverFreeHeapSize());
+//        strcpy(pcWriteBuffer, "\n\r");
         return pdFALSE;
     }
 }

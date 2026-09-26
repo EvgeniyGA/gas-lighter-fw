@@ -33,7 +33,7 @@ void vApplicationMallocFailedHook(void)
 {
   taskDISABLE_INTERRUPTS();
   while(1){
-    __NOP();
+    //__NOP();
   };
 }
 
@@ -44,6 +44,6 @@ void vApplicationStackOverflowHook(xTaskHandle pxTask, char *pcTaskName)
 
   taskDISABLE_INTERRUPTS();
   while(1){
-    __NOP();
+    //__NOP();
   };
 }

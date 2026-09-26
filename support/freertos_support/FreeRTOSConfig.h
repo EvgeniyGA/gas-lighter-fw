@@ -60,7 +60,7 @@
 
 #define configUSE_PREEMPTION                     1
 #define configSUPPORT_STATIC_ALLOCATION          1
-#define configSUPPORT_DYNAMIC_ALLOCATION         1
+#define configSUPPORT_DYNAMIC_ALLOCATION         1 // todo: set 0
 #define configUSE_IDLE_HOOK                      0
 #define configUSE_TICK_HOOK                      0
 #define configCPU_CLOCK_HZ                       ( SystemCoreClock )
@@ -94,6 +94,9 @@
 
 /* The following flag must be enabled only when using newlib */
 #define configUSE_NEWLIB_REENTRANT          1
+
+#define configUSE_MALLOC_FAILED_HOOK        1
+#define configCHECK_FOR_STACK_OVERFLOW      ( 2 )
 
 /* Set the following definitions to 1 to include the API function, or zero
 to exclude the API function. */
