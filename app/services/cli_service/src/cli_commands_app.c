@@ -5,6 +5,17 @@
 #include "fatfs.h"
 #include "FreeRTOS.h"
 #include "FreeRTOS_CLI.h"
+#include "../../ns_gen/include/device_api.h"
+
+static BaseType_t prvRun( char *pcWriteBuffer,
+                                  size_t xWriteBufferLen,
+                                  const char *pcCommandString )
+{
+	device_start_generation();
+	sprintf(pcWriteBuffer, "fire out!\r\n");
+
+	return pdFALSE;
+}
 
 static BaseType_t prvSetADC_PeriodDivider( char *pcWriteBuffer,
                                   size_t xWriteBufferLen,
@@ -51,6 +62,14 @@ static BaseType_t prvSetDAC_TimerDivider( char *pcWriteBuffer,
 	return pdFALSE;
 }
 
+const CLI_Command_Definition_t xRunCommand =
+{
+    "run",
+	"start work process\r\n",
+	prvRun,
+    0
+};
+
 const CLI_Command_Definition_t xSetADC_PeriodDividerCommand =
 {
     "meandr_div",
@@ -70,6 +89,7 @@ const CLI_Command_Definition_t xSetDAC_TimerDividerCommand =
 BaseType_t CLI_install_commands_app(void){
 	FreeRTOS_CLIRegisterCommand(&xSetADC_PeriodDividerCommand);
 	FreeRTOS_CLIRegisterCommand(&xSetDAC_TimerDividerCommand);
+	FreeRTOS_CLIRegisterCommand(&xRunCommand);
 
 	return pdPASS;
 }
