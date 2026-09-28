@@ -7,6 +7,14 @@ string(STRIP "${FW_VERSION_RAW}" FW_VERSION)
 
 project(gas-lighter-fw VERSION ${FW_VERSION} LANGUAGES C CXX ASM)
 
+option(USE_SYSTEM_VIEW "enable segger system view" OFF)
+if(USE_SYSTEM_VIEW)
+    add_compile_definitions(USE_SYTEM_VIEW)
+    set(SEGGER_LIBS segger_rtt segger_sysview )
+else()
+    set(SEGGER_LIBS "")
+endif()
+
 if(FOR_QEMU)
     add_compile_definitions(MSC_USE_SRAM)
     add_compile_definitions(PRINTF_UART)
@@ -16,7 +24,8 @@ if(FOR_QEMU)
 else()
     add_compile_definitions(MSC_USE_FLASH)
     #add_compile_definitions(MSC_USE_SRAM)
-    add_compile_definitions(PRINTF_RTT)
+    add_compile_definitions(PRINTF_UART)
+    #add_compile_definitions(PRINTF_RTT)
     set(MAIN_TIME_RESOLUTION 32 CACHE STRING "buffer size")
     set(DISKIO_DRIVER_SRC "drivers/flash_diskio.c")
     #set(DISKIO_DRIVER_SRC "drivers/sram_diskio.c")
@@ -81,8 +90,7 @@ elseif(${TARGET} STREQUAL "stm32f7")
         cli_service
         fatfs_core
         CMSISDSP
-        segger_rtt         
-        segger_sysview 
+        ${SEGGER_LIBS}
         config_service
         status_service
         tinyusb_support
