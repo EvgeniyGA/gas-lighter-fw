@@ -53,7 +53,9 @@
   extern uint32_t SystemCoreClock;
 #endif
 
+#ifdef USE_SYSTEM_VIEW
 #include "SEGGER_SYSVIEW_FreeRTOS.h"
+#endif
 
 #define configENABLE_FPU                         1
 #define configENABLE_MPU                         0
