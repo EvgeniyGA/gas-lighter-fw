@@ -9,7 +9,9 @@
 				"/C",
 				"((echo r & echo h & echo loadfile stm32f4-debug/${workspaceFolderBasename}.elf & echo q) > flash.jlink) && (JLink.exe -device STM32F407VG -if SWD -speed 4000 -NoGui 1 -CommandFile flash.jlink)"
 			],
-			"options": { "cwd": "${workspaceFolder}/build" },
+			"options": {
+				"cwd": "${workspaceFolder}/build"
+			},
 			"detail": "Flash STM32F4 (j-link)."
 		},
 		{
@@ -20,7 +22,9 @@
 				"/C",
 				"((echo r & echo h & echo erase & echo q) > erase.jlink) && (JLink.exe -device STM32F407VG -if SWD -speed 4000 -NoGui 1 -CommandFile erase.jlink)"
 			],
-			"options": { "cwd": "${workspaceFolder}/build" },
+			"options": {
+				"cwd": "${workspaceFolder}/build"
+			},
 			"detail": "Erase STM32F4 (j-link)."
 		},
 		{
@@ -31,24 +35,42 @@
 				"/C",
 				"((echo r & echo h & echo loadfile stm32f7-debug/${workspaceFolderBasename}.elf & echo q) > flash.jlink) && (JLink.exe -device STM32F746IG -if SWD -speed 4000 -NoGui 1 -CommandFile flash.jlink)"
 			],
-			"options": { "cwd": "${workspaceFolder}/build" },
-			"detail": "Flash STM32F7 (j-link)."
+			"options": {
+				"cwd": "${workspaceFolder}/build"
+			},
+			"detail": "Flash STM32F7 (j-link).",
+			"problemMatcher": []
 		},
 		{
 			"label": "Run qemu-arm (gdb)",
 			"type": "shell",
 			"command": "qemu-system-arm",
 			"args": [
-				"-M", "netduinoplus2",
-				"-nographic", 
-				"-serial", "mon:stdio",
-				"-gdb", "tcp::1234", "-S",        
-				"-kernel", "${command:cmake.launchTargetPath}"
+				"-M",
+				"netduinoplus2",
+				"-nographic",
+				"-serial",
+				"mon:stdio",
+				"-gdb",
+				"tcp::1234",
+				"-S",
+				"-kernel",
+				"${command:cmake.launchTargetPath}"
 			],
 			"isBackground": true,
 			"problemMatcher": {
-				"pattern": [ { "regexp": ".", "file": 1, "location": 2, "message": 3 } ],
-				"background": { "activeOnStart": true, "beginsPattern": "^.*", "endsPattern": "^$"
+				"pattern": [
+					{
+						"regexp": ".",
+						"file": 1,
+						"location": 2,
+						"message": 3
+					}
+				],
+				"background": {
+					"activeOnStart": true,
+					"beginsPattern": "^.*",
+					"endsPattern": "^$"
 				}
 			}
 		},
@@ -57,22 +79,30 @@
 			"type": "shell",
 			"command": "qemu-system-arm",
 			"args": [
-				"-M", "netduinoplus2",
-				"-nographic", 
-				"-serial", "mon:stdio",
-				//"-device", "stm32f2xx-adc,id=adc0,channel=0,value=2048",
-				//"-device", "m25p80,drive=flash0",
-				//"-blockdev", "driver=file,node-name=flash0,filename=flash.bin",
-				//"-d", "unimp,guest_errors",
-				//"-D", "qemu_debug.log",
-				"-kernel", "${command:cmake.launchTargetPath}"
+				"-M",
+				"netduinoplus2",
+				"-nographic",
+				"-serial",
+				"mon:stdio",
+				"-kernel",
+				"${command:cmake.launchTargetPath}"
 			],
 			"isBackground": true,
 			"problemMatcher": {
-				"pattern": [ { "regexp": ".", "file": 1, "location": 2, "message": 3 } ],
-				"background": { "activeOnStart": true, "beginsPattern": "^.*", "endsPattern": "^$"
+				"pattern": [
+					{
+						"regexp": ".",
+						"file": 1,
+						"location": 2,
+						"message": 3
+					}
+				],
+				"background": {
+					"activeOnStart": true,
+					"beginsPattern": "^.*",
+					"endsPattern": "^$"
 				}
 			}
-		},
+		}
 	]
 }
