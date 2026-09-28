@@ -2,8 +2,6 @@
 #include "main.h"
 #include <stdio.h>
 #include <ctype.h>
-#include "SEGGER_RTT.h"
-#include "SEGGER_SYSVIEW.h"
 #include "fatfs.h"
 #include "version.h"
 #include "version_check.h"
@@ -17,6 +15,10 @@
 #include <cstdio>
 #include "config_wrapper.hpp"
 #include <type_traits>
+#ifdef USE_SYTEM_VIEW
+	#include "SEGGER_RTT.h"
+	#include "SEGGER_SYSVIEW.h"
+#endif
 
 usb_device_config_t usb_device_config = {
 	.mounted = [](){ std::printf("USB device mounted\n\r"); },
@@ -27,13 +29,15 @@ uint8_t load_configs(void);
 void print_configs(void);
 
 void init(void){
-#ifndef FOR_QEMU
+#ifdef PRINTF_RTT
 	SEGGER_RTT_ConfigUpBuffer( 0, NULL, NULL, 0, SEGGER_RTT_MODE_NO_BLOCK_TRIM );
 #endif
+#ifdef USE_SYTEM_VIEW
 	SEGGER_SYSVIEW_Conf();
   	SEGGER_SYSVIEW_Start();
   	while(SEGGER_SYSVIEW_IsStarted()==0);
-  	SEGGER_RTT_WriteString( 0, "SEGGER Real-Time-Terminal Started\n" );
+#endif
+//  	SEGGER_RTT_WriteString( 0, "SEGGER Real-Time-Terminal Started\n" );
 }
 
 void setup(void){
@@ -55,7 +59,7 @@ void setup(void){
 		usb_device_init(&usb_device_config);
 		usb_cdc_init();
 		load_configs();
-		print_configs();
+		//print_configs();
 		device::init();
 		vTaskDelete(NULL);
 	}, "init", configMINIMAL_STACK_SIZE * 2, NULL, 1, NULL);
