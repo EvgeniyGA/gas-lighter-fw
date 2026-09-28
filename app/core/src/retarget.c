@@ -1,14 +1,22 @@
 #include <stdio.h>
 #include <string.h>
 #include "app.h"
+#ifdef PRINTF_RTT
 #include "SEGGER_RTT.h"
+#endif
 #ifdef STM32F746xx
 #include "stm32f7xx.h"
 #elif defined STM32F407xx
 #include "stm32f4xx.h"
 #endif
 
+
+
+#ifdef STM32F746xx
+extern UART_HandleTypeDef huart2;
+#elif defined STM32F407xx
 extern UART_HandleTypeDef huart1;
+#endif
 
 int print_raw(const char *str) {
     if (str == NULL) {
@@ -24,7 +32,12 @@ int print_raw(const char *str) {
     return SEGGER_RTT_Write(0, str, len);
     
 #elif defined(PRINTF_UART)
+
+#ifdef STM32F746xx
+    HAL_StatusTypeDef status = HAL_UART_Transmit(&huart2, (uint8_t*)str, len, HAL_MAX_DELAY);
+#elif defined STM32F407xx
     HAL_StatusTypeDef status = HAL_UART_Transmit(&huart1, (uint8_t*)str, len, HAL_MAX_DELAY);
+#endif
     if (status == HAL_OK) {
         return len;
     }
@@ -41,7 +54,11 @@ int _write(int file, char *ptr, int len) {
     int written = SEGGER_RTT_Write(0, ptr, len);
     return written;
 #elif PRINTF_UART
+#ifdef STM32F746xx
+    HAL_StatusTypeDef status = HAL_UART_Transmit(&huart2, (uint8_t*)ptr, len, HAL_MAX_DELAY);
+#elif defined STM32F407xx
     HAL_StatusTypeDef status = HAL_UART_Transmit(&huart1, (uint8_t*)ptr, len, HAL_MAX_DELAY);
+#endif
     if (status == HAL_OK) {
 		return len; // Возвращаем количество успешно отправленных байт
 	}
@@ -56,7 +73,12 @@ int debug_console_getchar(void) {
         return c;
     }
 #elif PRINTF_UART
-    if (HAL_UART_Receive(&huart1, &c, 1, 0) == HAL_OK) {
+#ifdef STM32F746xx
+    if (HAL_UART_Receive(&huart2, &c, 1, 0) == HAL_OK)
+#elif defined STM32F407xx
+    if (HAL_UART_Receive(&huart1, &c, 1, 0) == HAL_OK)
+#endif 
+    {
         return c;
     }
 #endif
