@@ -18,7 +18,7 @@ uint8_t status_service_init(status_heartbit_t status_heartbit_callback){
 void led_blinking_task(void* param) {
   //static uint8_t led_state = 0;
   while (1) {
-    SEGGER_SYSVIEW_PrintfHost("BlikTask started");
+//    SEGGER_SYSVIEW_PrintfHost("BlikTask started");
     ((status_heartbit_t)param)();
 #ifndef FOR_QEMU
     vTaskDelay(1000 / portTICK_PERIOD_MS);
