@@ -51,9 +51,9 @@ target_compile_definitions(${MAIN_EXECUTABLE} PRIVATE
 include(cmake/version.cmake)
 generate_version_header()
 
-#if(${TARGET} STREQUAL "stm32f4")
+if(${TARGET} STREQUAL "stm32f4")
 add_subdirectory(modules/CMSIS-DSP)
-#endif()
+endif()
 
 add_subdirectory(targets)
 add_subdirectory(modules)
@@ -88,7 +88,6 @@ elseif(${TARGET} STREQUAL "stm32f7")
         freertos_cli_core
         cli_service
         fatfs_core
-        CMSISDSP
         ${SEGGER_LIBS}
         config_service
         status_service
