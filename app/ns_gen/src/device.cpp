@@ -23,6 +23,24 @@ StaticTask_t refresh_task_taskdef;
 uint8_t is_started = 0;
 
 void heartbit_callback(void){
+  bool res = false;
+  switch(config_step){
+    case 0: res = config.config1.load(); break;
+    case 1: res = config.config2.load(); break;
+    case 2: res = config.config3.load(); break;
+    case 3: res = config.config4.load(); break;
+    case 4: res = config.config5.load(); break;
+    case 5: res = config.config6.load(); break;
+    default: std::printf("\n\rconfig load error\n\r"); break;
+  }
+  if(res != true){
+    std::printf("\n\rconfig load error\n\r");
+  }
+	//config.apply([](auto& item){
+	//	if(item.load() == true){
+	//		//std::printf("\t[%s] loaded\n\r", item.name);
+	//	}
+	//}); 
 }
 
 void update_period(){
