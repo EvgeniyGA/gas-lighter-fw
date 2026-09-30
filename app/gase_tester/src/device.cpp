@@ -114,3 +114,7 @@ void init(void){
 }
 
 }
+
+extern "C" void device_start_generation(void) {
+    //device::start_generation();
+}

@@ -4,6 +4,7 @@
 #include "task.h"
 #include "queue.h"
 #include <stdio.h>
+#include <stdarg.h>
 
 #define LCD_PRINTER_STACK_SIZE      configMINIMAL_STACK_SIZE * 2
 #define LCD_MAX_LEN             (20)

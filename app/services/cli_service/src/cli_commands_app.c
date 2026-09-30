@@ -5,7 +5,11 @@
 #include "fatfs.h"
 #include "FreeRTOS.h"
 #include "FreeRTOS_CLI.h"
+#ifdef STM32F746xx
 #include "../../ns_gen/include/device_api.h"
+#elif defined STM32F407xx
+#include "../../gase_tester/include/device_api.h"
+#endif
 
 static BaseType_t prvRun( char *pcWriteBuffer,
                                   size_t xWriteBufferLen,

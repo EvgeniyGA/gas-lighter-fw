@@ -68,8 +68,7 @@ if(${TARGET} STREQUAL "stm32f4")
         cli_service
         fatfs_core
         CMSISDSP
-        segger_rtt         
-        segger_sysview 
+        ${SEGGER_LIBS}
         lcd_service
         wave_starter_service
         wave_measure_service

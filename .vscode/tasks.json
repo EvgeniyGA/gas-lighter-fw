@@ -12,7 +12,8 @@
 			"options": {
 				"cwd": "${workspaceFolder}/build"
 			},
-			"detail": "Flash STM32F4 (j-link)."
+			"detail": "Flash STM32F4 (j-link).",
+			"problemMatcher": []
 		},
 		{
 			"label": "Erase F4 (j-link)",
