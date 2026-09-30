@@ -44,10 +44,12 @@ target_include_directories(cmsis_core_headers INTERFACE
     ${TARGET}/Drivers/CMSIS/Device/ST/${CMSIS_DEVICE_FAMILY}/Include
 )
 
+if(${TARGET} STREQUAL "stm32f4")
 target_include_directories(CMSISDSP PRIVATE
     ${TARGET}/Drivers/CMSIS/Include
     ${TARGET}/Drivers/CMSIS/Device/ST/${CMSIS_DEVICE_FAMILY}/Include
 )
+endif()
 #------------------------------------------------------------
 #----------------------- bsp drivers ---------------------
 #------------------------------------------------------------
