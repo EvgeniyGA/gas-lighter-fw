@@ -56,8 +56,11 @@ void update_period(){
   }
 }
 
-void start_generation(void){
-  auto period = config.getConfig(config_step).value[0];
+void start_generation(uint8_t ext){
+  uint8_t period = 0;
+  if(ext == 0){
+    period = config.getConfig(config_step).value[0];
+  }
   if((period != 0) && (is_started == 0)){
     is_started = 1;
   }
@@ -69,11 +72,13 @@ void start_generation(void){
   }
 }
 
-volatile int ext123 = 0;
+uint8_t external_run_flag = 0;
+
 void vRunTimerCallback( TimerHandle_t xTimer ) {
   check_conf();
   auto period = config.getConfig(config_step).value[0];
-  if(is_started || (period == 0)){
+  if(is_started || (period == 0) || (external_run_flag)){
+    external_run_flag = 0;
     gpio_led_go_change_state(GPIO_LED_ON);
     if(period != 0){
       xTimerReset(fire_away_timer, 0);
@@ -83,9 +88,6 @@ void vRunTimerCallback( TimerHandle_t xTimer ) {
       config.getConfig(config_step).value.size() - 1
     );
     xTimerReset(xLedOffTimer, portMAX_DELAY);
-  }
-  else{
-    ext123++;
   }
 }
 
@@ -107,7 +109,7 @@ void refresh_task(void* param){
     gpio_led_status_change_state(GPIO_LED_OFF);
 
     if(is_button_go_pressed() ){
-      start_generation(); 
+      start_generation(0); 
       while(is_button_go_pressed()){
         vTaskDelay(100 / portTICK_PERIOD_MS);
       }
@@ -131,5 +133,14 @@ void init(void){
 }
 
 extern "C" void device_start_generation(void) {
-    device::start_generation();
+    device::start_generation(0);
+}
+
+extern "C" void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+    if (GPIO_Pin == GPIO_PIN_0) {
+      BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+      device::external_run_flag = 1;
+      xTimerResetFromISR(device::fire_away_timer, &xHigherPriorityTaskWoken);
+      portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    }
 }
