@@ -49,6 +49,9 @@ uint8_t config_load_raw(const char* name, uint8_t* data, uint8_t element_size, u
     int loaded_val_int = 0;
     int loaded_val_float = 0;
     xSemaphoreTake(fs_mutex, portMAX_DELAY);
+
+f_mount(NULL, sramPath, 0); 
+res = f_mount(&USERFatFS, sramPath, 1);
     if(f_open(&file, name, FA_READ) == FR_OK){
         while(element_count--){
             f_gets(buf, sizeof(buf), &file);

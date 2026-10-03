@@ -14,7 +14,7 @@
 namespace device{
 
 inline constexpr uint8_t config_steps = LED_MODE_COUNT - 1;//???
-inline constexpr int refresh_task_stack_size = configMINIMAL_STACK_SIZE * 2;
+inline constexpr int refresh_task_stack_size = configMINIMAL_STACK_SIZE * 10;
 
 DeviceConfig config;
 uint8_t config_step = 0;
@@ -23,6 +23,9 @@ StaticTask_t refresh_task_taskdef;
 uint8_t is_started = 0;
 
 void heartbit_callback(void){
+}
+
+void check_conf(void){
   bool res = false;
   switch(config_step){
     case 0: res = config.config1.load(); break;
@@ -66,7 +69,9 @@ void start_generation(void){
   }
 }
 
+volatile int ext123 = 0;
 void vRunTimerCallback( TimerHandle_t xTimer ) {
+  check_conf();
   auto period = config.getConfig(config_step).value[0];
   if(is_started || (period == 0)){
     gpio_led_go_change_state(GPIO_LED_ON);
@@ -78,6 +83,9 @@ void vRunTimerCallback( TimerHandle_t xTimer ) {
       config.getConfig(config_step).value.size() - 1
     );
     xTimerReset(xLedOffTimer, portMAX_DELAY);
+  }
+  else{
+    ext123++;
   }
 }
 
