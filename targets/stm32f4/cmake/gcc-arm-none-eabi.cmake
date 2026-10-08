@@ -32,7 +32,8 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -fdata-sections -ffunction-sections -f
 # However, most GCC toolchains do not support this option, which causes a compilation error; for this reason, the feature is disabled by default.
 # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fcyclomatic-complexity")
 
-set(CMAKE_C_FLAGS_DEBUG "-O0 -g3")
+#set(CMAKE_C_FLAGS_DEBUG "-O0 -g3")
+set(CMAKE_C_FLAGS_DEBUG "-Os -g0")
 set(CMAKE_C_FLAGS_RELEASE "-Os -g0")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3")
 set(CMAKE_CXX_FLAGS_RELEASE "-Os -g0")
@@ -43,7 +44,7 @@ set(CMAKE_EXE_LINKER_FLAGS "${TARGET_FLAGS}")
 if("${FOR_QEMU}" STREQUAL "OK")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T \"${CMAKE_SOURCE_DIR}/targets/stm32f4/STM32F407XX_FLASH_QEMU.ld\"")
 else()
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T \"${CMAKE_SOURCE_DIR}/targets/stm32f4/STM32F407XX_FLASH.ld\"")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T \"${CMAKE_SOURCE_DIR}/targets/stm32f4/STM32F407XX_FLASH_SLOT1.ld\"")
 endif()
 #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T \"${CMAKE_SOURCE_DIR}/STM32F407XX_FLASH.ld\"")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --specs=nano.specs")
