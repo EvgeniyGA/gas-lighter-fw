@@ -69,7 +69,7 @@ void setup(void){
 }
 
 uint8_t load_configs(void){
-	std::printf("Load configs ...\n\r");
+	//std::printf("Try Load configs from memory ...\n\r");
 	device::config.apply([](auto& item){
 		if(item.load() == true){
 			std::printf("\t[%s] loaded\n\r", item.name);
