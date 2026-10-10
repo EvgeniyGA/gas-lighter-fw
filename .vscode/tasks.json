@@ -2,6 +2,23 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
+			"label": "Flash Signed App (J-Link)",
+			"type": "shell",
+			"command": "cmake",
+			"args": [
+				"--build",
+				"${command:cmake.buildDirectory}",
+				"--target",
+				"flash_app"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"group": "build",
+			"detail": "Собирает и прошивает через J-Link (использует кэш CMake Tools)",
+			"problemMatcher": []
+		},
+		{
 			"label": "Flash F4 (j-link)",
 			"type": "shell",
 			"command": "cmd",

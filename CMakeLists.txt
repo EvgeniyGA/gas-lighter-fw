@@ -120,9 +120,14 @@ set(MCUBOOT_KEY "${CMAKE_SOURCE_DIR}/modules/mcuboot/root-ec-p256.pem")
 set(FW_BIN "${CMAKE_BINARY_DIR}/${MAIN_EXECUTABLE}.bin")
 set(SIGNED_FW_BIN "${CMAKE_BINARY_DIR}/${MAIN_EXECUTABLE}_signed.bin")
 
+find_program(PYTHON_EXECUTABLE 
+    NAMES python3 python py
+    DOC "Python interpreter"
+)
+
 add_custom_command(
     OUTPUT ${SIGNED_FW_BIN}
-    COMMAND python3 ${MCUBOOT_IMGTOOL} sign 
+    COMMAND "${PYTHON_EXECUTABLE}" ${MCUBOOT_IMGTOOL} sign 
         --key ${MCUBOOT_KEY} 
         --header-size 0x200 
         --align 4 
@@ -137,3 +142,19 @@ add_custom_command(
 )
 
 add_custom_target(sign_fw ALL DEPENDS ${SIGNED_FW_BIN})
+
+set(FLASH_JLINK_SCRIPT "${CMAKE_BINARY_DIR}/flash_app.jlink")
+file(WRITE ${FLASH_JLINK_SCRIPT}
+    "r\n"
+    "h\n"
+    "loadbin \"${CMAKE_BINARY_DIR}/${MAIN_EXECUTABLE}_signed.bin\", 0x08080000\n"
+    "r\n"
+    "q\n"
+)
+
+add_custom_target(flash_app
+    COMMAND JLink.exe -device STM32F407VG -if SWD -speed 4000 -NoGui 1 -CommandFile ${FLASH_JLINK_SCRIPT}
+    DEPENDS sign_fw 
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMMENT "Flashing signed_app.bin via J-Link..."
+)

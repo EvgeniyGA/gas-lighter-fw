@@ -40,11 +40,11 @@ pulseMeasureConfig_s pulse_measure_config = {
 
 
 void pulse_measure_data_ready_callback(pulse_measure_msg_t* data){
-	printf("result %04ld:%04ld:%04ld:%04ld\n\r", 
-		data->result[Pulse_Measure_ADC_Channel_1], 
-		data->result[Pulse_Measure_ADC_Channel_2], 
-		data->result[Pulse_Measure_ADC_Channel_3], 
-		data->result[Pulse_Measure_ADC_Channel_4]);
+//	printf("result %04ld:%04ld:%04ld:%04ld\n\r", 
+//		data->result[Pulse_Measure_ADC_Channel_1], 
+//		data->result[Pulse_Measure_ADC_Channel_2], 
+//		data->result[Pulse_Measure_ADC_Channel_3], 
+//		data->result[Pulse_Measure_ADC_Channel_4]);
 	lcd_print(LCD_PRINTER_LINE1, LCD_PRINTER_OFFSET_ZERO, "%04ld:%04ld %04ld:%04ld\n\r", 
 		data->result[Pulse_Measure_ADC_Channel_1], data->result[Pulse_Measure_ADC_Channel_2], 
 		data->result[Pulse_Measure_ADC_Channel_3], data->result[Pulse_Measure_ADC_Channel_4]);
