@@ -72,8 +72,8 @@
 				"-gdb",
 				"tcp::1234",
 				"-S",
-				"-kernel",
-				"${command:cmake.launchTargetPath}"
+				//"-kernel", "${command:cmake.launchTargetPath}"
+				"-device", "loader,file=${command:cmake.launchTargetPath},cpu-num=0"
 			],
 			"isBackground": true,
 			"problemMatcher": {
@@ -100,10 +100,9 @@
 				"-M",
 				"netduinoplus2",
 				"-nographic",
-				"-serial",
-				"mon:stdio",
-				"-kernel",
-				"${command:cmake.launchTargetPath}"
+				"-serial", "mon:stdio",
+				//"-kernel", "${command:cmake.launchTargetPath}"
+				"-device", "loader,file=${command:cmake.launchTargetPath},cpu-num=0"
 			],
 			"isBackground": true,
 			"problemMatcher": {

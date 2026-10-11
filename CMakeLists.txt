@@ -80,6 +80,8 @@ if(${TARGET} STREQUAL "stm32f4")
         diskio_drivers
         bsp_drivers
         app_version
+        bootutil
+        mcuboot_support
     )
 elseif(${TARGET} STREQUAL "stm32f7")
     target_link_libraries(${MAIN_EXECUTABLE} 
@@ -96,6 +98,8 @@ elseif(${TARGET} STREQUAL "stm32f7")
         diskio_drivers
         bsp_drivers
         app_version
+        bootutil
+        mcuboot_support
     )
 else()
     message(FATAL_ERROR "unsupported target ${TARGET}")

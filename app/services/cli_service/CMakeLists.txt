@@ -17,4 +17,5 @@ target_link_libraries(cli_service PUBLIC
     freertos_cli_core
     fatfs_core
     config_service
+    bootutil
 )

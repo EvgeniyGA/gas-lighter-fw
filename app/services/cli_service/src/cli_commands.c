@@ -5,6 +5,7 @@
 #include "FreeRTOS_CLI.h"
 #include "task.h"
 #include "cli_commands.h"
+#include "bootutil/bootutil.h"
 
 #include "stm32f4xx.h"//todo
 
@@ -15,11 +16,27 @@ static BaseType_t prvTaskRebootCommand( char *pcWriteBuffer,
 	NVIC_SystemReset();
 }
 
+static BaseType_t prvTaskUpdateCommand( char *pcWriteBuffer,
+                                          size_t xWriteBufferLen,
+										  const char *pcCommandString )
+{
+	const int permanent = 0;
+  	boot_set_pending(permanent);
+}
+
 static const CLI_Command_Definition_t xRebootCommand =
 {
     "reboot",
 	DEFAULT_HELP_COLOR"reboot"ANSI_COLOR_RESET": Reboot mcu\r\n\r\n",
 	prvTaskRebootCommand,
+    0
+};
+
+static const CLI_Command_Definition_t xUpdateCommand =
+{
+    "update",
+	DEFAULT_HELP_COLOR"update"ANSI_COLOR_RESET": Update mcu\r\n\r\n",
+	prvTaskUpdateCommand,
     0
 };
 
@@ -192,7 +209,9 @@ BaseType_t CLI_install_commands(void){
 		if(pdPASS == FreeRTOS_CLIRegisterCommand( &xEchoCommand )){
 			//if(pdPASS == FreeRTOS_CLIRegisterCommand( &xColorCommand )){
 			if(pdPASS == FreeRTOS_CLIRegisterCommand( &xRebootCommand )){
-				return pdPASS;
+				if(pdPASS == FreeRTOS_CLIRegisterCommand( &xUpdateCommand )){
+					return pdPASS;
+				}
 			}
 		}
 	}

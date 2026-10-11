@@ -72,11 +72,11 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-#ifndef FOR_QEMU
+//#ifndef FOR_QEMU
 //  SCB->VTOR = 0x08020000;
   SCB->VTOR = 0x08040200;
   __enable_irq();
-#endif
+//#endif
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
