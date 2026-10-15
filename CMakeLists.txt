@@ -78,10 +78,10 @@ if(${TARGET} STREQUAL "stm32f4")
         tinyusb_support
         usb_service
         diskio_drivers
-        bsp_drivers
         app_version
         bootutil
         mcuboot_support
+        bsp_drivers
     )
 elseif(${TARGET} STREQUAL "stm32f7")
     target_link_libraries(${MAIN_EXECUTABLE} 

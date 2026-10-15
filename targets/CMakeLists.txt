@@ -61,6 +61,7 @@ set(BSP_SOURCES
     ${TARGET}/Core/Src/gpio_driver.c
     ${TARGET}/Core/Src/W25Qxx.c
     ${TARGET}/Core/Src/common.c
+    ${TARGET}/Core/Src/Driver_Flash.c
 )
 elseif(${TARGET} STREQUAL "stm32f7")
 set(BSP_SOURCES
@@ -79,6 +80,7 @@ add_library(bsp_drivers STATIC
 
 target_link_libraries(bsp_drivers PUBLIC 
     stm32cubemx
+    bootutil
 )
 
 target_include_directories(bsp_drivers PUBLIC 
