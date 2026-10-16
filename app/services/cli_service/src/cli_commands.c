@@ -14,6 +14,7 @@ static BaseType_t prvTaskRebootCommand( char *pcWriteBuffer,
 										  const char *pcCommandString )
 {
 	NVIC_SystemReset();
+	return pdFALSE;
 }
 
 static BaseType_t prvTaskUpdateCommand( char *pcWriteBuffer,
@@ -21,7 +22,9 @@ static BaseType_t prvTaskUpdateCommand( char *pcWriteBuffer,
 										  const char *pcCommandString )
 {
 	const int permanent = 0;
+	printf("request update\n\r");
   	boot_set_pending(permanent);
+	return pdFALSE;
 }
 
 static const CLI_Command_Definition_t xRebootCommand =

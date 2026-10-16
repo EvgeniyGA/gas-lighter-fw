@@ -26,9 +26,6 @@ target_link_libraries(bootutil PUBLIC
 
 add_library(mcuboot_support STATIC 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/flash_map.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ecdsa_pub_key.c
-    ${CMAKE_SOURCE_DIR}/modules/mcuboot/boot/mbed/app_enc_keys.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/flash_map_legacy.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/flash_map_extended.c
 )
 

@@ -106,5 +106,5 @@ void cli_service_init(void){
     CLI_install_commands();
 	CLI_install_commands_fs();
     CLI_install_commands_app();
-    xTaskCreate(cli_task,  "cli_task", configMINIMAL_STACK_SIZE * 4, NULL, 1, NULL);
+    xTaskCreate(cli_task,  "cli_task", configMINIMAL_STACK_SIZE * 16, NULL, 1, NULL);
 }
